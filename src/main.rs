@@ -12,7 +12,7 @@ use state::AppState;
 use tokio::fs;
 use tokio::{net::TcpListener, sync::RwLock};
 
-use grammers_client::{Client, Config, SignInError, Update};
+use grammers_client::{Client, Config};
 use grammers_session::Session;
 
 #[tokio::main]

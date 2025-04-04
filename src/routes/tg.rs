@@ -1,4 +1,4 @@
-use std::{fmt::format, sync::Arc};
+use std::sync::Arc;
 
 use axum::{Extension, Router, http::StatusCode, response::IntoResponse, routing::get};
 use serde_json::json;
