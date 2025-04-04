@@ -2,17 +2,18 @@ mod constants;
 mod routes;
 mod state;
 mod types;
+mod tg;
 
 use dotenv::dotenv;
+use tg::connect_client;
 use std::sync::Arc;
 
 use axum::{Extension, Router};
 use routes::{fallback, routes};
 use state::AppState;
-use tokio::fs;
 use tokio::{net::TcpListener, sync::RwLock};
 
-use grammers_client::{Client, Config};
+use grammers_client::{Client, Config, SignInError};
 use grammers_session::Session;
 
 #[tokio::main]
@@ -23,22 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
         .unwrap();
 
-    let session_file = "session.session";
-    let session = if let Ok(data) = fs::read(session_file).await {
-        Session::load(&data)?
-    } else {
-        Session::new()
-    };
-
-    let client = Client::connect(Config {
-        session,
-        api_id: 0,
-        api_hash: "0".to_string(),
-        params: Default::default(),
-    })
-    .await?;
-
-    println!("Server starting on port 8001");
+    let client = connect_client().await?;
 
     let mut state = AppState::default();
 

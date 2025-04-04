@@ -37,6 +37,7 @@ async fn get_me(Extension(state): Extension<Arc<RwLock<AppState>>>) -> impl Into
             "first_name":me.first_name(),
             "last_name":me.last_name(),
             "username":me.username(),
+            "is_verified":me.verified()
         })
         .to_string(),
     )
