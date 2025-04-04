@@ -13,3 +13,14 @@ sqlx = { version = "0.8.3", features = ["postgres","runtime-tokio-rustls"] }
 uuid = { version = "1.16.0", features = ["v4", "fast-rng"] }
 token_address_extractor = "0.1.0"
 ureq = "3.0.10"
+grammers-client = "0.7.0"
+grammers-session = "0.7.0"
+dashmap = "6.1.0"
+phf = { version = "0.11.3", features = ["macros", "phf_macros"] }
+
+[profile.release]
+strip = true        # Remove symbols from binary
+opt-level = 3       # Maximum optimization for speed
+lto = true          # Optimize at link stage ("fat")
+codegen-units = 1   # Reduce parallel codegen to maximize optimizations
+panic = "abort"     # Remove unwind information, reducing binary size and overhead (no backtraces in production)
