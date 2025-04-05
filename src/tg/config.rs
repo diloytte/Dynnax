@@ -1,8 +1,8 @@
 // src/config.rs
-use std::env;
-use tokio::fs as tokfs;
 use crate::Session;
+use std::env;
 use std::error::Error;
+use tokio::fs as tokfs;
 
 #[derive(Debug)]
 pub struct ConfigData {

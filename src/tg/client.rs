@@ -1,9 +1,9 @@
+use crate::SignInError;
 use crate::tg::config::{load_config, load_or_create_session, save_session};
 use crate::{Client, Config};
-use crate::SignInError;
 
 pub async fn connect_client() -> Result<Client, Box<dyn std::error::Error>> {
-    let config = load_config()?; 
+    let config = load_config()?;
 
     let session_file = "session.session";
     let session = load_or_create_session(session_file).await?;
@@ -27,7 +27,9 @@ pub async fn connect_client() -> Result<Client, Box<dyn std::error::Error>> {
         match client.sign_in(&token, code).await {
             Ok(_) => println!("Logged in successfully!"),
             Err(SignInError::PasswordRequired(password_token)) => {
-                client.check_password(password_token, &config.password).await?;
+                client
+                    .check_password(password_token, &config.password)
+                    .await?;
             }
             Err(e) => return Err(e.into()),
         }

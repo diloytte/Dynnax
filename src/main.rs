@@ -1,12 +1,13 @@
 mod constants;
+mod pf;
 mod routes;
 mod state;
-mod types;
 mod tg;
+mod types;
 
 use dotenv::dotenv;
-use tg::connect_client;
 use std::sync::Arc;
+use tg::{connect_client, listen_for_updates};
 
 use axum::{Extension, Router};
 use routes::{fallback, routes};
@@ -28,9 +29,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut state = AppState::default();
 
-    state.set_tg_client(client);
+    state.set_tg_client(client.clone());
 
     let shared_state = Arc::new(RwLock::new(state));
+
+    tokio::spawn(listen_for_updates(client, shared_state.clone()));
 
     let router = Router::new()
         .nest("/api/v1", routes())

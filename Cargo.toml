@@ -2,21 +2,40 @@
 name = "dynnax"
 version = "0.1.0"
 edition = "2024"
+authors = ["mail@diloytte.com"]
+repository = "git@github.com:diloytte/Dynnax.git"
+license = "MIT"
+
+[lints.rust]
+unsafe_code = "forbid"
+unused = { level = "allow", priority = -1 } # For development
 
 [dependencies]
-axum = { version = "0.8.3", features = ["macros"] }
+# -- Async
 tokio = { version = "1.44.1", features = ["full"] }
-serde = { version = "1.0.194", features = ["derive"] }
-serde_json = "1.0.112"
-dotenv = "0.15.0"
-sqlx = { version = "0.8.3", features = ["postgres","runtime-tokio-rustls"] }
-uuid = { version = "1.16.0", features = ["v4", "fast-rng"] }
-token_address_extractor = "0.1.0"
-ureq = "3.0.10"
+
+# -- Telegram
 grammers-client = "0.7.0"
 grammers-session = "0.7.0"
-dashmap = "6.1.0"
+
+# -- Server
+axum = { version = "0.8.3", features = ["macros"] }
+serde = { version = "1.0.194", features = ["derive"] }
+serde_json = "1.0.112"
+ureq = "3.0.10"
+
+# -- DB
+sqlx = { version = "0.8.3", features = ["postgres","runtime-tokio-rustls"] }
+
+# -- Other
+dotenv = "0.15.0"
 phf = { version = "0.11.3", features = ["macros", "phf_macros"] }
+dashmap = "6.1.0"
+uuid = { version = "1.16.0", features = ["v4", "fast-rng"] }
+
+# -- Cryptocurrencies
+token_address_extractor = "0.1.0"
+
 
 [profile.release]
 strip = true        # Remove symbols from binary

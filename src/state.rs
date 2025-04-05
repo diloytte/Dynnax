@@ -5,10 +5,9 @@ use grammers_client::Client;
 
 #[derive(Default)]
 pub struct AppState {
-    pub channels: DashMap<i64, SnipeTarget>,
+    pub chats: DashMap<i64, SnipeTarget>,
     pub tg_client: Option<Client>,
 }
-
 
 impl AppState {
     pub fn set_tg_client(&mut self, client: Client) {
