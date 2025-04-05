@@ -47,8 +47,10 @@ impl SnipeTarget {
     pub fn set_is_active(&mut self, value: bool) {
         self.is_active = value;
     }
-    pub fn set_deactivate_on_snipe(&mut self, value: bool) {
-        self.is_active = value;
+    pub fn set_deactivate_on_snipe(&mut self) {
+        if self.is_active {
+            self.is_active = false
+        };
     }
 }
 

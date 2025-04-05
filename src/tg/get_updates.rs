@@ -7,23 +7,35 @@ use tokio::sync::RwLock;
 pub async fn listen_for_updates(
     client: Client,
     shared_state: Arc<RwLock<AppState>>,
+    pf_api_key: String
 ) -> Result<(), InvocationError> {
-    let read_state = shared_state.read().await;
-    let chats = &read_state.chats;
-   
     loop {
         match client.next_update().await {
             Ok(Update::NewMessage(message)) => {
                 let chat_id = message.chat().id();
-                let snipe_target_option = chats.get(&chat_id);
-                if let Some(snipe_target) = snipe_target_option {
-                    let _ = buy_ca("", &snipe_target).await;
-                };
-
                 let ca = extract_solana_address(message.text());
-                dbg!(ca);
-                dbg!(message.text());
+                if ca.is_none() { continue; }
+                dbg!(&ca);
+                
+                let read_state = shared_state.read().await;
+                let chats = &read_state.chats;
+                let snipe_target_option = chats.get_mut(&chat_id);
+                if let Some(mut snipe_target) = snipe_target_option {
+                    if !snipe_target.is_active { continue; }
 
+                    match buy_ca(&pf_api_key, &snipe_target,ca.unwrap()).await {
+                        Ok(_) => {
+                            snipe_target.set_deactivate_on_snipe();
+                        },
+                        Err(error) => {
+                            println!("ERROR: {}",error)
+                        },
+                    }
+                } else {
+                    let chat = message.chat();
+                    let chat_name = chat.name();
+                    println!("Cannot find chat id: {} with name: {} in snipe targets map.",chat_id, chat_name);
+                };
                 //check if it contains any ca at all and inform
             }
             Err(e) => eprintln!("Error in listen_for_updates: {}", e),

@@ -6,7 +6,7 @@ mod tg;
 mod types;
 
 use dotenv::dotenv;
-use std::sync::Arc;
+use std::{env, sync::Arc};
 use tg::{connect_client, listen_for_updates};
 
 use axum::{Extension, Router};
@@ -25,15 +25,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
         .unwrap();
 
+    
     let client = connect_client().await?;
-
+    
     let mut state = AppState::default();
-
+    
     state.set_tg_client(client.clone());
-
+    
     let shared_state = Arc::new(RwLock::new(state));
-
-    tokio::spawn(listen_for_updates(client, shared_state.clone()));
+    
+    let pf_api_key: String = env::var("PUMPFUN_PORTAL_API_KEY")?.parse()?;
+    tokio::spawn(listen_for_updates(client, shared_state.clone(),pf_api_key));
 
     let router = Router::new()
         .nest("/api/v1", routes())
