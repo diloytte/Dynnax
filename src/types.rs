@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 pub struct SnipeConfig {
     pub sol_amount: f32,
     pub slippage: u8,
@@ -63,4 +65,20 @@ impl Default for SnipeTarget {
             deactivate_on_snipe: true,
         }
     }
+}
+
+
+#[derive(Serialize)]
+pub struct TradeRequest {
+    pub action: String,
+    pub mint: String,
+    pub amount: f32,
+    pub denominated_in_sol: bool,
+    pub slippage: u8,
+    pub priority_fee: f32,
+    pub pool: String,
+}
+#[derive(Debug,Deserialize)]
+pub struct MyRecvBody {
+    pub other: String,
 }

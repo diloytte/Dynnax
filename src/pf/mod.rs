@@ -2,24 +2,9 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use ureq::Error;
 
-use crate::types::SnipeTarget;
+use crate::types::{MyRecvBody, SnipeTarget, TradeRequest};
 
 static PUMP_PORTAL_URL: &str = "https://pumpportal.fun/api/trade?api-key=";
-
-#[derive(Serialize)]
-struct TradeRequest {
-    action: String,
-    mint: String,
-    amount: f32,
-    denominated_in_sol: bool,
-    slippage: u8,
-    priority_fee: f32,
-    pool: String,
-}
-#[derive(Debug,Deserialize)]
-struct MyRecvBody {
-    other: String,
-}
 
 pub async fn buy_ca(
     api_key: &str,
