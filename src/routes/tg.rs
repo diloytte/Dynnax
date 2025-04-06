@@ -4,7 +4,10 @@ use axum::{Extension, Router, http::StatusCode, response::IntoResponse, routing:
 use serde_json::json;
 use tokio::sync::RwLock;
 
-use crate::{constants::INTERNAL_ERROR_CODES, state::AppState, tg::get_dialogs as get_dialogs_service, types::AppStateExtension};
+use crate::{
+    constants::INTERNAL_ERROR_CODES, state::AppState, tg::get_dialogs as get_dialogs_service,
+    types::AppStateExtension,
+};
 
 pub fn routes() -> Router {
     Router::new().nest(
@@ -12,7 +15,7 @@ pub fn routes() -> Router {
         Router::new()
             .route("/me", get(get_me))
             .route("/clear", get(clear_dialogs))
-            .route("/dialogs",get(get_dialogs))
+            .route("/dialogs", get(get_dialogs)),
     )
 }
 
@@ -54,8 +57,8 @@ async fn clear_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse
     let client = read_state.tg_client.as_ref().unwrap();
 }
 
-async fn get_dialogs(Extension(state): AppStateExtension)->impl IntoResponse{
-    let read_state = state.read().await;
+async fn get_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
+     let read_state = state.read().await;
     let client = read_state.tg_client.as_ref().unwrap();
     let dialogs_result = get_dialogs_service(client).await;
     let dialogs = dialogs_result.unwrap_or(vec![]);
@@ -64,6 +67,6 @@ async fn get_dialogs(Extension(state): AppStateExtension)->impl IntoResponse{
         json!({
             "dialogs":dialogs
         })
-        .to_string()
+        .to_string(),
     )
 }

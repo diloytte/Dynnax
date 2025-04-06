@@ -48,7 +48,7 @@ pub async fn listen_for_updates(
 
                 let ca_option = extract_token_address_from_message_text(message.text());
                 let ca = ca_option.unwrap_or(String::from("None"));
-                println!("Solana token not found. Extracted CA: {}",ca);
+                println!("Solana token not found. Extracted CA: {}", ca);
             }
             Err(e) => eprintln!("Error in listen_for_updates: {}", e),
             _ => {}

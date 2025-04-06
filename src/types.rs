@@ -73,7 +73,6 @@ impl Default for SnipeTarget {
     }
 }
 
-
 #[derive(Serialize)]
 pub struct TradeRequest {
     pub action: String,
@@ -84,10 +83,9 @@ pub struct TradeRequest {
     pub priority_fee: f32,
     pub pool: String,
 }
-#[derive(Debug,Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct MyRecvBody {
     pub other: String,
 }
-
 
 pub type AppStateExtension = Extension<Arc<RwLock<AppState>>>;
