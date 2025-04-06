@@ -1,7 +1,10 @@
-mod clear_chats;
+mod get_dialogs;
+mod clear_dialogs;
 mod client;
 mod config;
-mod get_updates;
+mod snipe_dialog;
+
 
 pub use client::*;
-pub use get_updates::*;
+pub use snipe_dialog::*;
+pub use get_dialogs::*;

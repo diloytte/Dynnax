@@ -7,7 +7,7 @@ mod types;
 
 use dotenv::dotenv;
 use std::{env, sync::Arc};
-use tg::{connect_client, listen_for_updates};
+use tg::{connect_client, get_dialogs, listen_for_updates};
 
 use axum::{Extension, Router};
 use routes::{fallback, routes};
@@ -28,6 +28,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     let client = connect_client().await?;
     
+    let dialogs = get_dialogs(&client).await?;
+
     let mut state = AppState::default();
     
     state.set_tg_client(client.clone());

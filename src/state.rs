@@ -5,7 +5,7 @@ use grammers_client::Client;
 
 #[derive(Default)]
 pub struct AppState {
-    pub chats: DashMap<i64, SnipeTarget>,
+    pub dialogs: DashMap<i64, SnipeTarget>,
     pub tg_client: Option<Client>,
 }
 

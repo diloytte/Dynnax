@@ -1,4 +1,10 @@
+use std::sync::Arc;
+
+use axum::Extension;
 use serde::{Deserialize, Serialize};
+use tokio::sync::RwLock;
+
+use crate::state::AppState;
 
 pub struct SnipeConfig {
     pub sol_amount: f32,
@@ -82,3 +88,6 @@ pub struct TradeRequest {
 pub struct MyRecvBody {
     pub other: String,
 }
+
+
+pub type AppStateExtension = Extension<Arc<RwLock<AppState>>>;

@@ -21,7 +21,7 @@ pub async fn listen_for_updates(
 
                 {
                     let read_state = shared_state.read().await;
-                    let chats = &read_state.chats;
+                    let chats = &read_state.dialogs;
                     let snipe_target_option = chats.get_mut(&chat_id);
                     if let Some(mut snipe_target) = snipe_target_option {
                         if !snipe_target.is_active {
@@ -48,7 +48,7 @@ pub async fn listen_for_updates(
 
                 let ca_option = extract_token_address_from_message_text(message.text());
                 let ca = ca_option.unwrap_or(String::from("None"));
-                println!("Solana address not found. Extracted CA: {}",ca);
+                println!("Solana token not found. Extracted CA: {}",ca);
             }
             Err(e) => eprintln!("Error in listen_for_updates: {}", e),
             _ => {}
