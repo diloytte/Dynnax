@@ -1,6 +1,6 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug,Deserialize)]
+#[derive(Debug,Deserialize,Serialize,Clone)]
 pub struct SnipeConfig {
     pub sol_amount: f32,
     pub slippage: u8,
@@ -31,6 +31,7 @@ impl SnipeConfig {
     }
 }
 
+#[derive(Debug,Serialize,Clone)]
 pub struct SnipeTarget {
     pub target_name: String,
     pub snipe_config: SnipeConfig,

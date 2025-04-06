@@ -15,8 +15,10 @@ pub fn routes() -> Router {
 
 fn _routes() -> Router {
     let mut router = Router::new();
-    router = router.merge(dbg::routes()).merge(tg::routes());
     router
+    .merge(dbg::routes())
+    .merge(tg::routes())
+    .merge(snipe::routes())
 }
 
 pub async fn fallback(req: Request<Body>) -> impl IntoResponse {

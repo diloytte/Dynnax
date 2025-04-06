@@ -6,7 +6,7 @@ use crate::models::SnipeTarget;
 
 #[derive(Default)]
 pub struct AppState {
-    pub dialogs: DashMap<i64, SnipeTarget>,
+    pub snipe_targets: DashMap<i64, SnipeTarget>,
     pub tg_client: Option<Client>,
 }
 

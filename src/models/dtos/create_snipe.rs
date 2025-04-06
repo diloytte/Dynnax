@@ -5,7 +5,7 @@ use crate::models::SnipeConfig;
 #[derive(Debug, Deserialize)]
 pub struct CreateSnipeDTO {
     pub target_name: String,
-    pub target_id: String,
+    pub target_id: i64,
     pub snipe_config: Option<SnipeConfig>,
     pub deactivate_on_snipe: Option<bool>,
 }
