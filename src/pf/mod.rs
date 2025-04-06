@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use ureq::Error;
 
-use crate::types::{MyRecvBody, SnipeTarget, TradeRequest};
+use crate::models::{MyRecvBody, SnipeTarget, TradeRequest};
 
 static PUMP_PORTAL_URL: &str = "https://pumpportal.fun/api/trade?api-key=";
 

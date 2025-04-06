@@ -3,7 +3,7 @@ mod pf;
 mod routes;
 mod state;
 mod tg;
-mod types;
+mod models;
 
 use dotenv::dotenv;
 use std::{env, sync::Arc};

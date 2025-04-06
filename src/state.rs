@@ -1,7 +1,8 @@
 use dashmap::DashMap;
 
-use crate::types::SnipeTarget;
 use grammers_client::Client;
+
+use crate::models::SnipeTarget;
 
 #[derive(Default)]
 pub struct AppState {

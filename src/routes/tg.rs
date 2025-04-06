@@ -1,12 +1,9 @@
-use std::sync::Arc;
-
 use axum::{Extension, Router, http::StatusCode, response::IntoResponse, routing::get};
 use serde_json::json;
 use tokio::sync::RwLock;
 
 use crate::{
-    constants::INTERNAL_ERROR_CODES, state::AppState, tg::get_dialogs as get_dialogs_service,
-    types::AppStateExtension,
+    constants::INTERNAL_ERROR_CODES, models::AppStateExtension, state::AppState, tg::get_dialogs as get_dialogs_service
 };
 
 pub fn routes() -> Router {
