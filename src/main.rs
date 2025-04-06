@@ -7,7 +7,7 @@ mod models;
 
 use dotenv::dotenv;
 use std::{env, sync::Arc};
-use tg::{connect_client, get_dialogs, snipe};
+use tg::{connect_client, get_dialogs, snipe, snipe_x};
 
 use axum::{Extension, Router};
 use routes::{fallback, routes};
@@ -36,7 +36,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let shared_state = Arc::new(RwLock::new(state));
 
     let pf_api_key: String = env::var("PUMPFUN_PORTAL_API_KEY")?.parse()?;
-    tokio::spawn(snipe(client, shared_state.clone(), pf_api_key));
+    
+    tokio::spawn(snipe(client.clone(), shared_state.clone(), pf_api_key.clone()));
+
+    // tokio::spawn(snipe_x(client,shared_state.clone(),pf_api_key));
 
     let router = Router::new()
         .nest("/api/v1", routes())

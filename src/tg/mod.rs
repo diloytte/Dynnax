@@ -8,4 +8,4 @@ mod snipe_x;
 pub use client::*;
 pub use get_dialogs::*;
 pub use snipe::*;
-pub use snipe::*;
+pub use snipe_x::*;
