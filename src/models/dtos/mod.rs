@@ -1,3 +1,3 @@
-mod create_snipe;
+mod snipe;
 
-pub use create_snipe::*;
+pub use snipe::*;

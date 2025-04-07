@@ -11,10 +11,11 @@ pub struct CreateSnipeDTO {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct UpdateSnipeConfigDTO{
+pub struct PatchSnipeTargetDTO{
+    pub target_name: Option<String>,
     pub sol_amount: Option<f32>,
     pub slippage: Option<u8>,
     pub priority_fee: Option<f32>,
+    pub is_active:Option<bool>,
+    pub deactive_on_snipe:Option<bool>
 }
-
-

@@ -10,15 +10,14 @@ pub fn routes() -> Router {
     Router::new().nest(
         "/tg",
         Router::new()
-            .route("/me", get(get_me))
+            .route("/", get(get_me))
             .route("/clear", get(clear_dialogs))
             .route("/dialogs", get(get_dialogs)),
     )
 }
 
 async fn get_me(Extension(state): AppStateExtension) -> impl IntoResponse {
-    let locked_read_state = state.read().await;
-    let tg_client = locked_read_state.tg_client.as_ref().unwrap();
+    let tg_client = state.tg_client.as_ref().unwrap();
     let me_result = tg_client.get_me().await;
 
     let get_me_code_error = INTERNAL_ERROR_CODES.get("GETME").unwrap();
@@ -50,13 +49,11 @@ async fn get_me(Extension(state): AppStateExtension) -> impl IntoResponse {
 }
 
 async fn clear_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
-    let read_state = state.read().await;
-    let client = read_state.tg_client.as_ref().unwrap();
+    let client = state.tg_client.as_ref().unwrap();
 }
 
 async fn get_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
-     let read_state = state.read().await;
-    let client = read_state.tg_client.as_ref().unwrap();
+    let client = state.tg_client.as_ref().unwrap();
     let dialogs_result = get_dialogs_service(client).await;
     let dialogs = dialogs_result.unwrap_or(vec![]);
     (

@@ -6,7 +6,7 @@ use tokio::sync::RwLock;
 
 pub async fn snipe(
     client: Client,
-    shared_state: Arc<RwLock<AppState>>,
+    shared_state: Arc<AppState>,
     pf_api_key: String,
 ) -> Result<(), InvocationError> {
     loop {
@@ -19,32 +19,29 @@ pub async fn snipe(
                 }
                 dbg!(&ca);
 
-                {
-                    let read_state = shared_state.read().await;
-                    let chats = &read_state.snipe_targets;
-                    let snipe_target_option = chats.get_mut(&chat_id);
-                    if let Some(mut snipe_target) = snipe_target_option {
-                        if !snipe_target.is_active {
-                            continue;
-                        }
+                let chats = &shared_state.snipe_targets;
+                let snipe_target_option = chats.get_mut(&chat_id);
+                if let Some(mut snipe_target) = snipe_target_option {
+                    if !snipe_target.is_active {
+                        continue;
+                    }
 
-                        match buy_ca(&pf_api_key, &snipe_target, ca.unwrap()).await {
-                            Ok(_) => {
-                                snipe_target.set_deactivate_on_snipe();
-                            }
-                            Err(error) => {
-                                println!("ERROR: {}", error)
-                            }
+                    match buy_ca(&pf_api_key, &snipe_target, ca.unwrap()).await {
+                        Ok(_) => {
+                            snipe_target.set_deactivate_on_snipe();
                         }
-                    } else {
-                        let chat = message.chat();
-                        let chat_name = chat.name();
-                        println!(
-                            "Cannot find chat id: {} with name: {} in snipe targets map.",
-                            chat_id, chat_name
-                        );
-                    };
-                }
+                        Err(error) => {
+                            println!("ERROR: {}", error)
+                        }
+                    }
+                } else {
+                    let chat = message.chat();
+                    let chat_name = chat.name();
+                    println!(
+                        "Cannot find chat id: {} with name: {} in snipe targets map.",
+                        chat_id, chat_name
+                    );
+                };
             }
             Err(e) => eprintln!("Error in listen_for_updates: {}", e),
             _ => {}

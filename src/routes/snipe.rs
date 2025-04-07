@@ -1,14 +1,11 @@
 use std::collections::HashMap;
 
 use axum::{
-    Extension, Json, Router,
-    http::StatusCode,
-    response::IntoResponse,
-    routing::{get, post},
+    extract::Path, http::StatusCode, response::IntoResponse, routing::{get, post}, Extension, Json, Router
 };
 use serde_json::json;
 use tokio::sync::RwLock;
-use crate::models::{AppStateExtension, CreateSnipeDTO, SnipeConfig, SnipeTarget};
+use crate::models::{AppStateExtension, CreateSnipeDTO, PatchSnipeTargetDTO, SnipeConfig, SnipeTarget};
 
 pub fn routes() -> Router {
     Router::new().nest(
@@ -24,8 +21,8 @@ async fn create_snipe_target(
     Json(create_snipe_dto): Json<CreateSnipeDTO>,
 ) -> impl IntoResponse {
     // TODO: make sure that target id is valid and exists
-    let write_state = state.write().await;
-    let dialogs = &write_state.snipe_targets;
+
+    let dialogs = &state.snipe_targets;
     let snipe_target = SnipeTarget {
         target_name: create_snipe_dto.target_name,
         snipe_config: create_snipe_dto
@@ -46,8 +43,7 @@ async fn create_snipe_target(
 }
 
 async fn get_snipe_targets(Extension(state): AppStateExtension) -> impl IntoResponse {
-    let read_state = state.write().await;
-    let snipe_targets = &read_state.snipe_targets;
+    let snipe_targets = &state.snipe_targets;
 
     let mut snipe_targets_map: HashMap<i64, SnipeTarget> = HashMap::default();
 

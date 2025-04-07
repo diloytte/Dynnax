@@ -21,4 +21,4 @@ pub struct MyRecvBody {
     pub other: String,
 }
 
-pub type AppStateExtension = Extension<Arc<RwLock<AppState>>>;
+pub type AppStateExtension = Extension<Arc<AppState>>;
