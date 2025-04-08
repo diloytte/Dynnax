@@ -12,6 +12,7 @@ pub struct CreateSnipeDTO {
 
 #[derive(Debug, Deserialize)]
 pub struct PatchSnipeTargetDTO{
+    pub target_id:i64,
     pub target_name: Option<String>,
     pub sol_amount: Option<f32>,
     pub slippage: Option<u8>,

@@ -1,18 +1,27 @@
 use std::collections::HashMap;
 
-use axum::{
-    extract::Path, http::StatusCode, response::IntoResponse, routing::{get, post}, Extension, Json, Router
+use crate::models::{
+    AppStateExtension, CreateSnipeDTO, PatchSnipeTargetDTO, SnipeConfig, SnipeTarget,
 };
+use axum::{
+    Extension, Json, Router,
+    extract::Path,
+    http::StatusCode,
+    response::IntoResponse,
+    routing::{delete, get, patch, post},
+};
+use grammers_client::grammers_tl_types::types::smsjobs::Status;
 use serde_json::json;
 use tokio::sync::RwLock;
-use crate::models::{AppStateExtension, CreateSnipeDTO, PatchSnipeTargetDTO, SnipeConfig, SnipeTarget};
 
 pub fn routes() -> Router {
     Router::new().nest(
         "/snipe",
         Router::new()
             .route("/", get(get_snipe_targets))
-            .route("/", post(create_snipe_target)),
+            .route("/", post(create_snipe_target))
+            .route("/", patch(patch_snipe_target))
+            .route("/{id}", delete(delete_snipe_target)),
     )
 }
 
@@ -59,4 +68,77 @@ async fn get_snipe_targets(Extension(state): AppStateExtension) -> impl IntoResp
     .to_string();
 
     (StatusCode::OK, dialogs_json_string)
+}
+
+async fn patch_snipe_target(
+    Extension(state): AppStateExtension,
+    Json(patch_snipe_target_dto): Json<PatchSnipeTargetDTO>,
+) -> impl IntoResponse {
+    let snipe_targets: &dashmap::DashMap<i64, SnipeTarget> = &state.snipe_targets;
+    let snipe_target_option = snipe_targets.get_mut(&patch_snipe_target_dto.target_id);
+
+    if let Some(mut snipe_target) = snipe_target_option {
+        if let Some(name) = patch_snipe_target_dto.target_name {
+            snipe_target.set_name(name);
+        }
+
+        if let Some(sol) = patch_snipe_target_dto.sol_amount {
+            snipe_target.snipe_config.set_sol_amount(sol);
+        }
+
+        if let Some(slippage) = patch_snipe_target_dto.slippage {
+            snipe_target.snipe_config.set_slippage(slippage);
+        }
+
+        if let Some(priority_fee) = patch_snipe_target_dto.priority_fee {
+            snipe_target.snipe_config.set_priority_fee(priority_fee);
+        }
+
+        if let Some(is_active) = patch_snipe_target_dto.is_active {
+            snipe_target.set_is_active(is_active);
+        }
+
+        if let Some(deactivate_on_snipe) = patch_snipe_target_dto.deactive_on_snipe {
+            snipe_target.deactivate_on_snipe = deactivate_on_snipe;
+        }
+
+        let snipe_target = snipe_target.to_owned();
+
+        let data_response = Json(json!({
+            "snipe_target":snipe_target
+        }));
+
+        return (StatusCode::OK, data_response);
+    }
+
+    let error_response = Json(json!({
+        "error":format!("Snipe target with ID: {} does not exist.",&patch_snipe_target_dto.target_id)
+    }));
+
+    (StatusCode::NOT_FOUND, error_response)
+}
+
+async fn delete_snipe_target(
+    Extension(state): AppStateExtension,
+    Path(id): Path<i64>,
+) -> impl IntoResponse {
+    let snipe_targets: &dashmap::DashMap<i64, SnipeTarget> = &state.snipe_targets;
+    let remove = snipe_targets.remove(&id);
+
+    match remove {
+        Some(snipe_target) => {
+            return (
+                StatusCode::OK,
+                Json(json!({
+                    "snipe_target":snipe_target
+                })),
+            );
+        }
+        None => {
+            return (
+                StatusCode::NOT_FOUND,
+                Json(json!({"error":format!("Snipe Target with ID: {} does not exist.",&id)})),
+            );
+        }
+    }
 }
