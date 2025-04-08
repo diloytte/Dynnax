@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug,Deserialize,Serialize,Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct SnipeConfig {
     pub sol_amount: f32,
     pub slippage: u8,
@@ -17,21 +17,7 @@ impl Default for SnipeConfig {
     }
 }
 
-impl SnipeConfig {
-    pub fn set_sol_amount(&mut self, value: f32) {
-        self.sol_amount = value;
-    }
-
-    pub fn set_slippage(&mut self, value: u8) {
-        self.slippage = value;
-    }
-
-    pub fn set_priority_fee(&mut self, value: f32) {
-        self.priority_fee = value;
-    }
-}
-
-#[derive(Debug,Serialize,Clone)]
+#[derive(Debug, Serialize, Clone)]
 pub struct SnipeTarget {
     pub target_name: String,
     pub snipe_config: SnipeConfig,
@@ -39,30 +25,28 @@ pub struct SnipeTarget {
     pub deactivate_on_snipe: bool,
 }
 
-impl SnipeTarget {
-    pub fn set_name(&mut self, value: String) {
-        self.target_name = value;
-    }
-
-    pub fn set_snipe_config(&mut self, value: SnipeConfig) {
-        self.snipe_config = value;
-    }
-
-    pub fn set_is_active(&mut self, value: bool) {
-        self.is_active = value;
-    }
-    pub fn set_deactivate_on_snipe(&mut self) {
-        if self.is_active {
-            self.is_active = false
-        };
-    }
-}
-
 impl Default for SnipeTarget {
     fn default() -> Self {
         SnipeTarget {
             target_name: String::from("None"),
             snipe_config: SnipeConfig::default(),
+            is_active: false,
+            deactivate_on_snipe: true,
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub struct TwitterTarget {
+    pub snipe_config: SnipeConfig,
+    pub is_active: bool,
+    pub deactivate_on_snipe: bool,
+}
+
+impl Default for TwitterTarget {
+    fn default() -> Self {
+        Self {
+            snipe_config: Default::default(),
             is_active: false,
             deactivate_on_snipe: true,
         }

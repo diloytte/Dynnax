@@ -28,7 +28,7 @@ pub async fn snipe(
 
                     match buy_ca(&pf_api_key, &snipe_target, ca.unwrap()).await {
                         Ok(_) => {
-                            snipe_target.set_deactivate_on_snipe();
+                            snipe_target.deactivate_on_snipe = true;
                         }
                         Err(error) => {
                             println!("ERROR: {}", error)

@@ -79,23 +79,23 @@ async fn patch_snipe_target(
 
     if let Some(mut snipe_target) = snipe_target_option {
         if let Some(name) = patch_snipe_target_dto.target_name {
-            snipe_target.set_name(name);
+            snipe_target.target_name = name;
         }
 
         if let Some(sol) = patch_snipe_target_dto.sol_amount {
-            snipe_target.snipe_config.set_sol_amount(sol);
+            snipe_target.snipe_config.sol_amount = sol;
         }
 
         if let Some(slippage) = patch_snipe_target_dto.slippage {
-            snipe_target.snipe_config.set_slippage(slippage);
+            snipe_target.snipe_config.slippage = slippage;
         }
 
         if let Some(priority_fee) = patch_snipe_target_dto.priority_fee {
-            snipe_target.snipe_config.set_priority_fee(priority_fee);
+            snipe_target.snipe_config.priority_fee = priority_fee;
         }
 
         if let Some(is_active) = patch_snipe_target_dto.is_active {
-            snipe_target.set_is_active(is_active);
+            snipe_target.is_active = is_active;
         }
 
         if let Some(deactivate_on_snipe) = patch_snipe_target_dto.deactive_on_snipe {

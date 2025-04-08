@@ -31,7 +31,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut state = AppState::default();
 
-    state.set_tg_client(client.clone());
+    state.tg_client = Some(client.clone());
 
     // IMPORTANT NOTICE:
     //
