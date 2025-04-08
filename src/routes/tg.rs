@@ -3,7 +3,7 @@ use serde_json::json;
 use tokio::sync::RwLock;
 
 use crate::{
-    constants::INTERNAL_ERROR_CODES, models::AppStateExtension, state::AppState, tg::get_dialogs as get_dialogs_service
+    constants::INTERNAL_ERROR_CODES, models::AppStateExtension, state::AppState, tg::{self, dialog::clear_dialogs::clear_dialogs}, 
 };
 
 pub fn routes() -> Router {
@@ -48,13 +48,10 @@ async fn get_me(Extension(state): AppStateExtension) -> impl IntoResponse {
     )
 }
 
-async fn clear_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
-    let client = state.tg_client.as_ref().unwrap();
-}
 
 async fn get_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
     let client = state.tg_client.as_ref().unwrap();
-    let dialogs_result = get_dialogs_service(client).await;
+    let dialogs_result = tg::dialog::get_dialogs::get_dialogs(client).await;
     let dialogs = dialogs_result.unwrap_or(vec![]);
     (
         StatusCode::OK,

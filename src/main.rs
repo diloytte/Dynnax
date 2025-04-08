@@ -6,8 +6,8 @@ mod state;
 mod tg;
 
 use dotenv::dotenv;
+use tg::{client::connect_client, dialog::get_dialogs::get_dialogs, snipe::snipe::snipe};
 use std::{env, sync::Arc};
-use tg::{connect_client, get_dialogs, snipe, snipe_x};
 
 use axum::{Extension, Router};
 use routes::{fallback, routes};
