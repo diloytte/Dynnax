@@ -1,16 +1,16 @@
 mod constants;
 mod db;
-mod load_configurations;
 mod models;
 mod pf;
 mod routes;
 mod state;
 mod tg;
+mod utils;
 
 use dashmap::DashMap;
 use db::connect::connect;
 use dotenv::dotenv;
-use load_configurations::load_snipe_configurations;
+use utils::load_snipe_configurations;
 use std::{env, sync::Arc};
 use tg::{client::connect_client, dialog::get_dialogs::get_dialogs, sniper::snipe::snipe};
 

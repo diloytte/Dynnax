@@ -1,12 +1,11 @@
 use std::collections::HashMap;
 
 use crate::{
-    db::queries::snipe_targets::{q_create_snipe_target, q_get_all_snipe_targets},
-    models::{
+    db::queries::snipe_targets::{q_create_snipe_target, q_get_all_snipe_targets}, json_error, models::{
         dtos::{CreateSnipeDTO, PatchSnipeTargetDTO},
         other::AppStateExtension,
         service::snipe_target::{SnipeConfig, SnipeTarget},
-    },
+    }
 };
 use axum::{
     Extension, Json, Router,
@@ -35,14 +34,14 @@ async fn create_snipe_target(
     if let None = state.all_dialogs.get(&create_snipe_dto.target_id) {
         return (
             StatusCode::NOT_FOUND,
-            json!({"error":format!("Dialog with ID: {} does not exist.",&create_snipe_dto.target_id)}).to_string(),
+            json_error!(format!("Dialog with ID: {} does not exist.",&create_snipe_dto.target_id))
         );
     }
 
     if let Some(existing_target) = state.snipe_targets.get(&create_snipe_dto.target_id) {
         return (
             StatusCode::BAD_REQUEST,
-            json!({"error":format!("Snipe Target with ID: {} already exists.",&create_snipe_dto.target_id)}).to_string(),
+            json_error!(format!("Snipe Target with ID: {} already exists.",&create_snipe_dto.target_id))
         );
     }
 
@@ -50,7 +49,7 @@ async fn create_snipe_target(
         println!("Error <create_snipe_target>: {}",error);
         return (
             StatusCode::INTERNAL_SERVER_ERROR,
-            json!({"error":"Something went wrong."}).to_string(),
+            json_error!("Something went wrong.")
         );
     }
 
@@ -132,14 +131,10 @@ async fn patch_snipe_target(
             "snipe_target":snipe_target
         }));
 
-        return (StatusCode::OK, data_response);
+        return (StatusCode::OK, data_response.to_string());
     }
 
-    let error_response = Json(json!({
-        "error":format!("Snipe target with ID: {} does not exist.",&patch_snipe_target_dto.target_id)
-    }));
-
-    (StatusCode::NOT_FOUND, error_response)
+    (StatusCode::NOT_FOUND, json_error!(format!("Snipe target with ID: {} does not exist.",&patch_snipe_target_dto.target_id)))
 }
 
 async fn delete_snipe_target(
@@ -152,13 +147,13 @@ async fn delete_snipe_target(
     match removed_target {
         Some(snipe_target) => (
             StatusCode::OK,
-            Json(json!({
+            json!({
                 "snipe_target":snipe_target
-            })),
+            }).to_string(),
         ),
         None => (
             StatusCode::NOT_FOUND,
-            Json(json!({"error":format!("Snipe Target with ID: {} does not exist.",&id)})),
+            json_error!(format!("Snipe Target with ID: {} does not exist.",&id))
         ),
     }
 }

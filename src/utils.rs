@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use serde_json::json;
+
 use crate::{db::queries::snipe_targets::q_get_all_snipe_targets, state::AppState};
 
 pub async fn load_snipe_configurations(state: &Arc<AppState>) -> Result<(), ()> {
@@ -13,4 +15,11 @@ pub async fn load_snipe_configurations(state: &Arc<AppState>) -> Result<(), ()> 
     }
 
     Ok(())
+}
+
+#[macro_export]
+macro_rules! json_error {
+    ($message:expr) => {
+        serde_json::json!({ "error": $message }).to_string()
+    };
 }
