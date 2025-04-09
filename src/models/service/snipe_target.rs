@@ -33,7 +33,7 @@ impl Default for SnipeTarget {
         SnipeTarget {
             target_name: String::from("None"),
             snipe_config: SnipeConfig::default(),
-            is_active: false,
+            is_active: true,
             deactivate_on_snipe: true,
             past_shills: Vec::new(),
         }
@@ -51,7 +51,7 @@ impl Default for TwitterTarget {
     fn default() -> Self {
         Self {
             snipe_config: Default::default(),
-            is_active: false,
+            is_active: true,
             deactivate_on_snipe: true,
         }
     }

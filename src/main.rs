@@ -38,9 +38,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let client = connect_client().await?;
 
-    let _dialogs = get_dialogs(&client).await?;
+    let dialogs = get_dialogs(&client).await?;
+
+    let dialogs_dashmap = DashMap::new();
+
+    for dialog in dialogs {
+        dialogs_dashmap.insert(dialog.id,(dialog.name,dialog.dialog_type));
+    }
 
     let state = AppState {
+        all_dialogs:dialogs_dashmap,
         snipe_targets: DashMap::default(),
         twitter_snipe_targets: DashMap::default(),
         tg_client: Some(client.clone()),
@@ -69,7 +76,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // so there's no need for an `RwLock` around the entire `AppState` object.
     let shared_state = Arc::new(state);
 
-    load_snipe_configurations(&shared_state).await.unwrap();
+    let _ = load_snipe_configurations(&shared_state).await.unwrap();
 
     let pf_api_key: String = env::var("PUMPFUN_PORTAL_API_KEY")?.parse()?;
 

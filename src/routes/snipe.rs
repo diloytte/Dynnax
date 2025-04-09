@@ -32,20 +32,21 @@ async fn create_snipe_target(
     Extension(state): AppStateExtension,
     Json(create_snipe_dto): Json<CreateSnipeDTO>,
 ) -> impl IntoResponse {
-    // TODO: make sure that target id is valid and exists
-
-    let y = q_create_snipe_target(&state.db, &create_snipe_dto).await;
-
-    match y {
-        Ok(_) => {
-            dbg!("OK");
-        }
-        Err(err) => {
-            dbg!(err);
-        }
+    if let None = state.all_dialogs.get(&create_snipe_dto.target_id) {
+        return (
+            StatusCode::NOT_FOUND,
+            json!({"error":format!("Dialog with ID: {} does not exist.",&create_snipe_dto.target_id)}).to_string(),
+        );
     }
 
-    let dialogs = &state.snipe_targets;
+    if let Some(existing_target) = state.snipe_targets.get(&create_snipe_dto.target_id){
+        return (
+            StatusCode::BAD_REQUEST,
+            json!({"error":format!("Snipe Target with ID: {} already exists.",&create_snipe_dto.target_id)}).to_string(),
+        );
+    }
+
+    let snipe_targets = &state.snipe_targets;
     let snipe_target = SnipeTarget {
         target_name: create_snipe_dto.target_name,
         snipe_config: create_snipe_dto
@@ -61,16 +62,12 @@ async fn create_snipe_target(
     })
     .to_string();
 
-    dialogs.insert(create_snipe_dto.target_id, snipe_target);
+    snipe_targets.insert(create_snipe_dto.target_id, snipe_target);
 
     (StatusCode::OK, response_data)
 }
 
 async fn get_snipe_targets(Extension(state): AppStateExtension) -> impl IntoResponse {
-    let x = q_get_all_snipe_targets(&state.db).await.unwrap();
-
-    dbg!(&x);
-
     let snipe_targets = &state.snipe_targets;
 
     let mut snipe_targets_map: HashMap<i64, SnipeTarget> = HashMap::default();
@@ -81,17 +78,12 @@ async fn get_snipe_targets(Extension(state): AppStateExtension) -> impl IntoResp
         snipe_targets_map.insert(key, value);
     }
 
-    let _dialogs_json_string = json!({
+    let dialogs_json_string = json!({
         "snipe_targets":snipe_targets_map
     })
     .to_string();
 
-    let snipe_from_db = json!({
-        "x":x
-    })
-    .to_string();
-
-    (StatusCode::OK, snipe_from_db)
+    (StatusCode::OK, dialogs_json_string)
 }
 
 async fn patch_snipe_target(
