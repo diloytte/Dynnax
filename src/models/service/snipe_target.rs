@@ -14,7 +14,7 @@ impl Default for SnipeConfig {
         SnipeConfig {
             sol_amount: 1.0,
             slippage: 15,
-            priority_fee: 0.1,
+            priority_fee: 0.005,
         }
     }
 }

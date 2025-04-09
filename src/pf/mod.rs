@@ -1,5 +1,7 @@
+use serde_json::Value;
+
 use crate::models::{
-    other::{MyRecvBody, TradeRequest},
+    other::TradeRequest,
     service::snipe_target::SnipeTarget,
 };
 
@@ -14,18 +16,20 @@ pub async fn buy_ca(
         action: "buy".to_string(),
         mint: ca.to_string(),
         amount: snipe_target.snipe_config.sol_amount,
-        denominated_in_sol: true,
+        denominated_in_sol: "true".to_string(),
         slippage: snipe_target.snipe_config.slippage,
         priority_fee: snipe_target.snipe_config.priority_fee,
         pool: "auto".to_string(),
     };
 
+    dbg!(&body);
+
     let url = format!("{}{}", PUMP_PORTAL_URL, api_key);
 
-    let recv_body = ureq::post(url)
+    let recv_body:Value = ureq::post(url)
         .send_json(&body)?
         .body_mut()
-        .read_json::<MyRecvBody>()?;
+        .read_json()?;
 
     dbg!(recv_body);
 

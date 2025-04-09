@@ -5,19 +5,17 @@ use serde::{Deserialize, Serialize};
 
 use crate::state::AppState;
 
-#[derive(Serialize)]
+#[derive(Debug,Serialize)]
 pub struct TradeRequest {
     pub action: String,
     pub mint: String,
     pub amount: f32,
-    pub denominated_in_sol: bool,
+    #[serde(rename = "denominatedInSol")]
+    pub denominated_in_sol: String,
     pub slippage: i32,
+    #[serde(rename = "priorityFee")]
     pub priority_fee: f32,
     pub pool: String,
-}
-#[derive(Debug, Deserialize)]
-pub struct MyRecvBody {
-    pub _other: String,
 }
 
 pub type AppStateExtension = Extension<Arc<AppState>>;

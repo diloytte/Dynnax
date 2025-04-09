@@ -16,20 +16,23 @@ pub async fn q_create_snipe_target(
         None => &SnipeConfig::default(),
     };
 
-    let deactivate_on_snipe = create_snipe_dto.deactivate_on_snipe.unwrap_or(false);
+    let deactivate_on_snipe = create_snipe_dto.deactivate_on_snipe.unwrap_or(true);
+
+    let is_active = true;
 
     sqlx::query!(
         r#"
         INSERT INTO snipe_targets (
-            target_id, target_name, sol_amount, slippage, priority_fee, deactivate_on_snipe
-        ) VALUES ($1, $2, $3, $4, $5, $6)
+            target_id, target_name, sol_amount, slippage, priority_fee, deactivate_on_snipe, is_active
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7)
         "#,
         target_id,
         target_name,
         snipe_config.sol_amount as f64,
         snipe_config.slippage,
         snipe_config.priority_fee as f64,
-        deactivate_on_snipe
+        deactivate_on_snipe,
+        is_active
     )
     .execute(db)
     .await?;

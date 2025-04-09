@@ -39,10 +39,18 @@ async fn create_snipe_target(
         );
     }
 
-    if let Some(existing_target) = state.snipe_targets.get(&create_snipe_dto.target_id){
+    if let Some(existing_target) = state.snipe_targets.get(&create_snipe_dto.target_id) {
         return (
             StatusCode::BAD_REQUEST,
             json!({"error":format!("Snipe Target with ID: {} already exists.",&create_snipe_dto.target_id)}).to_string(),
+        );
+    }
+
+    if let Err(error) = q_create_snipe_target(&state.db, &create_snipe_dto).await {
+        println!("Error <create_snipe_target>: {}",error);
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            json!({"error":"Something went wrong."}).to_string(),
         );
     }
 
@@ -52,7 +60,7 @@ async fn create_snipe_target(
         snipe_config: create_snipe_dto
             .snipe_config
             .unwrap_or(SnipeConfig::default()),
-        is_active: false,
+        is_active: true,
         deactivate_on_snipe: create_snipe_dto.deactivate_on_snipe.unwrap_or(true),
         past_shills: vec![],
     };

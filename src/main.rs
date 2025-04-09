@@ -76,7 +76,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // so there's no need for an `RwLock` around the entire `AppState` object.
     let shared_state = Arc::new(state);
 
-    let _ = load_snipe_configurations(&shared_state).await.unwrap();
+    load_snipe_configurations(&shared_state).await.unwrap();
 
     let pf_api_key: String = env::var("PUMPFUN_PORTAL_API_KEY")?.parse()?;
 

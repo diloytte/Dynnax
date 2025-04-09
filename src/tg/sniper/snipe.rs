@@ -16,16 +16,17 @@ pub async fn snipe(
                 if ca.is_none() {
                     continue;
                 }
-                dbg!(&ca);
 
-                let chats = &shared_state.snipe_targets;
-                let snipe_target_option = chats.get_mut(&chat_id);
+                let snipe_targets = &shared_state.snipe_targets;
+                let snipe_target_option = snipe_targets.get_mut(&chat_id);
+                
                 if let Some(mut snipe_target) = snipe_target_option {
+                    
                     if !snipe_target.is_active {
                         continue;
                     }
-
                     match buy_ca(&pf_api_key, &snipe_target, ca.unwrap()).await {
+                        
                         Ok(_) => {
                             snipe_target.deactivate_on_snipe = true;
                         }
