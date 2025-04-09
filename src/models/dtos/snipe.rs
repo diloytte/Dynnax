@@ -10,7 +10,6 @@ pub struct CreateSnipeDTO {
     pub deactivate_on_snipe: Option<bool>,
 }
 
-
 #[derive(Debug, Deserialize)]
 pub struct PatchSnipeTargetDTO {
     pub target_id: i64,

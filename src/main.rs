@@ -11,14 +11,13 @@ use dashmap::DashMap;
 use db::connect::connect;
 use dotenv::dotenv;
 use load_configurations::load_snipe_configurations;
-use token_address_extractor::extract_solana_address;
 use std::{env, sync::Arc};
-use tg::{client::connect_client, dialog::get_dialogs::get_dialogs, snipe::snipe::snipe};
+use tg::{client::connect_client, dialog::get_dialogs::get_dialogs, sniper::snipe::snipe};
 
 use axum::{Extension, Router};
 use routes::{fallback, routes};
 use state::AppState;
-use tokio::{net::TcpListener, sync::RwLock};
+use tokio::net::TcpListener;
 
 use grammers_client::{Client, Config, SignInError};
 use grammers_session::Session;
@@ -39,9 +38,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let client = connect_client().await?;
 
-    let dialogs = get_dialogs(&client).await?;
+    let _dialogs = get_dialogs(&client).await?;
 
-    let mut state = AppState {
+    let state = AppState {
         snipe_targets: DashMap::default(),
         twitter_snipe_targets: DashMap::default(),
         tg_client: Some(client.clone()),

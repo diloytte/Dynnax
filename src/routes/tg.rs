@@ -1,9 +1,9 @@
 use axum::{Extension, Router, http::StatusCode, response::IntoResponse, routing::get};
 use serde_json::json;
-use tokio::sync::RwLock;
 
 use crate::{
-    models::other::AppStateExtension, state::AppState, tg::{self, dialog::clear_dialogs::clear_dialogs} 
+    models::other::AppStateExtension,
+    tg::{self, dialog::clear_dialogs::clear_dialogs},
 };
 
 pub fn routes() -> Router {
@@ -21,11 +21,11 @@ async fn get_me(Extension(state): AppStateExtension) -> impl IntoResponse {
     let me_result = tg_client.get_me().await;
 
     if me_result.is_err() {
-        println!(
-            "ERROR: {}",
-            me_result.err().unwrap()
+        println!("ERROR: {}", me_result.err().unwrap());
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "Error getting me.".to_string(),
         );
-        return (StatusCode::INTERNAL_SERVER_ERROR,"Error getting me.".to_string());
     }
 
     let me = me_result.unwrap();
@@ -41,7 +41,6 @@ async fn get_me(Extension(state): AppStateExtension) -> impl IntoResponse {
         .to_string(),
     )
 }
-
 
 async fn get_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
     let client = state.tg_client.as_ref().unwrap();

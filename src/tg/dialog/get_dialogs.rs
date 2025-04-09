@@ -1,5 +1,3 @@
-use std::any::Any;
-
 use grammers_client::types::Chat;
 use grammers_client::{Client, InvocationError};
 use serde::Serialize;
@@ -23,9 +21,9 @@ pub async fn get_dialogs(client: &Client) -> Result<Vec<DialogData>, InvocationE
         if let Some(next_dialog) = next_dialog_option {
             let chat = next_dialog.chat();
             let dialog_type = match chat {
-                Chat::User(user) => 0,
-                Chat::Group(group) => 1,
-                Chat::Channel(channel) => 2,
+                Chat::User(_) => 0,
+                Chat::Group(_) => 1,
+                Chat::Channel(_) => 2,
             };
             dialogs.push(DialogData {
                 name: chat.name().to_string(),

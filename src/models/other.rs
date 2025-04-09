@@ -17,7 +17,7 @@ pub struct TradeRequest {
 }
 #[derive(Debug, Deserialize)]
 pub struct MyRecvBody {
-    pub other: String,
+    pub _other: String,
 }
 
 pub type AppStateExtension = Extension<Arc<AppState>>;

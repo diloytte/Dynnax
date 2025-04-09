@@ -25,7 +25,7 @@ pub struct SnipeTarget {
     pub snipe_config: SnipeConfig,
     pub is_active: bool,
     pub deactivate_on_snipe: bool,
-    pub past_shills: Vec<String>
+    pub past_shills: Vec<String>,
 }
 
 impl Default for SnipeTarget {
@@ -35,7 +35,7 @@ impl Default for SnipeTarget {
             snipe_config: SnipeConfig::default(),
             is_active: false,
             deactivate_on_snipe: true,
-            past_shills:Vec::new()
+            past_shills: Vec::new(),
         }
     }
 }

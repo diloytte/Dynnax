@@ -8,7 +8,7 @@ license = "MIT"
 
 [lints.rust]
 unsafe_code = "forbid"
-unused = { level = "allow", priority = -1 } # For development
+# unused = { level = "allow", priority = -1 } # For development
 
 [dependencies]
 # -- Async

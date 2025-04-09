@@ -1,6 +1,13 @@
 use std::collections::HashMap;
 
-use crate::{db::queries::snipe_targets::{q_create_snipe_target, q_get_all_snipe_targets}, models::{dtos::{CreateSnipeDTO, PatchSnipeTargetDTO}, other::AppStateExtension, service::snipe_target::{SnipeConfig, SnipeTarget}}};
+use crate::{
+    db::queries::snipe_targets::{q_create_snipe_target, q_get_all_snipe_targets},
+    models::{
+        dtos::{CreateSnipeDTO, PatchSnipeTargetDTO},
+        other::AppStateExtension,
+        service::snipe_target::{SnipeConfig, SnipeTarget},
+    },
+};
 use axum::{
     Extension, Json, Router,
     extract::Path,
@@ -8,9 +15,7 @@ use axum::{
     response::IntoResponse,
     routing::{delete, get, patch, post},
 };
-use grammers_client::grammers_tl_types::types::smsjobs::Status;
 use serde_json::json;
-use tokio::sync::RwLock;
 
 pub fn routes() -> Router {
     Router::new().nest(
@@ -29,15 +34,15 @@ async fn create_snipe_target(
 ) -> impl IntoResponse {
     // TODO: make sure that target id is valid and exists
 
-    let y= q_create_snipe_target(&state.db, &create_snipe_dto).await;
+    let y = q_create_snipe_target(&state.db, &create_snipe_dto).await;
 
     match y {
         Ok(_) => {
             dbg!("OK");
-        },
+        }
         Err(err) => {
             dbg!(err);
-        },
+        }
     }
 
     let dialogs = &state.snipe_targets;
@@ -48,7 +53,7 @@ async fn create_snipe_target(
             .unwrap_or(SnipeConfig::default()),
         is_active: false,
         deactivate_on_snipe: create_snipe_dto.deactivate_on_snipe.unwrap_or(true),
-        past_shills:vec![]
+        past_shills: vec![],
     };
 
     let response_data = json!({
@@ -71,19 +76,20 @@ async fn get_snipe_targets(Extension(state): AppStateExtension) -> impl IntoResp
     let mut snipe_targets_map: HashMap<i64, SnipeTarget> = HashMap::default();
 
     for entry in snipe_targets.iter() {
-        let key = entry.key().clone();
+        let key = *entry.key();
         let value = entry.value().clone();
         snipe_targets_map.insert(key, value);
     }
 
-    let dialogs_json_string = json!({
+    let _dialogs_json_string = json!({
         "snipe_targets":snipe_targets_map
     })
     .to_string();
 
     let snipe_from_db = json!({
         "x":x
-    }).to_string();
+    })
+    .to_string();
 
     (StatusCode::OK, snipe_from_db)
 }
@@ -144,19 +150,15 @@ async fn delete_snipe_target(
     let removed_target = snipe_targets.remove(&id);
 
     match removed_target {
-        Some(snipe_target) => {
-            return (
-                StatusCode::OK,
-                Json(json!({
-                    "snipe_target":snipe_target
-                })),
-            );
-        }
-        None => {
-            return (
-                StatusCode::NOT_FOUND,
-                Json(json!({"error":format!("Snipe Target with ID: {} does not exist.",&id)})),
-            );
-        }
+        Some(snipe_target) => (
+            StatusCode::OK,
+            Json(json!({
+                "snipe_target":snipe_target
+            })),
+        ),
+        None => (
+            StatusCode::NOT_FOUND,
+            Json(json!({"error":format!("Snipe Target with ID: {} does not exist.",&id)})),
+        ),
     }
 }
