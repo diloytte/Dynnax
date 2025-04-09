@@ -1,8 +1,6 @@
 use std::collections::HashMap;
 
-use crate::models::{
-    AppStateExtension, CreateSnipeDTO, PatchSnipeTargetDTO, SnipeConfig, SnipeTarget,
-};
+use crate::{db::queries::snipe_targets::{q_create_snipe_target, q_get_all_snipe_targets}, models::{dtos::{CreateSnipeDTO, PatchSnipeTargetDTO}, other::AppStateExtension, service::snipe_target::{SnipeConfig, SnipeTarget}}};
 use axum::{
     Extension, Json, Router,
     extract::Path,
@@ -31,6 +29,17 @@ async fn create_snipe_target(
 ) -> impl IntoResponse {
     // TODO: make sure that target id is valid and exists
 
+    let y= q_create_snipe_target(&state.db, &create_snipe_dto).await;
+
+    match y {
+        Ok(_) => {
+            dbg!("OK");
+        },
+        Err(err) => {
+            dbg!(err);
+        },
+    }
+
     let dialogs = &state.snipe_targets;
     let snipe_target = SnipeTarget {
         target_name: create_snipe_dto.target_name,
@@ -39,6 +48,7 @@ async fn create_snipe_target(
             .unwrap_or(SnipeConfig::default()),
         is_active: false,
         deactivate_on_snipe: create_snipe_dto.deactivate_on_snipe.unwrap_or(true),
+        past_shills:vec![]
     };
 
     let response_data = json!({
@@ -52,6 +62,10 @@ async fn create_snipe_target(
 }
 
 async fn get_snipe_targets(Extension(state): AppStateExtension) -> impl IntoResponse {
+    let x = q_get_all_snipe_targets(&state.db).await.unwrap();
+
+    dbg!(&x);
+
     let snipe_targets = &state.snipe_targets;
 
     let mut snipe_targets_map: HashMap<i64, SnipeTarget> = HashMap::default();
@@ -67,7 +81,11 @@ async fn get_snipe_targets(Extension(state): AppStateExtension) -> impl IntoResp
     })
     .to_string();
 
-    (StatusCode::OK, dialogs_json_string)
+    let snipe_from_db = json!({
+        "x":x
+    }).to_string();
+
+    (StatusCode::OK, snipe_from_db)
 }
 
 async fn patch_snipe_target(
@@ -123,9 +141,9 @@ async fn delete_snipe_target(
     Path(id): Path<i64>,
 ) -> impl IntoResponse {
     let snipe_targets: &dashmap::DashMap<i64, SnipeTarget> = &state.snipe_targets;
-    let remove = snipe_targets.remove(&id);
+    let removed_target = snipe_targets.remove(&id);
 
-    match remove {
+    match removed_target {
         Some(snipe_target) => {
             return (
                 StatusCode::OK,

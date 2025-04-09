@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use axum::Extension;
 use serde::{Deserialize, Serialize};
-use tokio::sync::RwLock;
 
 use crate::state::AppState;
 
@@ -12,7 +11,7 @@ pub struct TradeRequest {
     pub mint: String,
     pub amount: f32,
     pub denominated_in_sol: bool,
-    pub slippage: u8,
+    pub slippage: i32,
     pub priority_fee: f32,
     pub pool: String,
 }

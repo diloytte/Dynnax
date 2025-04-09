@@ -1,9 +1,11 @@
 use serde::{Deserialize, Serialize};
 
+//TODO: Napravi PRESETE, gde ce to da ima vec on snipe targeta + name preseta i selected prseet
+
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct SnipeConfig {
     pub sol_amount: f32,
-    pub slippage: u8,
+    pub slippage: i32,
     pub priority_fee: f32,
 }
 
@@ -23,6 +25,7 @@ pub struct SnipeTarget {
     pub snipe_config: SnipeConfig,
     pub is_active: bool,
     pub deactivate_on_snipe: bool,
+    pub past_shills: Vec<String>
 }
 
 impl Default for SnipeTarget {
@@ -32,6 +35,7 @@ impl Default for SnipeTarget {
             snipe_config: SnipeConfig::default(),
             is_active: false,
             deactivate_on_snipe: true,
+            past_shills:Vec::new()
         }
     }
 }

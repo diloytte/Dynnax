@@ -1,13 +1,19 @@
 mod constants;
+mod db;
+mod load_configurations;
 mod models;
 mod pf;
 mod routes;
 mod state;
 mod tg;
 
+use dashmap::DashMap;
+use db::connect::connect;
 use dotenv::dotenv;
-use tg::{client::connect_client, dialog::get_dialogs::get_dialogs, snipe::snipe::snipe};
+use load_configurations::load_snipe_configurations;
+use token_address_extractor::extract_solana_address;
 use std::{env, sync::Arc};
+use tg::{client::connect_client, dialog::get_dialogs::get_dialogs, snipe::snipe::snipe};
 
 use axum::{Extension, Router};
 use routes::{fallback, routes};
@@ -25,13 +31,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
         .unwrap();
 
+    let db_url = env::var("DATABASE_URL")?;
+
+    let db = connect(db_url).await.unwrap();
+
+    sqlx::migrate!("./migrations").run(&db).await.unwrap();
+
     let client = connect_client().await?;
 
     let dialogs = get_dialogs(&client).await?;
 
-    let mut state = AppState::default();
-
-    state.tg_client = Some(client.clone());
+    let mut state = AppState {
+        snipe_targets: DashMap::default(),
+        twitter_snipe_targets: DashMap::default(),
+        tg_client: Some(client.clone()),
+        db,
+    };
 
     // IMPORTANT NOTICE:
     //
@@ -54,6 +69,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // But for now, DashMap is handling all the heavy lifting for concurrent access to `snipe_targets`,
     // so there's no need for an `RwLock` around the entire `AppState` object.
     let shared_state = Arc::new(state);
+
+    load_snipe_configurations(&shared_state).await.unwrap();
 
     let pf_api_key: String = env::var("PUMPFUN_PORTAL_API_KEY")?.parse()?;
 

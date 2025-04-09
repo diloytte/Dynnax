@@ -3,7 +3,7 @@ use serde_json::json;
 use tokio::sync::RwLock;
 
 use crate::{
-    models::AppStateExtension, state::AppState, tg::{self, dialog::clear_dialogs::clear_dialogs}, 
+    models::other::AppStateExtension, state::AppState, tg::{self, dialog::clear_dialogs::clear_dialogs} 
 };
 
 pub fn routes() -> Router {

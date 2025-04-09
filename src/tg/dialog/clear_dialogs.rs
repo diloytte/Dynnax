@@ -1,7 +1,7 @@
 use axum::{http::StatusCode, response::IntoResponse, Extension};
 use grammers_client::{types::dialog, InvocationError};
 
-use crate::{models::AppStateExtension, tg::client};
+use crate::{models::other::AppStateExtension, tg::client};
 
 pub async fn clear_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse{
     let clinet = state.tg_client.as_ref().unwrap();
