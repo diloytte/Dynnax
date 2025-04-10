@@ -1,6 +1,10 @@
 use crate::{
     db::connect::Database,
-    models::{db::DBSnipeTarget, dtos::{CreateSnipeDTO, PatchSnipeTargetDTO}, service::snipe_target::SnipeConfig},
+    models::{
+        db::DBSnipeTarget,
+        dtos::{CreateSnipeDTO, PatchSnipeTargetDTO},
+        service::snipe_target::SnipeConfig,
+    },
 };
 
 pub async fn q_create_snipe_target(
@@ -134,5 +138,12 @@ pub async fn q_patch_snipe_target(
         .await?;
     }
 
+    Ok(())
+}
+
+pub async fn q_delete_snipe_target(db: &Database, target_id: i64) -> Result<(), sqlx::Error> {
+    sqlx::query!("DELETE FROM snipe_targets WHERE target_id = $1", target_id)
+        .execute(db)
+        .await?;
     Ok(())
 }

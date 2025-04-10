@@ -1,11 +1,15 @@
 use std::collections::HashMap;
 
 use crate::{
-    db::queries::snipe_targets::{q_create_snipe_target, q_get_all_snipe_targets, q_patch_snipe_target}, json_error, models::{
+    db::queries::snipe_targets::{
+        q_create_snipe_target, q_delete_snipe_target, q_get_all_snipe_targets, q_patch_snipe_target,
+    },
+    json_error,
+    models::{
         dtos::{CreateSnipeDTO, PatchSnipeTargetDTO},
         other::AppStateExtension,
         service::snipe_target::{SnipeConfig, SnipeTarget},
-    }
+    },
 };
 use axum::{
     Extension, Json, Router,
@@ -14,6 +18,7 @@ use axum::{
     response::IntoResponse,
     routing::{delete, get, patch, post},
 };
+use grammers_client::grammers_tl_types::types::smsjobs::Status;
 use serde_json::json;
 
 pub fn routes() -> Router {
@@ -34,25 +39,32 @@ async fn create_snipe_target(
     if let None = state.all_dialogs.get(&create_snipe_dto.target_id) {
         return (
             StatusCode::NOT_FOUND,
-            json_error!(format!("Dialog with ID: {} does not exist.",&create_snipe_dto.target_id))
+            json_error!(format!(
+                "Dialog with ID: {} does not exist.",
+                &create_snipe_dto.target_id
+            )),
         );
     }
 
     if let Some(existing_target) = state.snipe_targets.get(&create_snipe_dto.target_id) {
         return (
             StatusCode::BAD_REQUEST,
-            json_error!(format!("Snipe Target with ID: {} already exists.",&create_snipe_dto.target_id))
+            json_error!(format!(
+                "Snipe Target with ID: {} already exists.",
+                &create_snipe_dto.target_id
+            )),
         );
     }
 
     if let Err(error) = q_create_snipe_target(&state.db, &create_snipe_dto).await {
-        println!("Error <create_snipe_target>: {}",error);
+        println!("Error <create_snipe_target>: {}", error);
         return (
             StatusCode::INTERNAL_SERVER_ERROR,
-            json_error!("Something went wrong.")
+            json_error!("Something went wrong."),
         );
     }
 
+    dbg!(&create_snipe_dto);
     let snipe_targets = &state.snipe_targets;
     let snipe_target = SnipeTarget {
         target_name: create_snipe_dto.target_name,
@@ -141,26 +153,44 @@ async fn patch_snipe_target(
         return (StatusCode::OK, data_response.to_string());
     }
 
-    (StatusCode::NOT_FOUND, json_error!(format!("Snipe target with ID: {} does not exist.",&patch_snipe_target_dto.target_id)))
+    (
+        StatusCode::NOT_FOUND,
+        json_error!(format!(
+            "Snipe target with ID: {} does not exist.",
+            &patch_snipe_target_dto.target_id
+        )),
+    )
 }
 
 async fn delete_snipe_target(
     Extension(state): AppStateExtension,
-    Path(id): Path<i64>,
+    Path(target_id): Path<i64>,
 ) -> impl IntoResponse {
+    if let Err(error) = q_delete_snipe_target(&state.db, target_id).await {
+        println!("Error: <delete_snipe_target>: {}", error);
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            json_error!("Something went wrong"),
+        );
+    }
+
     let snipe_targets: &dashmap::DashMap<i64, SnipeTarget> = &state.snipe_targets;
-    let removed_target = snipe_targets.remove(&id);
+    let removed_target = snipe_targets.remove(&target_id);
 
     match removed_target {
         Some(snipe_target) => (
             StatusCode::OK,
             json!({
                 "snipe_target":snipe_target
-            }).to_string(),
+            })
+            .to_string(),
         ),
         None => (
             StatusCode::NOT_FOUND,
-            json_error!(format!("Snipe Target with ID: {} does not exist.",&id))
+            json_error!(format!(
+                "Snipe Target with ID: {} does not exist.",
+                &target_id
+            )),
         ),
     }
 }

@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use crate::models::{other::TradeRequest, pf::PfResponse, service::snipe_target::SnipeTarget};
+use crate::{models::{other::{Browser, TradeRequest}, pf::PfResponse, service::snipe_target::SnipeTarget}, utils::open_browser};
 
 static PUMP_PORTAL_URL: &str = "https://pumpportal.fun/api/trade?api-key=";
 
@@ -19,14 +19,15 @@ pub async fn buy_ca(
         pool: "auto".to_string(),
     };
 
-    dbg!(&body);
-
     let url = format!("{}{}", PUMP_PORTAL_URL, api_key);
 
     let pf_response: PfResponse = ureq::post(url).send_json(&body)?.body_mut().read_json()?;
 
     match pf_response.signature {
-        Some(sig) => println!("Transaction sent. Signature: {}", sig),
+        Some(sig) => {
+            println!("Transaction sent. Signature: {}", sig);
+            open_browser(Browser::Brave, format!("https://neo.bullx.io/terminal?chainId=1399811149&address={}",ca));
+        },
         None => {
             for error in &pf_response.errors {
                 println!("PumpFun error: {}", error);

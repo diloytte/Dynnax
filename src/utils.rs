@@ -1,8 +1,8 @@
-use std::sync::Arc;
+use std::{io, process::Command, sync::Arc};
 
 use serde_json::json;
 
-use crate::{db::queries::snipe_targets::q_get_all_snipe_targets, state::AppState};
+use crate::{db::queries::snipe_targets::q_get_all_snipe_targets, models::other::Browser, state::AppState};
 
 pub async fn load_snipe_configurations(state: &Arc<AppState>) -> Result<(), ()> {
     let db = &state.db;
@@ -22,4 +22,18 @@ macro_rules! json_error {
     ($message:expr) => {
         serde_json::json!({ "error": $message }).to_string()
     };
+}
+
+
+pub fn open_browser(browser: Browser, url:String) -> io::Result<()> {
+    match browser {
+        Browser::Brave => {
+            Command::new("brave-browser")
+                .arg("--new-tab")
+                .arg(url)
+                .spawn()?;
+        }
+    }
+
+    Ok(())
 }

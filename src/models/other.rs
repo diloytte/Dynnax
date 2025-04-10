@@ -19,3 +19,7 @@ pub struct TradeRequest {
 }
 
 pub type AppStateExtension = Extension<Arc<AppState>>;
+
+pub enum Browser {
+    Brave,
+}

@@ -37,10 +37,10 @@ pub async fn snipe(
                 } else {
                     let chat = message.chat();
                     let chat_name = chat.name();
-                    println!(
-                        "Cannot find chat id: {} with name: {} in snipe targets map.",
-                        chat_id, chat_name
-                    );
+                    // println!(
+                    //     "Cannot find chat id: {} with name: {} in snipe targets map.",
+                    //     chat_id, chat_name
+                    // );
                 };
             }
             Err(e) => eprintln!("Error in listen_for_updates: {}", e),
