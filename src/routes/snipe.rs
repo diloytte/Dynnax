@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    db::queries::snipe_targets::{q_create_snipe_target, q_get_all_snipe_targets}, json_error, models::{
+    db::queries::snipe_targets::{q_create_snipe_target, q_get_all_snipe_targets, q_patch_snipe_target}, json_error, models::{
         dtos::{CreateSnipeDTO, PatchSnipeTargetDTO},
         other::AppStateExtension,
         service::snipe_target::{SnipeConfig, SnipeTarget},
@@ -97,6 +97,13 @@ async fn patch_snipe_target(
     Extension(state): AppStateExtension,
     Json(patch_snipe_target_dto): Json<PatchSnipeTargetDTO>,
 ) -> impl IntoResponse {
+    if let Err(err) = q_patch_snipe_target(&state.db, &patch_snipe_target_dto).await {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            json_error!(format!("Failed to patch DB: {}", err)),
+        );
+    }
+
     let snipe_targets: &dashmap::DashMap<i64, SnipeTarget> = &state.snipe_targets;
     let snipe_target_option = snipe_targets.get_mut(&patch_snipe_target_dto.target_id);
 

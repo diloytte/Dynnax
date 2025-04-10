@@ -1,9 +1,6 @@
 use serde_json::Value;
 
-use crate::models::{
-    other::TradeRequest,
-    service::snipe_target::SnipeTarget,
-};
+use crate::models::{other::TradeRequest, pf::PfResponse, service::snipe_target::SnipeTarget};
 
 static PUMP_PORTAL_URL: &str = "https://pumpportal.fun/api/trade?api-key=";
 
@@ -26,12 +23,16 @@ pub async fn buy_ca(
 
     let url = format!("{}{}", PUMP_PORTAL_URL, api_key);
 
-    let recv_body:Value = ureq::post(url)
-        .send_json(&body)?
-        .body_mut()
-        .read_json()?;
+    let pf_response: PfResponse = ureq::post(url).send_json(&body)?.body_mut().read_json()?;
 
-    dbg!(recv_body);
+    match pf_response.signature {
+        Some(sig) => println!("Transaction sent. Signature: {}", sig),
+        None => {
+            for error in &pf_response.errors {
+                println!("PumpFun error: {}", error);
+            }
+        }
+    }
 
     Ok(())
 }
