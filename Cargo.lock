@@ -2228,9 +2228,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "token_address_extractor"
-version = "1.0.0"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "51d9dbde799a77e8b53cef43d5a6837ef056930c266cb6314c8983a1146a2849"
+checksum = "007fa78c41c81e39c9830067939413b038da81ba3fad427fe0361cd87d5b65a2"
 dependencies = [
  "once_cell",
  "regex",

@@ -12,6 +12,7 @@ pub async fn snipe(
         match client.next_update().await {
             Ok(Update::NewMessage(message)) => {
                 let chat_id = message.chat().id();
+
                 let ca = extract_solana_address(message.text());
                 if ca.is_none() {
                     continue;
@@ -21,27 +22,21 @@ pub async fn snipe(
                 let snipe_target_option = snipe_targets.get_mut(&chat_id);
                 
                 if let Some(mut snipe_target) = snipe_target_option {
-                    
                     if !snipe_target.is_active {
                         continue;
                     }
-                    match buy_ca(&pf_api_key, &snipe_target, ca.unwrap()).await {
-                        
+                    match buy_ca(&pf_api_key, &snipe_target, ca.unwrap()).await {  
                         Ok(_) => {
-                            snipe_target.deactivate_on_snipe = true;
+                            if snipe_target.deactivate_on_snipe {
+                                snipe_target.is_active = false;
+                            }
                         }
                         Err(error) => {
                             println!("ERROR: {}", error)
                         }
                     }
-                } else {
-                    let chat = message.chat();
-                    let chat_name = chat.name();
-                    // println!(
-                    //     "Cannot find chat id: {} with name: {} in snipe targets map.",
-                    //     chat_id, chat_name
-                    // );
-                };
+
+                }
             }
             Err(e) => eprintln!("Error in listen_for_updates: {}", e),
             _ => {}

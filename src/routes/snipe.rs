@@ -64,7 +64,6 @@ async fn create_snipe_target(
         );
     }
 
-    dbg!(&create_snipe_dto);
     let snipe_targets = &state.snipe_targets;
     let snipe_target = SnipeTarget {
         target_name: create_snipe_dto.target_name,
