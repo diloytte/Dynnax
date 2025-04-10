@@ -12,7 +12,7 @@ use db::connect::connect;
 use dotenv::dotenv;
 use utils::load_snipe_configurations;
 use std::{env, sync::Arc};
-use tg::{client::connect_client, dialog::get_dialogs::get_dialogs, sniper::snipe::snipe};
+use tg::{client::connect_client, dialog::get_dialogs::get_dialogs, next_update_loop::main_tg_loop, sniper::{snipe::snipe, snipe_x::snipe_x}};
 
 use axum::{Extension, Router};
 use routes::{fallback, routes};
@@ -32,6 +32,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let db_url = env::var("DATABASE_URL")?;
 
+    let redacted_self_bot_father_dialog_id:i64 = env::var("REDACTED_SELF_BOT_FATHER_DIALOG_ID")?.parse()?;
+
     let db = connect(db_url).await.unwrap();
 
     sqlx::migrate!("./migrations").run(&db).await.unwrap();
@@ -47,11 +49,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let state = AppState {
+        db,
         all_dialogs:dialogs_dashmap,
         snipe_targets: DashMap::default(),
         twitter_snipe_targets: DashMap::default(),
         tg_client: Some(client.clone()),
-        db,
+        redacted_custom_bot_id:redacted_self_bot_father_dialog_id
     };
 
     // IMPORTANT NOTICE:
@@ -80,13 +83,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let pf_api_key: String = env::var("PUMPFUN_PORTAL_API_KEY")?.parse()?;
 
-    tokio::spawn(snipe(
-        client.clone(),
-        shared_state.clone(),
-        pf_api_key.clone(),
-    ));
-
-    // tokio::spawn(snipe_x(client,shared_state.clone(),pf_api_key));
+    tokio::spawn(main_tg_loop(client.clone(), shared_state.clone(), pf_api_key.clone()));
 
     let router = Router::new()
         .nest("/api/v1", routes())

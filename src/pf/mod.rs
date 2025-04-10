@@ -4,11 +4,24 @@ use crate::{models::{other::{Browser, TradeRequest}, pf::PfResponse, service::sn
 
 static PUMP_PORTAL_URL: &str = "https://pumpportal.fun/api/trade?api-key=";
 
+
+#[derive(Debug)]
+pub enum BuyError {
+    UreqError(ureq::Error),
+    CustomError(String),
+}
+
+impl From<ureq::Error> for BuyError {
+    fn from(err: ureq::Error) -> Self {
+        BuyError::UreqError(err)
+    }
+}
+
 pub async fn buy_ca(
     api_key: &str,
     snipe_target: &SnipeTarget,
     ca: String,
-) -> Result<(), ureq::Error> {
+) -> Result<(), BuyError> {
     let body = TradeRequest {
         action: "buy".to_string(),
         mint: ca.to_string(),
@@ -26,14 +39,18 @@ pub async fn buy_ca(
     match pf_response.signature {
         Some(sig) => {
             println!("Transaction sent. Signature: {}", sig);
-            open_browser(Browser::Brave, format!("https://neo.bullx.io/terminal?chainId=1399811149&address={}",ca));
+            open_browser(Browser::Brave, format!("https://neo.bullx.io/terminal?chainId=1399811149&address={}", ca));
         },
         None => {
+            println!("---------------------------");
             for error in &pf_response.errors {
                 println!("PumpFun error: {}", error);
             }
+            println!("---------------------------");
+            return Err(BuyError::CustomError(pf_response.errors.get(0).unwrap().to_string())); //TODO: Return just the first error, just for the sake of returning it...
         }
     }
 
     Ok(())
 }
+
