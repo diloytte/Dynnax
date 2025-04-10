@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     db::queries::snipe_targets::{
-        q_create_snipe_target, q_delete_snipe_target, q_get_all_snipe_targets, q_patch_snipe_target,
+        q_create_snipe_target, q_delete_snipe_target, q_patch_snipe_target,
     },
     json_error,
     models::{
@@ -18,7 +18,6 @@ use axum::{
     response::IntoResponse,
     routing::{delete, get, patch, post},
 };
-use grammers_client::grammers_tl_types::types::smsjobs::Status;
 use serde_json::json;
 
 pub fn routes() -> Router {
@@ -36,7 +35,7 @@ async fn create_snipe_target(
     Extension(state): AppStateExtension,
     Json(create_snipe_dto): Json<CreateSnipeDTO>,
 ) -> impl IntoResponse {
-    if let None = state.all_dialogs.get(&create_snipe_dto.target_id) {
+    if state.all_dialogs.get(&create_snipe_dto.target_id).is_none() {
         return (
             StatusCode::NOT_FOUND,
             json_error!(format!(
@@ -46,7 +45,7 @@ async fn create_snipe_target(
         );
     }
 
-    if let Some(existing_target) = state.snipe_targets.get(&create_snipe_dto.target_id) {
+    if let Some(_) = state.snipe_targets.get(&create_snipe_dto.target_id) {
         return (
             StatusCode::BAD_REQUEST,
             json_error!(format!(

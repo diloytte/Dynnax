@@ -1,4 +1,3 @@
-use dashmap::DashMap;
 use grammers_client::types::Chat;
 use grammers_client::{Client, InvocationError};
 use serde::Serialize;
@@ -10,13 +9,11 @@ pub struct DialogData {
     pub dialog_type: u8,
 }
 
-impl From<DialogData> for (String,u8){
+impl From<DialogData> for (String, u8) {
     fn from(value: DialogData) -> Self {
-        (value.name,value.dialog_type)
+        (value.name, value.dialog_type)
     }
 }
-
-
 
 pub async fn get_dialogs(client: &Client) -> Result<Vec<DialogData>, InvocationError> {
     let mut iter_dialogs = client.iter_dialogs();

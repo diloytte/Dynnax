@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
 use axum::Extension;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 use crate::state::AppState;
 
-#[derive(Debug,Serialize)]
+#[derive(Debug, Serialize)]
 pub struct TradeRequest {
     pub action: String,
     pub mint: String,

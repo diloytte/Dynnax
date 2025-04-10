@@ -8,10 +8,10 @@ use crate::{state::AppState, tg::sniper::snipe_x::snipe_x};
 use super::sniper::snipe::snipe;
 
 pub async fn main_tg_loop(
-    client:Client,
-    shared_state:Arc<AppState>,
-    pf_api_key:String,
-) -> Result<(),InvocationError> {
+    client: Client,
+    shared_state: Arc<AppState>,
+    pf_api_key: String,
+) -> Result<(), InvocationError> {
     loop {
         match client.next_update().await {
             Ok(Update::NewMessage(message)) => {
@@ -20,16 +20,29 @@ pub async fn main_tg_loop(
 
                 let ca = extract_solana_address(message_text);
                 if ca.is_none() {
-                    continue;    
+                    continue;
                 }
-                
+
                 let chat_id = message.chat().id();
                 if shared_state.redacted_custom_bot_id != chat_id {
-                    snipe(chat_id, &client, &shared_state, &pf_api_key,ca.as_ref().unwrap());
+                    let snipe_result = snipe(
+                        chat_id,
+                        &client,
+                        &shared_state,
+                        &pf_api_key,
+                        ca.as_ref().unwrap(),
+                    )
+                    .await;
                 } else {
-                    snipe_x(&message,&client, &shared_state, &pf_api_key,ca.as_ref().unwrap());
-                } 
-
+                    let snipe_x_result = snipe_x(
+                        &message,
+                        &client,
+                        &shared_state,
+                        &pf_api_key,
+                        ca.as_ref().unwrap(),
+                    )
+                    .await;
+                }
             }
             Err(e) => eprintln!("Error in listen_for_updates: {}", e),
             _ => {}
