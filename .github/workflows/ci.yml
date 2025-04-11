@@ -19,9 +19,11 @@ jobs:
         profile: minimal
         toolchain: stable
         override: true
-    
+
     - name: Run tests
+      working-directory: ./backend
       run: cargo test -- --nocapture
 
     - name: Build release
+      working-directory: ./backend
       run: cargo build --release
