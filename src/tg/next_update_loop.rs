@@ -16,7 +16,6 @@ pub async fn main_tg_loop(
         match client.next_update().await {
             Ok(Update::NewMessage(message)) => {
                 let message_text = message.text();
-                dbg!(message_text);
 
                 let ca = extract_solana_address(message_text);
                 if ca.is_none() {
