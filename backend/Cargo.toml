@@ -35,6 +35,7 @@ uuid = { version = "1.16.0", features = ["v4", "fast-rng"] }
 
 # -- Cryptocurrencies
 token_address_extractor = "1.1.0"
+rodio = "0.20.1"
 
 [profile.release]
 strip = true        # Remove symbols from binary
@@ -42,3 +43,7 @@ opt-level = 3       # Maximum optimization for speed
 lto = true          # Optimize at link stage ("fat")
 codegen-units = 1   # Reduce parallel codegen to maximize optimizations
 panic = "abort"     # Remove unwind information, reducing binary size and overhead (no backtraces in production)
+
+[features]
+default = []
+production = []

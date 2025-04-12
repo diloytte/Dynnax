@@ -14,7 +14,7 @@ use std::{env, sync::Arc};
 use tg::{
     client::connect_client, dialog::get_dialogs::get_dialogs, next_update_loop::main_tg_loop,
 };
-use utils::load_snipe_configurations;
+use utils::{load_snipe_configurations, play_buy_notif};
 
 use axum::{Extension, Router};
 use routes::{fallback, routes};
@@ -28,7 +28,14 @@ use grammers_session::Session;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
 
-    let listener = TcpListener::bind(format!("{}:{}", "localhost", "8001"))
+    let port = if cfg!(feature = "production") {
+        "8001" // production port
+    } else {
+        "8000" // development port
+    };
+
+
+    let listener = TcpListener::bind(format!("{}:{}", "localhost", port))
         .await
         .unwrap();
 
@@ -64,7 +71,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     load_snipe_configurations(&shared_state).await.unwrap();
 
-    let pf_api_key: String = env::var("PUMPFUN_PORTAL_API_KEY")?.parse()?;
+    // This part will only run in production mode
+    #[cfg(not(feature = "production"))]
+    {
+        println!("Running a development build of Dynnax application.");
+
+        // Do not run in dev mode
+        loop {
+            
+        }
+    }
+    
+    let pf_api_key = if cfg!(feature = "production") {
+        env::var("PUMPFUN_PORTAL_API_KEY")?
+    } else {
+        env::var("PUMPFUN_PORTAL_API_KEY_DEV")?
+    };
+
+
+    println!("Running a production build of Dynnax application.");
 
     tokio::spawn(main_tg_loop(
         client.clone(),

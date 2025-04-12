@@ -4,7 +4,7 @@ use crate::{
         pf::PfResponse,
         service::snipe_target::SnipeTarget,
     },
-    utils::open_browser,
+    utils::{open_browser, play_buy_notif},
 };
 
 static PUMP_PORTAL_URL: &str = "https://pumpportal.fun/api/trade?api-key=";
@@ -39,6 +39,7 @@ pub async fn buy_ca(api_key: &str, snipe_target: &SnipeTarget, ca: String) -> Re
     match pf_response.signature {
         Some(sig) => {
             println!("Transaction sent. Signature: {}", sig);
+            play_buy_notif();
             let _ = open_browser(
                 Browser::Brave,
                 format!(
