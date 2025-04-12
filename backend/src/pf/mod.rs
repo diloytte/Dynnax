@@ -50,7 +50,7 @@ pub async fn buy_ca(api_key: &str, snipe_target: &SnipeTarget, ca: String) -> Re
         None => {
             return Err(BuyError::CustomError(
                 format!("{} \n CA: {}",pf_response.errors.first().unwrap().to_string(),ca)
-            )); //TODO: Return just the first error, just for the sake of returning it...
+            )); //Return just the first error, just for the sake of returning it...
         }
     }
 

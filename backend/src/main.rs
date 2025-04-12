@@ -60,26 +60,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
     };
 
-    // IMPORTANT NOTICE:
-    //
-    // As of now, we're using DashMap for concurrent access to the `snipe_targets` in `AppState`
-    // which provides internal mutability and thread-safety without requiring an `RwLock` around the
-    // entire state. This is why we don't need to wrap the entire `AppState` in `RwLock`. The `DashMap`
-    // takes care of synchronization internally, allowing us to modify entries within it safely across
-    // multiple threads. This leads to simpler and more performant code, as we avoid locking the entire
-    // state for every read and write operation.
-    //
-    // When will `RwLock` be needed?
-    //
-    // `RwLock` will only be necessary if we add other types to `AppState` that are not inherently
-    // thread-safe (like `HashMap` or `bool`) and need to ensure synchronized access across the entire
-    // state object. In those cases, we would either:
-    // 1. Wrap the fields individually in `Mutex` or `RwLock` for synchronization.
-    // 2. Wrap the entire `AppState` in a `RwLock` (as we had before) to ensure consistency across
-    //    all fields.
-    //
-    // But for now, DashMap is handling all the heavy lifting for concurrent access to `snipe_targets`,
-    // so there's no need for an `RwLock` around the entire `AppState` object.
     let shared_state = Arc::new(state);
 
     load_snipe_configurations(&shared_state).await.unwrap();
@@ -92,12 +72,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         pf_api_key.clone(),
     ));
 
-    let router = Router::new()
-        .nest("/api/v1", routes())
-        .layer(Extension(shared_state))
-        .fallback(fallback);
+    tokio::spawn(async move {
+        let router = Router::new()
+            .nest("/api/v1", routes())
+            .layer(Extension(shared_state.clone()))
+            .fallback(fallback);
 
-    axum::serve(listener, router).await.unwrap();
+        axum::serve(listener, router).await.unwrap();
+    });
+
+    loop {
+        
+    }
 
     Ok(())
 }

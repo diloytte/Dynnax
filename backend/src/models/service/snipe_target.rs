@@ -1,7 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-//TODO: Napravi PRESETE, gde ce to da ima vec on snipe targeta + name preseta i selected prseet
-
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct SnipeConfig {
     pub sol_amount: f32,
