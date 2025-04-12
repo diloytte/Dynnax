@@ -1,4 +1,4 @@
-# Telegram Solana Token Sniper
+# Dynnax
 
 ## Overview
 
