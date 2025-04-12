@@ -6,11 +6,18 @@ use serde::Serialize;
 
 use crate::state::AppState;
 
+
+#[derive(Debug,Serialize)]
+pub enum Amount {
+    Float(f32),
+    String(String),
+}
+
 #[derive(Debug, Serialize)]
-pub struct TradeRequest {
+pub struct TradeRequestBuy {
     pub action: String,
     pub mint: String,
-    pub amount: f32,
+    pub amount: Amount,
     #[serde(rename = "denominatedInSol")]
     pub denominated_in_sol: String,
     pub slippage: i32,
