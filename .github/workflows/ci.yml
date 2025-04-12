@@ -41,6 +41,13 @@ jobs:
     - name: Install sqlx CLI
       run: cargo install sqlx-cli
 
+    - name: Run database migrations
+      working-directory: ./backend
+      run: sqlx migrate run
+      env:
+        DATABASE_URL: postgres://postgres:postgres@localhost:5432/dynnax
+    
+
     - name: Run tests
       working-directory: ./backend
       run: cargo test -- --nocapture
