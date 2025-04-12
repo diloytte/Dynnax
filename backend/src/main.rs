@@ -71,23 +71,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     load_snipe_configurations(&shared_state).await.unwrap();
 
-    // This part will only run in production mode
-    #[cfg(not(feature = "production"))]
-    {
-        println!("Running a development build of Dynnax application.");
-
-        // Do not run in dev mode
-        loop {
-            
-        }
-    }
-    
     let pf_api_key = if cfg!(feature = "production") {
         env::var("PUMPFUN_PORTAL_API_KEY")?
     } else {
         env::var("PUMPFUN_PORTAL_API_KEY_DEV")?
     };
 
+    println!("{}",pf_api_key);
 
     println!("Running a production build of Dynnax application.");
 
@@ -100,7 +90,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tokio::spawn(async move {
         let router = Router::new()
             .nest("/api/v1", routes())
-            .layer(Extension(shared_state.clone()))
+            .layer(Extension(shared_state))
             .fallback(fallback);
 
         axum::serve(listener, router).await.unwrap();

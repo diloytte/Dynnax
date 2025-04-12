@@ -55,3 +55,13 @@ No external data storage: The application does not store user data or credential
 No data sharing: Your sensitive data, such as Telegram credentials, will not be shared with third parties.
 
 Local usage: The application is designed for local usage only, so no user data is transmitted over the internet, ensuring privacy and security.
+
+# App help.
+
+1. Running a full app (production build)
+ - Run command: 
+ ```
+ cargo build --release --features production
+ ```
+2. Start the app with your local command: `./target/release/dynnax`
+
