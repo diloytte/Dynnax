@@ -19,15 +19,17 @@ jobs:
         profile: minimal
         toolchain: stable
         override: true
+    - name: Setup .env files
+      run: |
+        echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+
+    - name: Install sqlx CLI
+      run: cargo install sqlx-cli
 
     - name: Run tests
       working-directory: ./backend
-      env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
       run: cargo test -- --nocapture
 
     - name: Build release
       working-directory: ./backend
-      env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
       run: cargo build --release
