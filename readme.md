@@ -4,7 +4,7 @@
 
 ## Overview
 
-This self-hosted application that allows users to snipe Solana token addresses that are shilled in channels, groups or users.
+A self-hosted application that allows users to snipe Solana token addresses that are shilled in channels, groups or users.
 The application leverages the Pumpfun Lightning Transaction API to automatically make trades when a valid Solana token address is detected.
 
 ## Features

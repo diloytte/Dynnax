@@ -34,6 +34,10 @@ jobs:
         profile: minimal
         toolchain: stable
         override: true
+
+    - name: Install ALSA development libraries
+      run: sudo apt-get update && sudo apt-get install -y libasound2-dev        
+    
     - name: Setup .env files
       run: |
         echo "DATABASE_URL=postgres://postgres:postgres@localhost:5432/dynnax" >> ./backend/.env
