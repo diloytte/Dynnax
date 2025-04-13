@@ -49,14 +49,14 @@ pub async fn manual_buy_token(url:&str,sol_amount:f32,ca:String)->Result<(),Trad
     Ok(())
 }
 
-pub async fn buy_ca(url: &str, snipe_target: &SnipeTarget, ca: &String) -> Result<(), TradeError> {
+pub async fn buy_ca(url: &str, snipe_target: &SnipeTarget, ca: &String,fee_multiplier:u8) -> Result<(), TradeError> {
     let body = TradeRequestBuy {
         action: "buy".to_string(),
         mint: ca.to_string(),
         amount: snipe_target.snipe_config.sol_amount,
         denominated_in_sol: "true".to_string(),
         slippage: snipe_target.snipe_config.slippage,
-        priority_fee: snipe_target.snipe_config.priority_fee,
+        priority_fee: snipe_target.snipe_config.priority_fee * fee_multiplier as f32,
         pool: "auto".to_string(),
     };
 

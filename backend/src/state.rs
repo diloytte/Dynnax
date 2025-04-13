@@ -19,4 +19,5 @@ pub struct AppState {
     pub redacted_custom_bot_id: i64,
     pub sniper_trenches_chat:Chat,
     pub pf_api_url:String,
+    pub priority_fee_multiplier:u8 //Important: PumpFun Portal API dev said that fee is split for 3 sections. Jito/Fee/Priority Fee. Hence sending more makes tx land faster.
 }

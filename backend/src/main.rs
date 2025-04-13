@@ -82,7 +82,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         tg_client: Some(client.clone()),
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
         sniper_trenches_chat,
-        pf_api_url
+        pf_api_url,
+        priority_fee_multiplier:1
     };
 
     let shared_state = Arc::new(state);

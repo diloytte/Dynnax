@@ -32,7 +32,7 @@ pub async fn snipe_x(
 
     snipe_target.snipe_config.sol_amount=sol_amount;
 
-    match buy_ca(&shared_state.pf_api_url,& snipe_target, &ca).await {
+    match buy_ca(&shared_state.pf_api_url,& snipe_target, &ca,1).await {
         Ok(_) => {
             play_buy_notif();
             let chat_name = &snipe_target.target_name;
