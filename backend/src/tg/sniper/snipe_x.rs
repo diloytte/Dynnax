@@ -7,7 +7,6 @@ pub async fn snipe_x(
     message: &Message,
     client: &Client,
     shared_state: &Arc<AppState>,
-    pf_api_key: &String,
     ca: &String,
 ) -> Result<(), InvocationError> {
     Ok(())

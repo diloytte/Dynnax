@@ -64,6 +64,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         dialogs_dashmap.insert(dialog.id, (dialog.name, dialog.dialog_type));
     }
 
+    let pf_api_key = if cfg!(feature = "production") {
+        env::var("PUMPFUN_PORTAL_API_KEY")?
+    } else {
+        env::var("PUMPFUN_PORTAL_API_KEY_DEV")?
+    };
+
+    let pump_portal_url: &str = "https://pumpportal.fun/api/trade?api-key=";
+
+    let pf_api_url = format!("{}{}",pump_portal_url,pf_api_key);
+
     let state = AppState {
         db,
         all_dialogs: dialogs_dashmap,
@@ -71,19 +81,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         twitter_snipe_targets: DashMap::default(),
         tg_client: Some(client.clone()),
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
-        sniper_trenches_chat
+        sniper_trenches_chat,
+        pf_api_url
     };
 
     let shared_state = Arc::new(state);
 
     load_snipe_configurations(&shared_state).await.unwrap();
-
-    let pf_api_key = if cfg!(feature = "production") {
-        env::var("PUMPFUN_PORTAL_API_KEY")?
-    } else {
-        env::var("PUMPFUN_PORTAL_API_KEY_DEV")?
-    };
-
 
     tokio::spawn(main_tg_loop(
         client.clone(),

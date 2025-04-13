@@ -1,6 +1,7 @@
 mod dbg;
 mod snipe;
 mod tg;
+mod pf;
 
 use axum::{
     Router,
@@ -19,6 +20,7 @@ fn _routes() -> Router {
         .merge(dbg::routes())
         .merge(tg::routes())
         .merge(snipe::routes())
+        .merge(pf::routes())
 }
 
 pub async fn fallback(req: Request<Body>) -> impl IntoResponse {

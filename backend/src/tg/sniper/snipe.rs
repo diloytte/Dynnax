@@ -6,14 +6,13 @@ pub async fn snipe(
     chat_id: i64,
     client: &Client,
     shared_state: &Arc<AppState>,
-    pf_api_key: &String,
     ca: &String,
 ) -> Result<(), InvocationError> {
     let snipe_targets = &shared_state.snipe_targets;
     let snipe_target_option = snipe_targets.get_mut(&chat_id);
 
     if let Some(mut snipe_target) = snipe_target_option {
-        match buy_ca(pf_api_key, &snipe_target, ca.clone()).await {
+        match buy_ca(&shared_state.pf_api_url, &snipe_target, ca.clone()).await {
             Ok(_) => {
                 if snipe_target.deactivate_on_snipe {
                     snipe_target.is_active = false;

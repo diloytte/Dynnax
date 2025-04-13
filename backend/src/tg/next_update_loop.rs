@@ -27,7 +27,6 @@ pub async fn main_tg_loop(
                         chat_id,
                         &client,
                         &shared_state,
-                        &pf_api_key,
                         ca.as_ref().unwrap(),
                     )
                     .await;
@@ -36,7 +35,6 @@ pub async fn main_tg_loop(
                         &message,
                         &client,
                         &shared_state,
-                        &pf_api_key,
                         ca.as_ref().unwrap(),
                     )
                     .await;
