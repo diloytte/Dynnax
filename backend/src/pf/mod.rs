@@ -49,7 +49,7 @@ pub async fn manual_buy_token(url:&str,sol_amount:f32,ca:String)->Result<(),Trad
     Ok(())
 }
 
-pub async fn buy_ca(url: &str, snipe_target: &SnipeTarget, ca: String) -> Result<(), TradeError> {
+pub async fn buy_ca(url: &str, snipe_target: &SnipeTarget, ca: &String) -> Result<(), TradeError> {
     let body = TradeRequestBuy {
         action: "buy".to_string(),
         mint: ca.to_string(),
@@ -65,7 +65,6 @@ pub async fn buy_ca(url: &str, snipe_target: &SnipeTarget, ca: String) -> Result
     match pf_response.signature {
         Some(sig) => {
             println!("BUY Transaction sent. Signature: {}", sig);
-            play_buy_notif();
         }
         None => {
             return Err(TradeError::CustomError(
