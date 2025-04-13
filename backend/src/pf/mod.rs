@@ -32,7 +32,6 @@ pub async fn buy_ca(api_key: &str, snipe_target: &SnipeTarget, ca: String) -> Re
         pool: "auto".to_string(),
     };
 
-    //TODO: Ovo moze globalno
     let url = format!("{}{}", PUMP_PORTAL_URL, api_key);
 
     let pf_response: PfResponse = ureq::post(url).send_json(&body)?.body_mut().read_json()?;

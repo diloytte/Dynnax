@@ -15,14 +15,12 @@ pub async fn main_tg_loop(
     loop {
         match client.next_update().await {
             Ok(Update::NewMessage(message)) => {
-                //TODO: odavde pa sve nadalje tokio:spawn tread
                 let message_text = message.text();
 
                 let ca = extract_solana_address(message_text);
                 if ca.is_none() {
                     continue;
                 }
-
                 let chat_id = message.chat().id();
                 if shared_state.redacted_custom_bot_id != chat_id {
                     let snipe_result = snipe(
@@ -45,7 +43,7 @@ pub async fn main_tg_loop(
                 }
             }
             Err(e) => eprintln!("Error in listen_for_updates: {}", e),
-            _ => {}
+            _ => continue,
         }
     }
 }
