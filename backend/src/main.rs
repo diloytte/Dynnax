@@ -7,12 +7,14 @@ mod state;
 mod tg;
 mod utils;
 
+
+use grammers_client::types::Chat;
 use dashmap::DashMap;
 use db::connect::connect;
 use dotenv::dotenv;
 use std::{env, sync::Arc};
 use tg::{
-    client::connect_client, dialog::get_dialogs::get_dialogs, next_update_loop::main_tg_loop,
+    client::connect_client, dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data}, next_update_loop::main_tg_loop,
 };
 use utils::{load_snipe_configurations, play_buy_notif};
 
@@ -50,11 +52,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let client = connect_client().await?;
 
-    let dialogs = get_dialogs(&client).await?;
+    let dialogs_data = get_dialogs_data(&client).await?;
 
     let dialogs_dashmap = DashMap::new();
 
-    for dialog in dialogs {
+    let sniper_trenches_chat_id:i64 = env::var("SNIPER_TRENCHES_CHAT_ID")?.parse()?;
+    
+    let sniper_trenches_chat:Chat = find_dialog_chat_by_id(&client, sniper_trenches_chat_id).await.unwrap();
+
+    for dialog in dialogs_data {
         dialogs_dashmap.insert(dialog.id, (dialog.name, dialog.dialog_type));
     }
 
@@ -65,6 +71,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         twitter_snipe_targets: DashMap::default(),
         tg_client: Some(client.clone()),
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
+        sniper_trenches_chat
     };
 
     let shared_state = Arc::new(state);
@@ -77,9 +84,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         env::var("PUMPFUN_PORTAL_API_KEY_DEV")?
     };
 
-    println!("{}",pf_api_key);
-
-    println!("Running a production build of Dynnax application.");
 
     tokio::spawn(main_tg_loop(
         client.clone(),

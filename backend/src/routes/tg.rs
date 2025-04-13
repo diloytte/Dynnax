@@ -44,7 +44,7 @@ async fn get_me(Extension(state): AppStateExtension) -> impl IntoResponse {
 
 async fn get_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
     let client = state.tg_client.as_ref().unwrap();
-    let dialogs_result = tg::dialog::get_dialogs::get_dialogs(client).await;
+    let dialogs_result = tg::dialog::get_dialogs::get_dialogs_data(client).await;
     let dialogs = dialogs_result.unwrap_or(vec![]);
     (
         StatusCode::OK,

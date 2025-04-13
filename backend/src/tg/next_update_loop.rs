@@ -15,6 +15,7 @@ pub async fn main_tg_loop(
     loop {
         match client.next_update().await {
             Ok(Update::NewMessage(message)) => {
+                //TODO: odavde pa sve nadalje tokio:spawn tread
                 let message_text = message.text();
 
                 let ca = extract_solana_address(message_text);

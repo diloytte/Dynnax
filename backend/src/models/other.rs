@@ -1,23 +1,30 @@
 use core::fmt;
 use std::{io, path::Display, sync::Arc};
 
-use axum::Extension;
+use axum::{extract::MatchedPath, Extension};
 use serde::Serialize;
+use sqlx::ValueRef;
 
 use crate::state::AppState;
-
-
-#[derive(Debug,Serialize)]
-pub enum Amount {
-    Float(f32),
-    String(String),
-}
 
 #[derive(Debug, Serialize)]
 pub struct TradeRequestBuy {
     pub action: String,
     pub mint: String,
-    pub amount: Amount,
+    pub amount: f32,
+    #[serde(rename = "denominatedInSol")]
+    pub denominated_in_sol: String,
+    pub slippage: i32,
+    #[serde(rename = "priorityFee")]
+    pub priority_fee: f32,
+    pub pool: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct TradeRequestSell {
+    pub action: String,
+    pub mint: String,
+    pub amount: String,
     #[serde(rename = "denominatedInSol")]
     pub denominated_in_sol: String,
     pub slippage: i32,

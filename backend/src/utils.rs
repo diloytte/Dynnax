@@ -28,7 +28,7 @@ macro_rules! json_error {
     };
 }
 
-pub fn open_browser(browser: Browser, url: String) -> io::Result<()> {
+pub fn open_browser(browser: Browser, url: &String) -> io::Result<()> {
     match browser {
         Browser::Brave => {
             Command::new("brave-browser")

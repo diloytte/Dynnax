@@ -1,6 +1,6 @@
 use crate::{
     models::{
-        other::{Amount, Browser, TradeRequestBuy},
+        other::{Browser, TradeRequestBuy, TradeRequestSell},
         pf::PfResponse,
         service::snipe_target::SnipeTarget,
     },
@@ -25,13 +25,14 @@ pub async fn buy_ca(api_key: &str, snipe_target: &SnipeTarget, ca: String) -> Re
     let body = TradeRequestBuy {
         action: "buy".to_string(),
         mint: ca.to_string(),
-        amount: Amount::Float(snipe_target.snipe_config.sol_amount),
+        amount: snipe_target.snipe_config.sol_amount,
         denominated_in_sol: "true".to_string(),
         slippage: snipe_target.snipe_config.slippage,
         priority_fee: snipe_target.snipe_config.priority_fee,
         pool: "auto".to_string(),
     };
 
+    //TODO: Ovo moze globalno
     let url = format!("{}{}", PUMP_PORTAL_URL, api_key);
 
     let pf_response: PfResponse = ureq::post(url).send_json(&body)?.body_mut().read_json()?;
@@ -40,13 +41,6 @@ pub async fn buy_ca(api_key: &str, snipe_target: &SnipeTarget, ca: String) -> Re
         Some(sig) => {
             println!("BUY Transaction sent. Signature: {}", sig);
             play_buy_notif();
-            let _ = open_browser(
-                Browser::Brave,
-                format!(
-                    "https://neo.bullx.io/terminal?chainId=1399811149&address={}",
-                    ca
-                ),
-            );
         }
         None => {
             return Err(TradeError::CustomError(
@@ -59,10 +53,10 @@ pub async fn buy_ca(api_key: &str, snipe_target: &SnipeTarget, ca: String) -> Re
 }
 
 pub async fn sell_ca(api_key:&str,snipe_target:&SnipeTarget,ca:String,sell_precent:f32)->Result<(),TradeError>{
-    let body = TradeRequestBuy {
+    let body = TradeRequestSell {
         action: "sell".to_string(),
         mint: ca.to_string(),
-        amount: Amount::String(format!("{}%",sell_precent)),
+        amount: format!("{}%",sell_precent.to_string()),
         denominated_in_sol: "false".to_string(),
         slippage: snipe_target.snipe_config.slippage,
         priority_fee: snipe_target.snipe_config.priority_fee,

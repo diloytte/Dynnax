@@ -15,7 +15,7 @@ impl From<DialogData> for (String, u8) {
     }
 }
 
-pub async fn get_dialogs(client: &Client) -> Result<Vec<DialogData>, InvocationError> {
+pub async fn get_dialogs_data(client: &Client) -> Result<Vec<DialogData>, InvocationError> {
     let mut iter_dialogs = client.iter_dialogs();
 
     let dialogs_len = iter_dialogs.total().await.unwrap_or(0);
