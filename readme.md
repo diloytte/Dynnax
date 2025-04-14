@@ -1,5 +1,7 @@
 # Dynnax
 
+![Dynnax Logo](frontend/public/dynnax.svg)
+
 # IMPORTANT: Still in development.
 
 ## Overview
