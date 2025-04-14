@@ -1,0 +1,51 @@
+.dialogCard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    padding: 12px;
+    max-width: 400px;
+    gap: 1rem;
+}
+
+.imageContainer{
+    width: 100%;
+    max-width: 70px;
+    height: 70px;
+    .dialogImage{
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+    }
+}
+
+.dialogInfo{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: start;
+    gap: 1rem;
+    font-size: medium;
+
+    .basic{
+        padding: 0.3rem;
+        height: 100%;
+        display: flex;
+        align-items: start;
+        justify-content: start;
+        flex-direction:column;
+        gap: 0.2rem;
+    }
+
+    .typeIcon{
+        width: 40px;
+        height: 40px;
+        padding: 1rem;
+    }
+}
+
+.invertColor{
+    filter: invert(100%);
+}
