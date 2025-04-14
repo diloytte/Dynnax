@@ -6,6 +6,7 @@ use serde::Serialize;
 pub struct DialogData {
     pub id: i64,
     pub name: String,
+    #[serde(rename = "dialogType")]
     pub dialog_type: u8,
 }
 

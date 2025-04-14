@@ -19,4 +19,5 @@ pub struct PatchSnipeTargetDTO {
     pub priority_fee: Option<f32>,
     pub is_active: Option<bool>,
     pub deactive_on_snipe: Option<bool>,
+
 }

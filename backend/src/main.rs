@@ -12,13 +12,14 @@ use grammers_client::types::Chat;
 use dashmap::DashMap;
 use db::connect::connect;
 use dotenv::dotenv;
+use tower_http::cors::{Any, CorsLayer};
 use std::{env, sync::Arc};
 use tg::{
     client::connect_client, dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data}, next_update_loop::main_tg_loop,
 };
 use utils::{load_snipe_configurations, play_buy_notif};
 
-use axum::{Extension, Router};
+use axum::{http::Method, Extension, Router};
 use routes::{fallback, routes};
 use state::AppState;
 use tokio::net::TcpListener;
@@ -90,6 +91,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     load_snipe_configurations(&shared_state).await.unwrap();
 
+    let cors = CorsLayer::new()
+    .allow_origin(Any)
+    .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE])
+    .allow_headers([
+        "Content-Type".parse().unwrap(),
+        "Authorization".parse().unwrap(),
+        "Access-Control-Allow-Origin".parse().unwrap(),
+    ]);
+
     tokio::spawn(main_tg_loop(
         client.clone(),
         shared_state.clone(),
@@ -99,6 +109,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tokio::spawn(async move {
         let router = Router::new()
             .nest("/api/v1", routes())
+            .layer(cors)
             .layer(Extension(shared_state))
             .fallback(fallback);
 
