@@ -14,13 +14,11 @@ pub async fn snipe_x(
     shared_state: &Arc<AppState>,
     ca: &String,
 ) -> Result<(), InvocationError> {
-    let ca = extract_solana_address(message.text());
+    let blocked_ca = "43SXvpf4c41t2uErsw7aL6w5qhnie6BXSSPqiTcTpump";
 
-    if ca.is_none() {
+    if ca.to_lowercase() == blocked_ca.to_lowercase() {
         return Ok(());
     }
-
-    let ca = ca.unwrap();
 
     let mut snipe_target = SnipeTarget::default();
 
@@ -50,7 +48,9 @@ pub async fn snipe_x(
                 &bullx_link,
             );
         },
-        Err(_) => todo!(),
+        Err(error) => {
+            println!("{:?}",error);
+        },
     }
 
     Ok(())

@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use grammers_client::{Client, InvocationError, Update};
-use token_address_extractor::extract_solana_address;
+use token_address_extractor::{extract_all_solana_addresses, extract_solana_address};
 
 use crate::{state::AppState, tg::sniper::snipe_x::snipe_x};
 
@@ -16,28 +16,26 @@ pub async fn main_tg_loop(
         match client.next_update().await {
             Ok(Update::NewMessage(message)) => {
                 let message_text = message.text();
+                let chat_id = message.chat().id();
 
-                let ca = extract_solana_address(message_text);
-                if ca.is_none() {
+                let cas = extract_all_solana_addresses(message_text);
+
+                if cas.is_empty() {
                     continue;
                 }
-                let chat_id = message.chat().id();
-                if shared_state.redacted_custom_bot_id != chat_id {
-                    let snipe_result = snipe(
-                        chat_id,
-                        &client,
-                        &shared_state,
-                        ca.as_ref().unwrap(),
-                    )
-                    .await;
-                } else {
-                    let snipe_x_result = snipe_x(
-                        &message,
-                        &client,
-                        &shared_state,
-                        ca.as_ref().unwrap(),
-                    )
-                    .await;
+
+                for ca in cas {
+                    let client = client.clone();
+                    let shared_state = shared_state.clone();
+                    let message = message.clone();
+
+                    tokio::spawn(async move {
+                        if shared_state.redacted_custom_bot_id != chat_id {
+                            let _ = snipe(chat_id, &client, &shared_state, &ca).await;
+                        } else {
+                            let _ = snipe_x(&message, &client, &shared_state, &ca).await;
+                        }
+                    });
                 }
             }
             Err(e) => eprintln!("Error in listen_for_updates: {}", e),
