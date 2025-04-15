@@ -17,3 +17,8 @@
 .invisible {
   color: transparent;
 }
+
+
+.invertColor {
+  filter: invert(100%);
+}

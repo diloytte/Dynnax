@@ -1,0 +1,33 @@
+.snipeTarget {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    .configurations {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); // 2 columns
+        gap: 1rem;
+        background-color: gray;
+        flex-direction: row;
+        width: 100%;
+        gap: 0.5rem;
+        border-top: 1px solid white;
+        padding: 1rem;
+
+        .sliderWrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .togglesWrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-evenly;
+            flex-direction: row;
+        }
+    }
+}

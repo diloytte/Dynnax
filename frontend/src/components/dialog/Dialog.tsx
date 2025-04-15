@@ -2,6 +2,7 @@ import styles from './Dialog.module.scss';
 import user from '../../assets/user.png';
 import megaphone from '../../assets/megaphone.png';
 import privateIcon from '../../assets/private.png';
+import imgNotFound from '../../assets/imgnotfound.png';
 
 export enum DialogType {
   User = 0,
@@ -34,7 +35,7 @@ const Dialog: React.FC<DialogData> = ({id,name,dialogType}:DialogData) => {
     <div className={styles.dialogCard}>
       <div className={styles.imageContainer}>
         <img
-          src={`https://picsum.photos/seed/${id}/64`}
+          src={imgNotFound}
           alt='dialogImage'
           className={styles.dialogImage}
         />
