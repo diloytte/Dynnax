@@ -73,16 +73,6 @@ function App() {
     <>
       <div className='App'>
         <div>
-        {dialogs.map((dialog) => (
-          <Dialog
-            key={dialog.id}
-            id={dialog.id}
-            name={dialog.name}
-            dialogType={dialog.dialogType}
-          />
-        ))}
-        </div>
-        <div>
         {snipeTargets.map((target) => (
         <SnipeTarget key={target.targetId} {...target} />
       ))}
