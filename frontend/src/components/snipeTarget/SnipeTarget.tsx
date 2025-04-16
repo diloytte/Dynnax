@@ -1,23 +1,9 @@
 import { updateSnipeTarget } from '../../api/updateSnipeTarget'
+import { globalSnipeTargetConfigurations } from '../../constants'
 import Dialog, { DialogData } from '../dialog/Dialog'
 import Slider from '../slider/Slider'
 import Toggle from '../toggle/Toggle'
 import styles from './SnipeTarget.module.scss'
-
-export const globalSnipeTargetConfigurations = {
-  slippage: {
-    min: 1,
-    max: 100,
-  },
-  priorityFee: {
-    min: 0.005,
-    max: 1,
-  },
-  solAmount: {
-    min: 0.5,
-    max: 30
-  }
-}
 
 export interface SnipeTargetData {
   targetId: number,

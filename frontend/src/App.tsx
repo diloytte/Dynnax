@@ -6,7 +6,8 @@ import SnipeTarget, { SnipeTargetData } from './components/snipeTarget/SnipeTarg
 function App() {
   const [dialogs, setDialogs] = useState<DialogData[]>([])
   const [snipeTargets, setSnipeTargets] = useState<SnipeTargetData[]>([])
-
+  const [a,setA] = useState();
+  
   useEffect(() => {
     const fetchDialogs = async () => {
       try {
@@ -64,18 +65,45 @@ function App() {
       } catch (err) {
         console.error('Failed to fetch snipe targets:', err)
       }
+      await fetchTokenMetadata();
     }
 
     fetchSnipeTargets()
   }, [])
 
+  const fetchTokenMetadata = async () => {
+    try {
+      const res = await fetch(
+        'https://solana-gateway.moralis.io/token/mainnet/SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt/metadata',
+        {
+          method: 'GET',
+          headers: {
+            accept: 'application/json',
+            'X-API-Key': import.meta.env.VITE_MORALIS_API_KEY, 
+          },
+        }
+      );
+  
+      if (!res.ok) throw new Error(`Error: ${res.status}`);
+  
+      const data = await res.json();
+      const logoUrl = data.logo;
+      setA(logoUrl);
+
+      console.log('Response:', data);
+    } catch (err) {
+      console.error('Fetch error:', err);
+    }
+  };
+
   return (
     <>
       <div className='App'>
+          <img src={a}/>
         <div>
         {snipeTargets.map((target) => (
-        <SnipeTarget key={target.targetId} {...target} />
-      ))}
+          <SnipeTarget key={target.targetId} {...target} />
+        ))}
         </div>
       </div>
     </>

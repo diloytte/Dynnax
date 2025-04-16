@@ -4,7 +4,7 @@ use crate::pf::buy_ca;
 use crate::state::AppState;
 use crate::utils::{open_browser, play_buy_notif};
 use grammers_client::types::Message;
-use grammers_client::{Client, InvocationError};
+use grammers_client::{Client, InvocationError, InputMessage};
 use token_address_extractor::extract_solana_address;
 use std::sync::Arc;
 
@@ -47,6 +47,8 @@ pub async fn snipe_x(
                 Browser::Brave,
                 &bullx_link,
             );
+            let trenches_chat = &shared_state.sniper_trenches_chat;
+            client.send_message(trenches_chat,InputMessage::text(format!("{}\n{}",final_msg,bullx_link))).await?;
         },
         Err(error) => {
             println!("{:?}",error);

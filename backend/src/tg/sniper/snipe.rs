@@ -8,6 +8,11 @@ pub async fn snipe(
     shared_state: &Arc<AppState>,
     ca: &String,
 ) -> Result<(), InvocationError> {
+
+    if ca == "43SXvpf4c41t2uErsw7aL6w5qhnie6BXSSPqiTcTpump"{
+        return Ok(());
+    }
+
     let snipe_targets = &shared_state.snipe_targets;
     let snipe_target_option = snipe_targets.get_mut(&chat_id);
 
@@ -40,8 +45,8 @@ pub async fn snipe(
                     &bullx_link,
                 );
                 // TODO: Cant be send from me, it wont be receiving message notifications.
-                // let trenches_chat = &shared_state.sniper_trenches_chat;
-                // client.send_message(trenches_chat,InputMessage::text(format!("{}\n{}",final_msg,bullx_link))).await?;
+                let trenches_chat = &shared_state.sniper_trenches_chat;
+                client.send_message(trenches_chat,InputMessage::text(format!("{}\n{}",final_msg,bullx_link))).await?;
             }
             Err(error) => {
                 println!("ERROR: {:?}", error)

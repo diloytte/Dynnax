@@ -59,7 +59,6 @@ const Slider: React.FC<SliderProps> = ({
         [paramName]: newValue,
       });
 
-      console.log("Updated server with value:", newValue);
     } catch (err) {
       console.error("Slider update failed:", err);
     }
@@ -72,7 +71,7 @@ const Slider: React.FC<SliderProps> = ({
         type="range"
         min={min}
         max={max}
-        step={paramMap[name] === "slippage" ? 1 : 0.001} // or whatever precision you want
+        step={paramMap[name] === "slippage" ? 1 : 0.0001} // or whatever precision you want
         value={tempValue} // Bind temporary value here
         onChange={handleChange}
         onMouseUp={handleMouseUp}
