@@ -25,6 +25,7 @@ const SnipeTarget = (snipeTargetData: SnipeTargetData) => {
         id={snipeTargetData.targetId}
         name={snipeTargetData.targetName}
         dialogType={0}
+        isSnipeTarget={true}
       />
       <div className={styles.configurations}>
         <div className={styles.sliderWrapper}>

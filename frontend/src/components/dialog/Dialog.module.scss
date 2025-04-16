@@ -49,3 +49,12 @@
 .invertColor{
     filter: invert(100%);
 }
+
+
+.trashImg{
+    width: 25px;
+    height: 25px;
+    &:hover{
+        cursor: pointer;
+    }
+}
