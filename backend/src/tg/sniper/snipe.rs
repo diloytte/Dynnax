@@ -1,4 +1,4 @@
-use crate::{db::queries::snipe_targets::q_patch_snipe_target, models::{dtos::PatchSnipeTargetDTO, other::Browser}, pf::buy_ca, state::AppState, utils::{open_browser, play_buy_notif}};
+use crate::{constants::GLOBALY_BLOCKED_CAS, db::queries::snipe_targets::q_patch_snipe_target, models::{dtos::PatchSnipeTargetDTO, other::Browser}, pf::buy_ca, state::AppState, utils::{open_browser, play_buy_notif}};
 use grammers_client::{Client, InputMessage, InvocationError};
 use std::sync::Arc;
 
@@ -9,7 +9,8 @@ pub async fn snipe(
     ca: &String,
 ) -> Result<(), InvocationError> {
 
-    if ca == "43SXvpf4c41t2uErsw7aL6w5qhnie6BXSSPqiTcTpump"{
+    //TODO: Worst solution but for now it works.FIX ASAP
+    if GLOBALY_BLOCKED_CAS.contains(ca){
         return Ok(());
     }
 
@@ -21,15 +22,19 @@ pub async fn snipe(
             Ok(_) => {
                 play_buy_notif();
                 if snipe_target.deactivate_on_snipe {
-                    //TODO: DB Write too!
                     snipe_target.is_active = false;
                 }
                     //TODO: DB Write too!
                 snipe_target.past_shills.push(ca.to_string());
-                // q_patch_snipe_target(&shared_state.db, &PatchSnipeTargetDTO {
-                //     target_id:111,
-                //     is_active:Some(false)
-                // });
+                q_patch_snipe_target(&shared_state.db, &PatchSnipeTargetDTO {
+                    target_id:chat_id,
+                    is_active:Some(false),
+                    target_name:None,
+                    sol_amount:None,
+                    slippage:None,
+                    priority_fee:None,
+                    deactive_on_snipe:None
+                });
                 let chat_name = &snipe_target.target_name;
                 let final_msg = format!(
                     "---------------\nChat: {}\n ID: {}\n CA: {}\n---------------",

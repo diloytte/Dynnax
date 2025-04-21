@@ -1,3 +1,4 @@
+use crate::constants::GLOBALY_BLOCKED_CAS;
 use crate::models::other::Browser;
 use crate::models::service::snipe_target::SnipeTarget;
 use crate::pf::buy_ca;
@@ -14,9 +15,11 @@ pub async fn snipe_x(
     shared_state: &Arc<AppState>,
     ca: &String,
 ) -> Result<(), InvocationError> {
-    let blocked_ca = "43SXvpf4c41t2uErsw7aL6w5qhnie6BXSSPqiTcTpump";
+    
+    // return Ok(());
 
-    if ca.to_lowercase() == blocked_ca.to_lowercase() {
+    //TODO: Worst solution but for now it works.FIX ASAP
+    if GLOBALY_BLOCKED_CAS.contains(&ca.to_lowercase()){
         return Ok(());
     }
 

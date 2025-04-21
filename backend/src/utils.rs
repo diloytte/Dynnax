@@ -1,5 +1,6 @@
 use std::{fs::File, io::{self, BufReader}, process::Command, sync::Arc};
 
+use regex::Regex;
 use rodio::{Decoder, OutputStream, Source};
 
 use crate::{

@@ -6,12 +6,13 @@ mod routes;
 mod state;
 mod tg;
 mod utils;
-
+mod twitter_regex;
 
 use grammers_client::types::Chat;
 use dashmap::DashMap;
 use db::connect::connect;
 use dotenv::dotenv;
+
 use tower_http::cors::{Any, CorsLayer};
 use std::{env, sync::Arc};
 use tg::{
@@ -36,7 +37,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         "8000" // development port
     };
-
 
     let listener = TcpListener::bind(format!("{}:{}", "localhost", port))
         .await
