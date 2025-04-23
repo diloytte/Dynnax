@@ -6,4 +6,3 @@ members = [
     "soft_shills_manager",
 ]
 resolver = "2"
-

@@ -1,6 +1,7 @@
 use crate::constants::GLOBALY_BLOCKED_CAS;
 use crate::pf::buy_ca;
 use crate::state::AppState;
+use crate::twitter_regex::extract_twitter_sender;
 use grammers_client::types::Message;
 use grammers_client::{Client, InvocationError, InputMessage};
 use shared::types::{Browser, SnipeTarget};
@@ -14,28 +15,38 @@ pub async fn snipe_x(
     shared_state: &Arc<AppState>,
     ca: &String,
 ) -> Result<(), InvocationError> {
+    let sender_option = extract_twitter_sender(message.text());
     
-    // return Ok(());
+    if let None = sender_option {
+        println!("Unable to find Twitter sender.");
+        println!("Message:");
+        println!("{}",message.text());
+        println!("---------------");
+        return Ok(());
+    }
+    
+    let twitter_snipe_targets = &shared_state.twitter_snipe_targets;
 
-    //TODO: Worst solution but for now it works.FIX ASAP
-    if GLOBALY_BLOCKED_CAS.contains(&ca.to_lowercase()){
+    let twitter_sender = sender_option.unwrap();
+    let twitter_snipe_target_option = twitter_snipe_targets.get(&twitter_sender);
+
+    if let None = twitter_snipe_target_option {
+        println!("{} is not a Twitter Snipe Target.",twitter_sender);
         return Ok(());
     }
 
-    let mut snipe_target = SnipeTarget::default();
+    let twitter_snipe_target = twitter_snipe_target_option.unwrap();
 
-    let sol_amount = if cfg!(feature = "production"){
-        2.5
-    } else {
-        0.0001
-    };
+    if !twitter_snipe_target.is_active{
+        println!("{} is not a Active.",twitter_sender);
+        return Ok(());
+    }
 
-    snipe_target.snipe_config.sol_amount=sol_amount;
-
-    match buy_ca(&shared_state.pf_api_url,& snipe_target, &ca,1).await {
+    match buy_ca(&shared_state.pf_api_url,& twitter_snipe_target.snipe_config, &ca,1).await {
         Ok(_) => {
+            println!("Triggered twitter sniper.");
             play_buy_notif();
-            let chat_name = &snipe_target.target_name;
+            let chat_name = &twitter_snipe_target.target_name;
             let final_msg = format!(
                 "---------------\nChat: {}\n CA: {}\n---------------",
                 chat_name, ca

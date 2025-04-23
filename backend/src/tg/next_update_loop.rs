@@ -10,7 +10,6 @@ use super::sniper::snipe::snipe;
 pub async fn main_tg_loop(
     client: Client,
     shared_state: Arc<AppState>,
-    pf_api_key: String,
 ) -> Result<(), InvocationError> {
     loop {
         match client.next_update().await {
@@ -18,27 +17,25 @@ pub async fn main_tg_loop(
                 let message_text = message.text();
                 let chat_id = message.chat().id();
 
-                let cas = extract_all_solana_addresses(message_text);
+                let ca = extract_solana_address(message_text);
 
-                if cas.is_empty() {
+                if let None = ca {
                     continue;
                 }
 
-                if cas.len() > 2 {
-                    continue;
-                }
+                let ca = ca.unwrap();
 
-                for ca in cas {
-                    let client = client.clone();
-                    let shared_state = shared_state.clone();
-                    let message = message.clone();
+                let client = client.clone();
+                let shared_state = shared_state.clone();
+                let message = message.clone();
 
+                if shared_state.redacted_custom_bot_id != chat_id {
                     tokio::spawn(async move {
-                        if shared_state.redacted_custom_bot_id != chat_id {
-                            let _ = snipe(chat_id, &client, &shared_state, &ca).await;
-                        } else {
-                            let _ = snipe_x(&message, &client, &shared_state, &ca).await;
-                        }
+                        let _ = snipe(chat_id, &client, &shared_state, &ca).await;
+                    });
+                } else {
+                    tokio::spawn(async move {
+                        let _ = snipe_x(&message, &client, &shared_state, &ca).await;
                     });
                 }
             }

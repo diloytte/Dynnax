@@ -1,12 +1,12 @@
 use shared::types::SnipeConfig;
 
-use crate::{db::connect::Database, types::{db::DBXSnipeTarget, dtos::PatchXSnipeTargetDTO}};
+use crate::{db::connect::Database, types::{db::DBXSnipeTarget, dtos::snipe_x::PatchXSnipeTargetDTO}};
 
 pub async fn q_create_x_snipe_target(
     db: &Database,
     target_name: &str,
     snipe_config: &SnipeConfig,
-    deactivate_on_snipe: Option<bool>,
+    deactivate_on_snipe: &Option<bool>,
 ) -> Result<(), sqlx::error::Error> {
     let deactivate_on_snipe = deactivate_on_snipe.unwrap_or(true);
     let is_active = true;
@@ -126,8 +126,8 @@ pub async fn q_patch_x_snipe_target(
     Ok(())
 }
 
-pub async fn q_delete_x_snipe_target(db: &Database, id: i32) -> Result<(), sqlx::Error> {
-    sqlx::query!("DELETE FROM x_snipe_targets WHERE id = $1", id)
+pub async fn q_delete_x_snipe_target(db: &Database, target_name: &String) -> Result<(), sqlx::Error> {
+    sqlx::query!("DELETE FROM x_snipe_targets WHERE target_name = $1", target_name)
         .execute(db)
         .await?;
     Ok(())

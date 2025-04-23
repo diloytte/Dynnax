@@ -13,7 +13,7 @@ use dashmap::DashMap;
 use db::connect::connect;
 use dotenv::dotenv;
 
-use shared::tg::{client::connect_client, dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data}};
+use shared::{tg::{client::connect_client, dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data}}, utils::play_buy_notif};
 use tower_http::cors::{Any, CorsLayer};
 use std::{env, sync::Arc};
 use tg::{
@@ -27,17 +27,19 @@ use state::AppState;
 use tokio::net::TcpListener;
 
 use grammers_client::{Client, Config, SignInError};
-use grammers_session::Session;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
 
-    let port = if cfg!(feature = "production") {
-        "8001" // production port
+    let port: &str = if cfg!(feature = "production") {
+        println!("Running PRODUCTION backend build");
+        "8001"
     } else {
-        "8000" // development port
+        println!("Running DEVELOPMENT backend build");
+        "8000"
     };
+    
 
     let listener = TcpListener::bind(format!("{}:{}", "localhost", port))
         .await
@@ -104,7 +106,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tokio::spawn(main_tg_loop(
         client.clone(),
         shared_state.clone(),
-        pf_api_key.clone(),
     ));
 
     tokio::spawn(async move {

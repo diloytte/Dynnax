@@ -187,8 +187,9 @@ impl Default for SnipeTarget {
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize,Clone)]
 pub struct TwitterTarget {
+    pub target_name:String,
     pub snipe_config: SnipeConfig,
     pub is_active: bool,
     pub deactivate_on_snipe: bool,
@@ -197,6 +198,7 @@ pub struct TwitterTarget {
 impl Default for TwitterTarget {
     fn default() -> Self {
         Self {
+            target_name: String::from("UNNAMED TWITTER TARGET"),
             snipe_config: Default::default(),
             is_active: true,
             deactivate_on_snipe: true,

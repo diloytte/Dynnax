@@ -1,5 +1,5 @@
 use serde::Serialize;
-use shared::{types::{PfResponse, SnipeTarget, TradeRequestBuy, TradeRequestSell}, utils::play_buy_notif};
+use shared::{types::{PfResponse, SnipeConfig, SnipeTarget, TradeRequestBuy, TradeRequestSell}, utils::play_buy_notif};
 
 #[derive(Debug)]
 pub enum TradeError {
@@ -41,14 +41,14 @@ pub async fn manual_buy_token(url:&str,sol_amount:f32,ca:String)->Result<(),Trad
     Ok(())
 }
 
-pub async fn buy_ca(url: &str, snipe_target: &SnipeTarget, ca: &String,fee_multiplier:u8) -> Result<(), TradeError> {
+pub async fn buy_ca(url: &str, snipe_config: &SnipeConfig, ca: &String,fee_multiplier:u8) -> Result<(), TradeError> {
     let body = TradeRequestBuy {
         action: "buy".to_string(),
         mint: ca.to_string(),
-        amount: snipe_target.snipe_config.sol_amount,
+        amount: snipe_config.sol_amount,
         denominated_in_sol: "true".to_string(),
-        slippage: snipe_target.snipe_config.slippage,
-        priority_fee: snipe_target.snipe_config.priority_fee * fee_multiplier as f32,
+        slippage: snipe_config.slippage,
+        priority_fee: snipe_config.priority_fee * fee_multiplier as f32,
         pool: "auto".to_string(),
     };
 
