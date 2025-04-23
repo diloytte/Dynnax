@@ -47,7 +47,7 @@ pub async fn snipe_x(
             println!("Triggered twitter sniper.");
             if twitter_snipe_target.deactivate_on_snipe {
                 twitter_snipe_target.is_active = false;
-                let _ = q_patch_x_snipe_target(&shared_state.db, twitter_snipe_target.target_name.clone(),&PatchXSnipeTargetDTO{
+                let _ = q_patch_x_snipe_target(&shared_state.db,&PatchXSnipeTargetDTO{
                     target_name:twitter_snipe_target.target_name.clone(),
                     sol_amount: None,
                     slippage: None,

@@ -73,3 +73,12 @@ Local usage: The application is designed for local usage only, so no user data i
 Many components in this project could have been simplified. For example, a database isn't strictly necessary — everything could have been handled with a collection of JSON configuration files. However, to turn this into a more comprehensive learning experience and to build something closer to a real-world product, I intentionally "overengineered" it.
 
 Due to time constraints, if you’d like to try and test this app yourself, please feel free to do so — but kindly refrain from asking too many questions. I have a long to-do list to complete for this project and won’t be available to respond to questions, issues, or usage inquiries until the app is finished.
+
+# New Additions
+
+1. Run specific project using:  
+
+```
+cargo run -p <folder name>
+```
+- Example:   `cargo run -p bacakend`

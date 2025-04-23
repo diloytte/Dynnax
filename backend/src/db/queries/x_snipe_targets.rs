@@ -48,9 +48,9 @@ pub async fn q_get_all_x_snipe_targets(
 
 pub async fn q_patch_x_snipe_target(
     db: &Database,
-    name: String,
     dto: &PatchXSnipeTargetDTO,
 ) -> Result<(), sqlx::Error> {
+    let name = &dto.target_name;
         sqlx::query!(
             r#"
             UPDATE x_snipe_targets SET target_name = $1 WHERE target_name = $2

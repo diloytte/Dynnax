@@ -16,6 +16,18 @@ export interface SnipeTargetData {
     slippage: number,
     solAmount: number
   }
+  isTwitterTarget?:boolean
+}
+
+export interface TwitterSnipeTargetData {
+  targetName: string,
+  deactiveOnSnipe: boolean,
+  isActive: boolean,
+  snipeConfig: {
+    priorityFee: number,
+    slippage: number,
+    solAmount: number
+  }
 }
 
 const SnipeTarget = (snipeTargetData: SnipeTargetData) => {
@@ -26,6 +38,7 @@ const SnipeTarget = (snipeTargetData: SnipeTargetData) => {
         name={snipeTargetData.targetName}
         dialogType={0}
         isSnipeTarget={true}
+        isTwitterData={snipeTargetData.isTwitterTarget}
       />
       <div className={styles.configurations}>
         <div className={styles.sliderWrapper}>

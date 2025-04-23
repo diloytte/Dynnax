@@ -5,6 +5,7 @@ import privateIcon from '../../assets/private.png';
 import imgNotFound from '../../assets/imgnotfound.png';
 import trash from '../../assets/delete.png';
 import { useSnipeStore } from '../../store/snipeTargetStore';
+import { useTwitterSnipeStore } from '../../store/twitterSnipeTargetsStore';
 
 export enum DialogType {
   User = 0,
@@ -16,8 +17,9 @@ export type DialogData = {
   id: number,
   name: string,
   dialogType: DialogType,
-  imageUrl?: string;
-  isSnipeTarget: boolean
+  isSnipeTarget: boolean,
+  imageUrl?: string
+  isTwitterData?:boolean
 }
 
 const getTypeIcon = (type: DialogType): string => {
@@ -33,9 +35,9 @@ const getTypeIcon = (type: DialogType): string => {
   }
 };
 
-const Dialog: React.FC<DialogData> = ({ id, name, dialogType, isSnipeTarget }: DialogData) => {
+const Dialog: React.FC<DialogData> = ({ id, name, dialogType, isSnipeTarget,isTwitterData }: DialogData) => {
     const deleteTarget = useSnipeStore((state) => state.deleteTarget)
-  
+    const deleteTwitterTarget = useTwitterSnipeStore((state)=>state.deleteTwitterTarget)
   return (
     <div className={styles.dialogCard}>
       <div className={styles.imageContainer}>
@@ -60,6 +62,10 @@ const Dialog: React.FC<DialogData> = ({ id, name, dialogType, isSnipeTarget }: D
         { isSnipeTarget &&
         <img
           onClick={()=>{
+            if(isTwitterData){
+              deleteTwitterTarget(name);
+              return;
+            }
             deleteTarget(id)
           }}
           src={trash}
