@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use grammers_client::{Client, InvocationError, Update};
-use token_address_extractor::{extract_all_solana_addresses, extract_solana_address};
+use token_address_extractor::extract_solana_address;
 
 use crate::{state::AppState, tg::sniper::snipe_x::snipe_x};
 
@@ -19,7 +19,7 @@ pub async fn main_tg_loop(
 
                 let ca = extract_solana_address(message_text);
 
-                if let None = ca {
+                if ca.is_none() {
                     continue;
                 }
 

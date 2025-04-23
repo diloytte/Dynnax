@@ -4,7 +4,7 @@ use axum::{extract::Path, response::IntoResponse, routing::{delete, get, post}, 
 use serde_json::json;
 use shared::{
     json_error,
-    types::{SnipeConfig, TwitterTarget},
+    types::TwitterTarget,
 };
 use ureq::http::StatusCode;
 
@@ -28,9 +28,9 @@ async fn create_snipe_x_target(
     Extension(state): AppStateExtension,
     Json(twitter_create_snipe_dto): Json<CreateXSnipeTargetDTO>,
 ) -> impl IntoResponse {
-    if let Some(_) = state
+    if state
         .twitter_snipe_targets
-        .get(&twitter_create_snipe_dto.target_name)
+        .get(&twitter_create_snipe_dto.target_name).is_some()
     {
         return (
             StatusCode::BAD_REQUEST,
@@ -47,7 +47,7 @@ async fn create_snipe_x_target(
 
     if let Err(error) = q_create_x_snipe_target(
         &state.db,
-        &twitter_target_name,
+        twitter_target_name,
         &twitter_snipe_config,
         &twitter_create_snipe_dto.deactivate_on_snipe,
     )

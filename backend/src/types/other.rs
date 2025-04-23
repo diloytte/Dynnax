@@ -1,9 +1,6 @@
-use core::fmt;
-use std::{io, path::Display, sync::Arc};
+use std::sync::Arc;
 
-use axum::{extract::MatchedPath, Extension};
-use serde::Serialize;
-use sqlx::ValueRef;
+use axum::Extension;
 
 use crate::state::AppState;
 

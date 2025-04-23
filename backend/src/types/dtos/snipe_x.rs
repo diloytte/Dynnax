@@ -11,8 +11,7 @@ pub struct CreateXSnipeTargetDTO{
 
 #[derive(Debug, Deserialize)]
 pub struct PatchXSnipeTargetDTO {
-    pub id: i32,
-    pub target_name: Option<String>,
+    pub target_name: String,
     pub sol_amount: Option<f32>,
     pub slippage: Option<i32>,
     pub priority_fee: Option<f32>,

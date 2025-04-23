@@ -1,6 +1,3 @@
-use lazy_static::lazy_static;
-use regex::Regex;
-
 use crate::constants::TWITTER_BOT_REGEX;
 
 pub fn extract_twitter_sender(text: &str) -> Option<String> {

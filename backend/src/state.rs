@@ -1,4 +1,3 @@
-use std::os::unix;
 use grammers_client::types::Chat;
 
 use dashmap::DashMap;
@@ -6,9 +5,7 @@ use dashmap::DashMap;
 use grammers_client::Client;
 use shared::types::{SnipeTarget, TwitterTarget};
 
-use crate::{
-    db::connect::Database,
-};
+use crate::db::connect::Database;
 
 pub struct AppState {
     pub db: Database,

@@ -22,24 +22,25 @@ pub async fn snipe(
         if !snipe_target.is_active{
             return Ok(());
         }
-        match buy_ca(&shared_state.pf_api_url, &snipe_target.snipe_config, &ca,shared_state.priority_fee_multiplier).await {
+        match buy_ca(&shared_state.pf_api_url, &snipe_target.snipe_config, ca,shared_state.priority_fee_multiplier).await {
             Ok(_) => {
                 println!("Triggered sniper.");
-                play_buy_notif();
                 if snipe_target.deactivate_on_snipe {
                     snipe_target.is_active = false;
+                    let _ = q_patch_snipe_target(&shared_state.db, &PatchSnipeTargetDTO {
+                        target_id:chat_id,
+                        is_active:Some(false),
+                        target_name:None,
+                        sol_amount:None,
+                        slippage:None,
+                        priority_fee:None,
+                        deactive_on_snipe:None
+                    }).await;
                 }
-                    //TODO: DB Write too!
+                //TODO: DB Write too!
                 snipe_target.past_shills.push(ca.to_string());
-                let _ = q_patch_snipe_target(&shared_state.db, &PatchSnipeTargetDTO {
-                    target_id:chat_id,
-                    is_active:Some(false),
-                    target_name:None,
-                    sol_amount:None,
-                    slippage:None,
-                    priority_fee:None,
-                    deactive_on_snipe:None
-                });
+
+                play_buy_notif();
                 let chat_name = &snipe_target.target_name;
                 let final_msg = format!(
                     "---------------\nChat: {}\n ID: {}\n CA: {}\n---------------",

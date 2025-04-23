@@ -1,4 +1,3 @@
-use serde::Serialize;
 use shared::{types::{PfResponse, SnipeConfig, SnipeTarget, TradeRequestBuy, TradeRequestSell}, utils::play_buy_notif};
 
 #[derive(Debug)]
@@ -33,7 +32,7 @@ pub async fn manual_buy_token(url:&str,sol_amount:f32,ca:String)->Result<(),Trad
         }
         None => {
             return Err(TradeError::CustomError(
-                format!("{} \n CA: {}",pf_response.errors.first().unwrap().to_string(),ca)
+                format!("{} \n CA: {}",pf_response.errors.first().unwrap(),ca)
             )); //Return just the first error, just for the sake of returning it...
         }
     }
@@ -60,7 +59,7 @@ pub async fn buy_ca(url: &str, snipe_config: &SnipeConfig, ca: &String,fee_multi
         }
         None => {
             return Err(TradeError::CustomError(
-                format!("{} \n CA: {}",pf_response.errors.first().unwrap().to_string(),ca)
+                format!("{} \n CA: {}",pf_response.errors.first().unwrap(),ca)
             )); //Return just the first error, just for the sake of returning it...
         }
     }
@@ -72,7 +71,7 @@ pub async fn sell_ca(url:&str,snipe_target:&SnipeTarget,ca:String,sell_precent:f
     let body = TradeRequestSell {
         action: "sell".to_string(),
         mint: ca.to_string(),
-        amount: format!("{}%",sell_precent.to_string()),
+        amount: format!("{}%",sell_precent),
         denominated_in_sol: "false".to_string(),
         slippage: snipe_target.snipe_config.slippage,
         priority_fee: snipe_target.snipe_config.priority_fee,
@@ -87,7 +86,7 @@ pub async fn sell_ca(url:&str,snipe_target:&SnipeTarget,ca:String,sell_precent:f
         }
         None => {
             return Err(TradeError::CustomError(
-                format!("{} \n CA: {}",pf_response.errors.first().unwrap().to_string(),ca)
+                format!("{} \n CA: {}",pf_response.errors.first().unwrap(),ca)
             )); //Return just the first error, just for the sake of returning it...
         }
     }

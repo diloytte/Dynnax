@@ -44,7 +44,7 @@ async fn create_snipe_target(
         );
     }
 
-    if let Some(_) = state.snipe_targets.get(&create_snipe_dto.target_id) {
+    if state.snipe_targets.get(&create_snipe_dto.target_id).is_some() {
         return (
             StatusCode::BAD_REQUEST,
             json_error!(format!(

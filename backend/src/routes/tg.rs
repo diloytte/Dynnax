@@ -4,7 +4,7 @@ use shared::tg::dialog::get_dialogs::get_dialogs_data;
 
 use crate::{
     types::other::AppStateExtension,
-    tg::{self, dialog::clear_dialogs::clear_dialogs},
+    tg::dialog::clear_dialogs::clear_dialogs,
 };
 
 pub fn routes() -> Router {

@@ -13,20 +13,16 @@ use dashmap::DashMap;
 use db::connect::connect;
 use dotenv::dotenv;
 
-use shared::{tg::{client::connect_client, dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data}}, utils::play_buy_notif};
+use shared::{tg::{client::connect_client, dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data}}};
 use tower_http::cors::{Any, CorsLayer};
 use std::{env, sync::Arc};
-use tg::{
-    next_update_loop::main_tg_loop,
-};
+use tg::next_update_loop::main_tg_loop;
 use utils::load_snipe_configurations;
 
 use axum::{http::Method, Extension, Router};
 use routes::{fallback, routes};
 use state::AppState;
 use tokio::net::TcpListener;
-
-use grammers_client::{Client, Config, SignInError};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -121,6 +117,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     loop {
         
     }
-
-    Ok(())
 }

@@ -48,28 +48,26 @@ pub async fn q_get_all_x_snipe_targets(
 
 pub async fn q_patch_x_snipe_target(
     db: &Database,
-    id: i32,
+    name: String,
     dto: &PatchXSnipeTargetDTO,
 ) -> Result<(), sqlx::Error> {
-    if let Some(name) = &dto.target_name {
         sqlx::query!(
             r#"
-            UPDATE x_snipe_targets SET target_name = $1 WHERE id = $2
+            UPDATE x_snipe_targets SET target_name = $1 WHERE target_name = $2
             "#,
             name,
-            id
+            name
         )
         .execute(db)
         .await?;
-    }
 
     if let Some(sol) = dto.sol_amount {
         sqlx::query!(
             r#"
-            UPDATE x_snipe_targets SET sol_amount = $1 WHERE id = $2
+            UPDATE x_snipe_targets SET sol_amount = $1 WHERE target_name = $2
             "#,
             sol as f64,
-            id
+            name
         )
         .execute(db)
         .await?;
@@ -78,10 +76,10 @@ pub async fn q_patch_x_snipe_target(
     if let Some(slippage) = dto.slippage {
         sqlx::query!(
             r#"
-            UPDATE x_snipe_targets SET slippage = $1 WHERE id = $2
+            UPDATE x_snipe_targets SET slippage = $1 WHERE target_name = $2
             "#,
             slippage,
-            id
+            name
         )
         .execute(db)
         .await?;
@@ -90,10 +88,10 @@ pub async fn q_patch_x_snipe_target(
     if let Some(priority_fee) = dto.priority_fee {
         sqlx::query!(
             r#"
-            UPDATE x_snipe_targets SET priority_fee = $1 WHERE id = $2
+            UPDATE x_snipe_targets SET priority_fee = $1 WHERE target_name = $2
             "#,
             priority_fee as f64,
-            id
+            name
         )
         .execute(db)
         .await?;
@@ -102,10 +100,10 @@ pub async fn q_patch_x_snipe_target(
     if let Some(is_active) = dto.is_active {
         sqlx::query!(
             r#"
-            UPDATE x_snipe_targets SET is_active = $1 WHERE id = $2
+            UPDATE x_snipe_targets SET is_active = $1 WHERE target_name = $2
             "#,
             is_active,
-            id
+            name
         )
         .execute(db)
         .await?;
@@ -114,10 +112,10 @@ pub async fn q_patch_x_snipe_target(
     if let Some(deactivate_on_snipe) = dto.deactivate_on_snipe {
         sqlx::query!(
             r#"
-            UPDATE x_snipe_targets SET deactivate_on_snipe = $1 WHERE id = $2
+            UPDATE x_snipe_targets SET deactivate_on_snipe = $1 WHERE target_name = $2
             "#,
             deactivate_on_snipe,
-            id
+            name
         )
         .execute(db)
         .await?;
