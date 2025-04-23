@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
-
-use super::service::snipe_target::{SnipeConfig, SnipeTarget, TwitterTarget};
+use shared::types::{SnipeConfig, SnipeTarget, TwitterTarget};
 
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
 pub struct DBSnipeTarget {

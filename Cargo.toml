@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "backend",
+    "dead_x_sniper",
+    "shared",
+    "soft_shills_manager",
+]
+resolver = "2"
+

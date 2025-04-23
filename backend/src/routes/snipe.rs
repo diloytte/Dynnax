@@ -4,11 +4,9 @@ use crate::{
     db::queries::snipe_targets::{
         q_create_snipe_target, q_delete_snipe_target, q_patch_snipe_target,
     },
-    json_error,
-    models::{
+    types::{
         dtos::{CreateSnipeDTO, PatchSnipeTargetDTO},
         other::AppStateExtension,
-        service::snipe_target::{SnipeConfig, SnipeTarget},
     },
 };
 use axum::{
@@ -19,6 +17,7 @@ use axum::{
     routing::{delete, get, patch, post},
 };
 use serde_json::json;
+use shared::{json_error, types::{SnipeConfig, SnipeTarget}};
 
 pub fn routes() -> Router {
     Router::new().nest(

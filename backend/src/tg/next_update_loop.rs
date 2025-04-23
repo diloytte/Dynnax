@@ -24,6 +24,10 @@ pub async fn main_tg_loop(
                     continue;
                 }
 
+                if cas.len() > 2 {
+                    continue;
+                }
+
                 for ca in cas {
                     let client = client.clone();
                     let shared_state = shared_state.clone();

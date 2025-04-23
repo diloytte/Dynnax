@@ -1,6 +1,6 @@
 use axum::{Extension, http::StatusCode, response::IntoResponse};
 
-use crate::models::other::AppStateExtension;
+use crate::types::other::AppStateExtension;
 
 pub async fn clear_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
     let clinet = state.tg_client.as_ref().unwrap();

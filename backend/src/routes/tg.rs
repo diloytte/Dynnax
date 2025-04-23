@@ -1,8 +1,9 @@
 use axum::{Extension, Router, http::StatusCode, response::IntoResponse, routing::get};
 use serde_json::json;
+use shared::tg::dialog::get_dialogs::get_dialogs_data;
 
 use crate::{
-    models::other::AppStateExtension,
+    types::other::AppStateExtension,
     tg::{self, dialog::clear_dialogs::clear_dialogs},
 };
 
@@ -44,7 +45,7 @@ async fn get_me(Extension(state): AppStateExtension) -> impl IntoResponse {
 
 async fn get_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
     let client = state.tg_client.as_ref().unwrap();
-    let dialogs_result = tg::dialog::get_dialogs::get_dialogs_data(client).await;
+    let dialogs_result = get_dialogs_data(client).await;
     let dialogs = dialogs_result.unwrap_or(vec![]);
     (
         StatusCode::OK,

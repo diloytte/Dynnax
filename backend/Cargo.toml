@@ -1,5 +1,5 @@
 [package]
-name = "dynnax"
+name = "backend"
 version = "0.1.0"
 edition = "2024"
 authors = ["mail@diloytte.com"]
@@ -39,6 +39,8 @@ rodio = "0.20.1"
 token_address_extractor = "1.2.0"
 regex = "1.11.1"
 lazy_static = "1.5.0"
+
+shared = { path = "../shared" }
 
 [profile.release]
 strip = true        # Remove symbols from binary

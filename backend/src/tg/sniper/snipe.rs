@@ -1,5 +1,6 @@
-use crate::{constants::GLOBALY_BLOCKED_CAS, db::queries::snipe_targets::q_patch_snipe_target, models::{dtos::PatchSnipeTargetDTO, other::Browser}, pf::buy_ca, state::AppState, utils::{open_browser, play_buy_notif}};
+use crate::{constants::GLOBALY_BLOCKED_CAS, db::queries::snipe_targets::q_patch_snipe_target, types::dtos::PatchSnipeTargetDTO, pf::buy_ca, state::AppState};
 use grammers_client::{Client, InputMessage, InvocationError};
+use shared::{types::Browser, utils::{open_browser, play_buy_notif}};
 use std::sync::Arc;
 
 pub async fn snipe(
@@ -18,6 +19,9 @@ pub async fn snipe(
     let snipe_target_option = snipe_targets.get_mut(&chat_id);
 
     if let Some(mut snipe_target) = snipe_target_option {
+        if !snipe_target.is_active{
+            return Ok(());
+        }
         match buy_ca(&shared_state.pf_api_url, &snipe_target, &ca,shared_state.priority_fee_multiplier).await {
             Ok(_) => {
                 play_buy_notif();

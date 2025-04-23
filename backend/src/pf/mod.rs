@@ -1,13 +1,5 @@
 use serde::Serialize;
-
-use crate::{
-    models::{
-        other::{Browser, TradeRequestBuy, TradeRequestSell},
-        pf::PfResponse,
-        service::snipe_target::SnipeTarget,
-    },
-    utils::{open_browser, play_buy_notif},
-};
+use shared::{types::{PfResponse, SnipeTarget, TradeRequestBuy, TradeRequestSell}, utils::play_buy_notif};
 
 #[derive(Debug)]
 pub enum TradeError {

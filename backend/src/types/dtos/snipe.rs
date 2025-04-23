@@ -1,6 +1,5 @@
 use serde::Deserialize;
-
-use crate::models::service::snipe_target::SnipeConfig;
+use shared::types::SnipeConfig;
 
 #[derive(Debug, Deserialize)]
 pub struct CreateSnipeDTO {

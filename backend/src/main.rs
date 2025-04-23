@@ -1,6 +1,6 @@
 mod constants;
 mod db;
-mod models;
+mod types;
 mod pf;
 mod routes;
 mod state;
@@ -13,12 +13,13 @@ use dashmap::DashMap;
 use db::connect::connect;
 use dotenv::dotenv;
 
+use shared::tg::{client::connect_client, dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data}};
 use tower_http::cors::{Any, CorsLayer};
 use std::{env, sync::Arc};
 use tg::{
-    client::connect_client, dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data}, next_update_loop::main_tg_loop,
+    next_update_loop::main_tg_loop,
 };
-use utils::{load_snipe_configurations, play_buy_notif};
+use utils::load_snipe_configurations;
 
 use axum::{http::Method, Extension, Router};
 use routes::{fallback, routes};
@@ -51,7 +52,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     sqlx::migrate!("./migrations").run(&db).await.unwrap();
 
-    let client = connect_client().await?;
+    let client = connect_client("./backend/session.session").await?;
 
     let dialogs_data = get_dialogs_data(&client).await?;
 

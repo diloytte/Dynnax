@@ -1,11 +1,10 @@
 use crate::constants::GLOBALY_BLOCKED_CAS;
-use crate::models::other::Browser;
-use crate::models::service::snipe_target::SnipeTarget;
 use crate::pf::buy_ca;
 use crate::state::AppState;
-use crate::utils::{open_browser, play_buy_notif};
 use grammers_client::types::Message;
 use grammers_client::{Client, InvocationError, InputMessage};
+use shared::types::{Browser, SnipeTarget};
+use shared::utils::{open_browser, play_buy_notif};
 use token_address_extractor::extract_solana_address;
 use std::sync::Arc;
 

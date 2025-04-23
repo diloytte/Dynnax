@@ -1,9 +1,10 @@
+use shared::types::SnipeConfig;
+
 use crate::{
     db::connect::Database,
-    models::{
+    types::{
         db::DBSnipeTarget,
         dtos::{CreateSnipeDTO, PatchSnipeTargetDTO},
-        service::snipe_target::SnipeConfig,
     },
 };
 

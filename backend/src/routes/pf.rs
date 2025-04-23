@@ -1,8 +1,9 @@
 use axum::{http::StatusCode, response::IntoResponse, routing::post, Extension, Json, Router};
 use serde::Deserialize;
 use serde_json::json;
+use shared::json_error;
 
-use crate::{json_error, models::other::AppStateExtension, pf::manual_buy_token};
+use crate::{types::other::AppStateExtension, pf::manual_buy_token};
 
 #[derive(Deserialize)]
 pub struct ManualBuyDTO{
