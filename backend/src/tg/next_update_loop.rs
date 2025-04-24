@@ -3,9 +3,8 @@ use std::sync::Arc;
 use grammers_client::{Client, InvocationError, Update};
 use token_address_extractor::extract_solana_address;
 
-use crate::{state::AppState, tg::sniper::snipe_x::snipe_x};
+use crate::{sniper::{snipe::snipe, snipe_x::snipe_x}, state::AppState};
 
-use super::sniper::snipe::snipe;
 
 pub async fn main_tg_loop(
     client: Client,
