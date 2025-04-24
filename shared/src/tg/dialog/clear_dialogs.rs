@@ -1,10 +1,7 @@
-use axum::{Extension, http::StatusCode, response::IntoResponse};
+use grammers_client::{Client, InvocationError};
 
-use crate::types::other::AppStateExtension;
-
-pub async fn clear_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
-    let clinet = state.tg_client.as_ref().unwrap();
-    let mut iter_dialogs = clinet.iter_dialogs();
+pub async fn clear_dialogs(client:&Client) ->Result<(),InvocationError> {
+    let mut iter_dialogs = client.iter_dialogs();
 
     let dialogs_len = iter_dialogs.total().await.unwrap_or(0);
 
@@ -14,7 +11,7 @@ pub async fn clear_dialogs(Extension(state): AppStateExtension) -> impl IntoResp
         match next_dialog_result_option {
             Ok(next_dialog_option) => {
                 if let Some(dialog) = next_dialog_option {
-                    let _ = clinet.mark_as_read(dialog.chat).await;
+                    let _ = client.mark_as_read(dialog.chat).await;
                 }
             }
             Err(err) => {
@@ -23,5 +20,5 @@ pub async fn clear_dialogs(Extension(state): AppStateExtension) -> impl IntoResp
         }
     }
 
-    StatusCode::OK
+    Ok(())
 }
