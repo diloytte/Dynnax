@@ -47,5 +47,5 @@ codegen-units = 1   # Reduce parallel codegen to maximize optimizations
 panic = "abort"     # Remove unwind information, reducing binary size and overhead (no backtraces in production)
 
 [features]
-default = []
 production = []
+remote = ["shared/remote"]  # forward the flag to shared crate

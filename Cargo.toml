@@ -2,6 +2,7 @@
 members = [
     "backend",
     "dead_x_sniper",
+     "say_gm",
     "shared",
     "soft_shills_manager",
 ]

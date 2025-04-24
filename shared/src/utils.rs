@@ -12,6 +12,7 @@ macro_rules! json_error {
 }
 
 pub fn open_browser(browser: Browser, url: &String) -> io::Result<()> {
+    #[cfg(not(feature = "remote"))]
     match browser {
         Browser::Brave => {
             Command::new("brave-browser")
@@ -25,6 +26,7 @@ pub fn open_browser(browser: Browser, url: &String) -> io::Result<()> {
 }
 
 pub fn play_buy_notif(){
+    #[cfg(not(feature = "remote"))]
     tokio::spawn(async{
         match play_sound(){
             Ok(_) => {},

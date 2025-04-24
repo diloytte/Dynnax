@@ -82,3 +82,10 @@ Due to time constraints, if you’d like to try and test this app yourself, plea
 cargo run -p <folder name>
 ```
 - Example:   `cargo run -p bacakend`
+
+
+2. Remote server configuration build
+
+`cargo build --release --features "production remote"`
+
+Remote is added because `open_browser` and `play_sound` functionalities shouldnt be called on remote backend.
