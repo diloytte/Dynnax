@@ -548,6 +548,7 @@ checksum = "0c87e182de0887fd5361989c677c4e8f5000cd9491d6d563161a8f3a5519fc7f"
 name = "dead_x_sniper"
 version = "0.1.0"
 dependencies = [
+ "dotenv",
  "grammers-client",
  "grammers-session",
  "shared",
@@ -2157,6 +2158,8 @@ version = "0.1.0"
 dependencies = [
  "grammers-client",
  "grammers-session",
+ "lazy_static",
+ "regex",
  "rodio",
  "serde",
  "tokio",

@@ -1,3 +1,6 @@
+use grammers_client::{Client, InvocationError};
+use grammers_client::types::Chat;
+
 use crate::{types::{PfResponse, SnipeTarget, TradeError, TradeRequestBuy, TradeRequestSell}, utils::play_buy_notif};
 
 pub async fn manual_buy_token(url:&str,sol_amount:f32,ca:String)->Result<(),TradeError>{
@@ -27,6 +30,12 @@ pub async fn manual_buy_token(url:&str,sol_amount:f32,ca:String)->Result<(),Trad
 
     Ok(())
 }
+
+pub async fn buy_ca_tg(client:&Client,message:&str,chat:&Chat)->Result<(),InvocationError>{
+    client.send_message(chat, message).await?;
+    Ok(())
+}
+
 
 pub async fn buy_ca(url: &str, snipe_target: &SnipeTarget, ca: &String,fee_multiplier:u8) -> Result<(), TradeError> {
     let body = TradeRequestBuy {

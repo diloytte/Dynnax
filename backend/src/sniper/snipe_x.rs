@@ -1,10 +1,10 @@
 use crate::db::queries::x_snipe_targets::q_patch_x_snipe_target;
 use crate::pf::buy_ca;
 use crate::state::AppState;
-use crate::twitter_regex::extract_twitter_sender;
 use crate::types::dtos::snipe_x::PatchXSnipeTargetDTO;
 use grammers_client::types::Message;
 use grammers_client::{Client, InvocationError, InputMessage};
+use shared::twitter_regex::extract_twitter_sender;
 use shared::types::Browser;
 use shared::utils::{open_browser, play_buy_notif};
 use std::sync::Arc;

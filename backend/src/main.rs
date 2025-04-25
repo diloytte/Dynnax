@@ -6,7 +6,6 @@ mod routes;
 mod state;
 mod tg;
 mod utils;
-mod twitter_regex;
 mod sniper;
 
 use grammers_client::types::Chat;
