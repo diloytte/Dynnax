@@ -1716,6 +1716,19 @@ checksum = "42f5e15c9953c5e4ccceeb2e7382a716482c34515315f7b03532b8b4e8393d2d"
 [[package]]
 name = "one_time_x_snipe"
 version = "0.1.0"
+dependencies = [
+ "axum",
+ "dashmap",
+ "dotenv",
+ "grammers-client",
+ "grammers-session",
+ "serde",
+ "serde_json",
+ "shared",
+ "tokio",
+ "tower-http",
+ "ureq",
+]
 
 [[package]]
 name = "os_info"
@@ -2173,6 +2186,7 @@ dependencies = [
  "regex",
  "rodio",
  "serde",
+ "sqlx",
  "tokio",
  "ureq",
 ]

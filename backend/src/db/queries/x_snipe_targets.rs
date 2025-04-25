@@ -1,6 +1,6 @@
-use shared::types::SnipeConfig;
+use shared::{db::Database, types::SnipeConfig};
 
-use crate::{db::connect::Database, types::{db::DBXSnipeTarget, dtos::snipe_x::PatchXSnipeTargetDTO}};
+use crate::types::{db::DBXSnipeTarget, dtos::snipe_x::PatchXSnipeTargetDTO};
 
 pub async fn q_create_x_snipe_target(
     db: &Database,

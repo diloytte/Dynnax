@@ -14,6 +14,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     gm_hashmap.insert(1981115066,"/gm_printers");
     gm_hashmap.insert(2433957378,"gm");
     gm_hashmap.insert(2424480459,"gm");
+    // gm_hashmap.insert(4779791343,"gm");
 
     for (id,message) in gm_hashmap {
         let chat = find_dialog_chat_by_id(&client, id).await;

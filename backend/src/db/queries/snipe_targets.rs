@@ -1,11 +1,8 @@
-use shared::types::SnipeConfig;
+use shared::{db::Database, types::SnipeConfig};
 
-use crate::{
-    db::connect::Database,
-    types::{
-        db::DBSnipeTarget,
-        dtos::{CreateSnipeDTO, PatchSnipeTargetDTO},
-    },
+use crate::types::{
+    db::DBSnipeTarget,
+    dtos::{CreateSnipeDTO, PatchSnipeTargetDTO},
 };
 
 pub async fn q_create_snipe_target(

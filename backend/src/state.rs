@@ -3,9 +3,8 @@ use grammers_client::types::Chat;
 use dashmap::DashMap;
 
 use grammers_client::Client;
-use shared::types::{SnipeTarget, TwitterTarget};
+use shared::{db::Database, types::{SnipeTarget, TwitterTarget}};
 
-use crate::db::connect::Database;
 
 pub struct AppState {
     pub db: Database,

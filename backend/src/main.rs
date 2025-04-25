@@ -10,10 +10,9 @@ mod sniper;
 
 use grammers_client::types::Chat;
 use dashmap::DashMap;
-use db::connect::connect;
 use dotenv::dotenv;
 
-use shared::{tg::{client::connect_client, dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data}}};
+use shared::{db::connect::{self, connect}, tg::{client::connect_client, dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data}}};
 use tower_http::cors::{Any, CorsLayer};
 use std::{env, sync::Arc};
 use tg::next_update_loop::main_tg_loop;
@@ -42,11 +41,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .unwrap();
 
     let db_url = env::var("DATABASE_URL")?;
+    let db = connect(db_url).await.unwrap();
 
     let redacted_self_bot_father_dialog_id: i64 =
         env::var("REDACTED_SELF_BOT_FATHER_DIALOG_ID")?.parse()?;
 
-    let db = connect(db_url).await.unwrap();
 
     sqlx::migrate!("./migrations").run(&db).await.unwrap();
 

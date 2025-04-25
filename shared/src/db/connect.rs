@@ -1,6 +1,6 @@
 use sqlx::postgres::PgPoolOptions;
 
-pub type Database = sqlx::Pool<sqlx::Postgres>;
+use super::Database;
 
 pub async fn connect(db_url: String) -> Result<Database, sqlx::error::Error> {
     let pool: Database = PgPoolOptions::new()
