@@ -2069,6 +2069,13 @@ dependencies = [
 [[package]]
 name = "say_gm"
 version = "0.1.0"
+dependencies = [
+ "dotenv",
+ "grammers-client",
+ "grammers-session",
+ "shared",
+ "tokio",
+]
 
 [[package]]
 name = "scopeguard"

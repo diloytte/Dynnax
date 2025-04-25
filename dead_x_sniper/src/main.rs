@@ -48,6 +48,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut tracked_twitter_account:HashMap<&str,&str> = HashMap::new();
 
+    //TODO: make this dynamix and accessable elsewhere. so u dont have to restart the app once this changes
     tracked_twitter_account.insert("TheRoaringKitty", "EKEWAk7hfnwfR8DBb1cTayPPambqyC7pwNiYkaYQKQHp");
     tracked_twitter_account.insert("unity_on_solana", "EdhTCqUxXRWQcUd5Fonyz9rapHAB6mABAuVkmPrtpump");
 
