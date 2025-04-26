@@ -57,7 +57,9 @@ pub async fn snipe(
                 );
                 // TODO: Cant be send from me, it wont be receiving message notifications.
                 let trenches_chat = &shared_state.sniper_trenches_chat;
+                let trojan_bot = &shared_state.trojan_bot_chat;
                 client.send_message(trenches_chat,InputMessage::text(format!("{}\n{}",final_msg,bullx_link))).await?;
+                client.send_message(trojan_bot, "/positions").await?;
             }
             Err(error) => {
                 println!("ERROR: {:?}", error)

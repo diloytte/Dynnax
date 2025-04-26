@@ -59,6 +59,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     let sniper_trenches_chat:Chat = find_dialog_chat_by_id(&client, sniper_trenches_chat_id).await.unwrap();
 
+    let trojan_bot_chat_id:i64 = env::var("TROJAN_DIALOG_ID")?.parse()?;
+
+    let trojan_bot_chat = find_dialog_chat_by_id(&client, trojan_bot_chat_id).await.unwrap();
+
     for dialog in dialogs_data {
         dialogs_dashmap.insert(dialog.id, (dialog.name, dialog.dialog_type));
     }
@@ -82,7 +86,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
         sniper_trenches_chat,
         pf_api_url,
-        priority_fee_multiplier:1
+        priority_fee_multiplier:1,
+        trojan_bot_chat
     };
 
     let shared_state = Arc::new(state);

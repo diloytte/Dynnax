@@ -10,8 +10,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut gm_hashmap:HashMap<i64,&str> = HashMap::new();
     
-    gm_hashmap.insert(1649642332,"/gm_lab");
-    gm_hashmap.insert(1981115066,"/gm_printers");
+    gm_hashmap.insert(1649642332,"/gmlab");
+    gm_hashmap.insert(1981115066,"/gmprinters");
     gm_hashmap.insert(2433957378,"gm");
     gm_hashmap.insert(2424480459,"gm");
     // gm_hashmap.insert(4779791343,"gm");
