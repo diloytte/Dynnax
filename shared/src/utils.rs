@@ -1,11 +1,13 @@
+#[cfg(not(feature = "remote"))]
 use rodio::{Decoder, OutputStream, Source};
+#[cfg(not(feature = "remote"))]
 use std::{
     fs::File,
     io::{self, BufReader},
     path::PathBuf,
     process::Command,
 };
-
+#[cfg(not(feature = "remote"))]
 use crate::types::{Browser, SoundError};
 
 #[macro_export]
@@ -15,8 +17,8 @@ macro_rules! json_error {
     };
 }
 
+#[cfg(not(feature = "remote"))]
 pub fn open_browser(browser: Browser, url: &str) -> io::Result<()> {
-    #[cfg(not(feature = "remote"))]
     match browser {
         Browser::Brave => {
             Command::new("brave-browser")
@@ -29,8 +31,8 @@ pub fn open_browser(browser: Browser, url: &str) -> io::Result<()> {
     Ok(())
 }
 
+#[cfg(not(feature = "remote"))]
 pub fn play_buy_notif() {
-    #[cfg(not(feature = "remote"))]
     tokio::spawn(async {
         match play_sound() {
             Ok(_) => {}
@@ -41,6 +43,7 @@ pub fn play_buy_notif() {
     });
 }
 
+#[cfg(not(feature = "remote"))]
 fn play_sound() -> Result<(), SoundError> {
     //TODO: Good for now, but can be done better. Either saving something to in memory state, or using Sink (check rodio docs).
     let (_stream, stream_handle) = OutputStream::try_default()?;

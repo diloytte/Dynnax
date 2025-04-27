@@ -2,7 +2,7 @@ use axum::{Extension, Json, Router, http::StatusCode, response::IntoResponse, ro
 use serde::Deserialize;
 use shared::{
     json_error,
-    pf::{manual_buy_token, sell_ca},
+    pf::manual_buy_token,
 };
 
 use crate::types::other::AppStateExtension;

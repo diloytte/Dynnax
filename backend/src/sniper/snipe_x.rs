@@ -2,11 +2,9 @@ use crate::db::queries::x_snipe_targets::q_patch_x_snipe_target;
 use crate::state::AppState;
 use crate::types::dtos::snipe_x::PatchXSnipeTargetDTO;
 use grammers_client::types::Message;
-use grammers_client::{Client, InputMessage, InvocationError};
+use grammers_client::{Client, InvocationError};
 use shared::pf::buy_ca;
 use shared::twitter_regex::extract_twitter_sender;
-use shared::types::Browser;
-use shared::utils::{open_browser, play_buy_notif};
 use std::sync::Arc;
 
 use super::buy_notify;
@@ -77,14 +75,14 @@ pub async fn snipe_x(
             let ca = ca.clone();
 
             tokio::spawn(async move {
-                buy_notify(
+                let _ = buy_notify(
                     &chat_name,
                     &super::Shiller::X(twitter_sender),
                     &ca,
                     &client,
                     &trenches_chat,
                     &trojan_bot,
-                );
+                ).await;
             });
         }
         Err(error) => {

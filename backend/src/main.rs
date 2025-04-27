@@ -13,7 +13,7 @@ use grammers_client::types::Chat;
 
 use reqwest::Client;
 use shared::{
-    db::connect::{self, connect},
+    db::connect::connect,
     tg::{
         client::connect_client,
         dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data},
@@ -120,15 +120,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     tokio::spawn(main_tg_loop(client.clone(), shared_state.clone()));
 
-    tokio::spawn(async move {
-        let router = Router::new()
-            .nest("/api/v1", routes())
-            .layer(cors)
-            .layer(Extension(shared_state))
-            .fallback(fallback);
+    let router = Router::new()
+        .nest("/api/v1", routes())
+        .layer(cors)
+        .layer(Extension(shared_state))
+        .fallback(fallback);
 
-        axum::serve(listener, router).await.unwrap();
-    });
+    axum::serve(listener, router).await.unwrap();
 
-    loop {}
+    Ok(())
 }

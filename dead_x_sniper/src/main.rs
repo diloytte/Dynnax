@@ -58,9 +58,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "EdhTCqUxXRWQcUd5Fonyz9rapHAB6mABAuVkmPrtpump",
     );
 
-    for (key, _) in &tracked_twitter_account {
+    for tracked in &tracked_twitter_account {
         client
-            .send_message(&redacted_bot_chat, format!("/add {}", key))
+            .send_message(&redacted_bot_chat, format!("/add {}", tracked.0))
             .await?;
     }
 
@@ -96,7 +96,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                 let ca = ca.unwrap();
 
-                buy_ca_tg(&client, &ca, &pepeboost_chat).await?;
+                buy_ca_tg(&client, ca, &pepeboost_chat).await?;
 
                 tracked_twitter_account.remove(twitter_sender.as_str());
             }

@@ -2,12 +2,8 @@ use crate::{
     constants::GLOBALY_BLOCKED_CAS, db::queries::snipe_targets::q_patch_snipe_target,
     sniper::buy_notify, state::AppState, types::dtos::PatchSnipeTargetDTO,
 };
-use grammers_client::{Client, InputMessage, InvocationError};
-use shared::{
-    pf::buy_ca,
-    types::Browser,
-    utils::{open_browser, play_buy_notif},
-};
+use grammers_client::{Client, InvocationError};
+use shared::pf::buy_ca;
 use std::sync::Arc;
 
 pub async fn snipe(
@@ -67,14 +63,14 @@ pub async fn snipe(
                 let ca = ca.clone();
 
                 tokio::spawn(async move {
-                    buy_notify(
+                    let _ = buy_notify(
                         &chat_name,
                         &super::Shiller::Tg(chat_id),
                         &ca,
                         &client,
                         &trenches_chat,
                         &trojan_bot,
-                    );
+                    ).await;
                 });
             }
             Err(error) => {

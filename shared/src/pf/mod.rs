@@ -3,10 +3,10 @@ use grammers_client::{Client, InvocationError};
 use reqwest::Client as ReqwestClient;
 
 use crate::types::{DexScreenerResponse, SnipeConfig, TradeRequest};
-use crate::{
-    types::{PfResponse, SnipeTarget, TradeError, TradeRequestBuy, TradeRequestSell},
-    utils::play_buy_notif,
-};
+use crate::types::{PfResponse, SnipeTarget, TradeError, TradeRequestBuy, TradeRequestSell};
+
+#[cfg(not(feature = "remote"))]
+use crate::utils::play_buy_notif;
 
 pub async fn manual_buy_token(
     url: &str,
@@ -31,6 +31,7 @@ pub async fn manual_buy_token(
     match pf_response.signature {
         Some(sig) => {
             println!("BUY Transaction sent. Signature: {}", sig);
+            #[cfg(not(feature = "remote"))]
             play_buy_notif();
         }
         None => {

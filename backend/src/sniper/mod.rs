@@ -1,10 +1,12 @@
 use std::fmt::Display;
 
-use grammers_client::{Client, InputMessage, InvocationError, client, types::Chat};
-use shared::{
-    types::Browser,
-    utils::{open_browser, play_buy_notif},
-};
+use grammers_client::{Client, InputMessage, InvocationError, types::Chat};
+
+#[cfg(not(feature = "remote"))]
+use shared::types::Browser;
+
+#[cfg(not(feature = "remote"))]
+use shared::utils::{open_browser, play_buy_notif};
 
 pub mod snipe;
 pub mod snipe_x;
@@ -23,7 +25,7 @@ impl Display for Shiller {
     }
 }
 
-pub async fn buy_notify<'a>(
+pub async fn buy_notify(
     chat_name: &str,
     shiller: &Shiller,
     ca: &str,
@@ -31,6 +33,7 @@ pub async fn buy_notify<'a>(
     trenches_chat: &Chat,
     trojan_bot: &Chat,
 ) -> Result<(), InvocationError> {
+    #[cfg(not(feature = "remote"))]
     play_buy_notif();
     let final_msg = format!(
         "---------------\nChat: {}\n ID: {}\n CA: {}\n---------------",
@@ -40,6 +43,7 @@ pub async fn buy_notify<'a>(
         "https://neo.bullx.io/terminal?chainId=1399811149&address={}",
         ca
     );
+    #[cfg(not(feature = "remote"))]
     let _ = open_browser(Browser::Brave, &bullx_link);
     {
         let client = client.clone();
