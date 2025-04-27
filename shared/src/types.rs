@@ -60,17 +60,17 @@ impl fmt::Display for SoundError {
 
 #[derive(Debug)]
 pub enum TradeError {
-    UreqError(ureq::Error),
+    ReqwestError(reqwest::Error),
     CustomError(String),
 }
 
-impl From<ureq::Error> for TradeError {
-    fn from(err: ureq::Error) -> Self {
-        TradeError::UreqError(err)
+impl From<reqwest::Error> for TradeError {
+    fn from(err: reqwest::Error) -> Self {
+        TradeError::ReqwestError(err)
     }
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize,Clone)]
 pub struct TradeRequestBuy {
     pub action: String,
     pub mint: String,
@@ -96,6 +96,11 @@ pub struct TradeRequestSell {
     pub pool: String,
 }
 
+#[derive(Debug, Serialize)]
+pub enum TradeRequest<'a> {
+    Buy(&'a TradeRequestBuy),
+    Sell(&'a TradeRequestSell)
+}
 
 #[derive(Debug, Deserialize)]
 pub struct ErrorResponse {
@@ -113,13 +118,26 @@ pub struct PfResponse {
 
 
 
+#[derive(Deserialize)]
+pub struct DexScreenerResponse {
+    pub pairs: Vec<Pair>,
+}
 
 
 
+#[derive(Deserialize)]
+pub struct Pair {
+    pub base_token: BaseToken,
+}
 
 
 
-
+#[derive(Deserialize)]
+pub struct BaseToken {
+    pub address: String,
+    pub name: String,
+    pub symbol: String,
+}
 
 
 

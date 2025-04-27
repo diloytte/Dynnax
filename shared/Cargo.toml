@@ -9,10 +9,10 @@ grammers-session = "0.7.0"
 serde = { version = "1.0.194", features = ["derive"] }
 rodio = "0.20.1"
 tokio = { version = "1.44.1", features = ["full"] }
-ureq = { version = "3.0.10", features = ["json"] }
 regex = "1.11.1"
 lazy_static = "1.5.0"
 sqlx = { version = "0.8.3", features = ["postgres","runtime-tokio-rustls"] }
+reqwest = { version = "0.12.15", features = ["json"] }
 
 
 [features]

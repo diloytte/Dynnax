@@ -1,6 +1,6 @@
-use crate::{constants::GLOBALY_BLOCKED_CAS, db::queries::snipe_targets::q_patch_snipe_target, types::dtos::PatchSnipeTargetDTO, pf::buy_ca, state::AppState};
+use crate::{constants::GLOBALY_BLOCKED_CAS, db::queries::snipe_targets::q_patch_snipe_target, sniper::buy_notify, state::AppState, types::dtos::PatchSnipeTargetDTO};
 use grammers_client::{Client, InputMessage, InvocationError};
-use shared::{types::Browser, utils::{open_browser, play_buy_notif}};
+use shared::{pf::buy_ca, types::Browser, utils::{open_browser, play_buy_notif}};
 use std::sync::Arc;
 
 pub async fn snipe(
@@ -22,45 +22,47 @@ pub async fn snipe(
         if !snipe_target.is_active{
             return Ok(());
         }
-        match buy_ca(&shared_state.pf_api_url, &snipe_target.snipe_config, ca,shared_state.priority_fee_multiplier).await {
+        match buy_ca(&shared_state.pf_api_url, &snipe_target.snipe_config, ca, shared_state.priority_fee_multiplier,&shared_state.request_client).await {
             Ok(_) => {
-                println!("Triggered sniper.");
                 if snipe_target.deactivate_on_snipe {
                     snipe_target.is_active = false;
-                    let _ = q_patch_snipe_target(&shared_state.db, &PatchSnipeTargetDTO {
-                        target_id:chat_id,
-                        is_active:Some(false),
-                        target_name:None,
-                        sol_amount:None,
-                        slippage:None,
-                        priority_fee:None,
-                        deactive_on_snipe:None
-                    }).await;
+        
+                    let db = shared_state.db.clone();
+                    let patch = PatchSnipeTargetDTO {
+                        target_id: chat_id,
+                        is_active: Some(false),
+                        target_name: None,
+                        sol_amount: None,
+                        slippage: None,
+                        priority_fee: None,
+                        deactive_on_snipe: None,
+                    };
+        
+                    tokio::spawn(async move {
+                        let _ = q_patch_snipe_target(&db, &patch).await;
+                    });
                 }
-                //TODO: DB Write too!
+        
+                // TODO: write to db, needs patch above.
                 snipe_target.past_shills.push(ca.to_string());
-
-                play_buy_notif();
-                let chat_name = &snipe_target.target_name;
-                let final_msg = format!(
-                    "---------------\nChat: {}\n ID: {}\n CA: {}\n---------------",
-                    chat_name, chat_id, ca
-                );
-                println!("{}", final_msg);
-                let bullx_link = format!(
-                    "https://neo.bullx.io/terminal?chainId=1399811149&address={}",
-                    ca
-                );
-                let _ = open_browser(
-                    Browser::Brave,
-                    &bullx_link,
-                );
-                // TODO: Cant be send from me, it wont be receiving message notifications.
-                let trenches_chat = &shared_state.sniper_trenches_chat;
-                let trojan_bot = &shared_state.trojan_bot_chat;
-                client.send_message(trenches_chat,InputMessage::text(format!("{}\n{}",final_msg,bullx_link))).await?;
-                client.send_message(trojan_bot, "/positions").await?;
-            }
+        
+                let client = client.clone();
+                let chat_name = snipe_target.target_name.clone();
+                let trenches_chat = shared_state.sniper_trenches_chat.clone();
+                let trojan_bot = shared_state.trojan_bot_chat.clone();
+                let ca = ca.clone();
+        
+                tokio::spawn(async move {
+                    buy_notify(
+                        &chat_name,
+                        &super::Shiller::Tg(chat_id),
+                        &ca,
+                        &client,
+                        &trenches_chat,
+                        &trojan_bot,
+                    );
+                });
+            },
             Err(error) => {
                 println!("ERROR: {:?}", error)
             }

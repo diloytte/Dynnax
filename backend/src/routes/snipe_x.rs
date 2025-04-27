@@ -1,13 +1,12 @@
 use std::collections::HashMap;
 
 use axum::{extract::Path, response::IntoResponse, routing::{delete, get, patch, post}, Extension, Json, Router};
+use reqwest::StatusCode;
 use serde_json::json;
 use shared::{
     json_error,
     types::TwitterTarget,
 };
-use ureq::http::StatusCode;
-
 use crate::{
     db::queries::x_snipe_targets::{q_create_x_snipe_target, q_delete_x_snipe_target, q_patch_x_snipe_target},
     types::{dtos::snipe_x::{CreateXSnipeTargetDTO, PatchXSnipeTargetDTO}, other::AppStateExtension},

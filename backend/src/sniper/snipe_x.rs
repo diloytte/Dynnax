@@ -1,13 +1,15 @@
 use crate::db::queries::x_snipe_targets::q_patch_x_snipe_target;
-use crate::pf::buy_ca;
 use crate::state::AppState;
 use crate::types::dtos::snipe_x::PatchXSnipeTargetDTO;
 use grammers_client::types::Message;
 use grammers_client::{Client, InvocationError, InputMessage};
+use shared::pf::buy_ca;
 use shared::twitter_regex::extract_twitter_sender;
 use shared::types::Browser;
 use shared::utils::{open_browser, play_buy_notif};
 use std::sync::Arc;
+
+use super::buy_notify;
 
 pub async fn snipe_x(
     message: &Message,
@@ -42,40 +44,33 @@ pub async fn snipe_x(
         return Ok(());
     }
 
-    match buy_ca(&shared_state.pf_api_url,& twitter_snipe_target.snipe_config, ca,1).await {
+    match buy_ca(&shared_state.pf_api_url,& twitter_snipe_target.snipe_config, ca,1,&shared_state.request_client).await {
         Ok(_) => {
-            println!("Triggered twitter sniper.");
             if twitter_snipe_target.deactivate_on_snipe {
                 twitter_snipe_target.is_active = false;
-                let _ = q_patch_x_snipe_target(&shared_state.db,&PatchXSnipeTargetDTO{
-                    target_name:twitter_snipe_target.target_name.clone(),
+                
+                let db = shared_state.db.clone();
+                let patch = PatchXSnipeTargetDTO {
+                    target_name: twitter_snipe_target.target_name.clone(),
                     sol_amount: None,
                     slippage: None,
                     priority_fee: None,
                     is_active: Some(false),
                     deactivate_on_snipe: Some(true),
-                    
-                }).await;
+                };
+                tokio::spawn(async move {
+                    let _ = q_patch_x_snipe_target(&db, &patch).await;
+                });
             }
-            play_buy_notif();
-            let chat_name = &twitter_snipe_target.target_name;
-            let final_msg = format!(
-                "---------------\nChat: {}\n CA: {}\n---------------",
-                chat_name, ca
-            );
-            println!("{}", final_msg);
-            let bullx_link = format!(
-                "https://neo.bullx.io/terminal?chainId=1399811149&address={}",
-                ca
-            );
-            let _ = open_browser(
-                Browser::Brave,
-                &bullx_link,
-            );
-            let trenches_chat = &shared_state.sniper_trenches_chat;
-            let trojan_bot = &shared_state.trojan_bot_chat;
-            client.send_message(trenches_chat,InputMessage::text(format!("{}\n{}",final_msg,bullx_link))).await?;
-            client.send_message(trojan_bot, "/positions").await?;
+            let client = client.clone();
+            let chat_name = twitter_snipe_target.target_name.clone();
+            let trenches_chat = shared_state.sniper_trenches_chat.clone();
+            let trojan_bot = shared_state.trojan_bot_chat.clone();
+            let ca = ca.clone();
+
+            tokio::spawn(async move {
+                buy_notify(&chat_name, &super::Shiller::X(twitter_sender), &ca, &client, &trenches_chat, &trojan_bot);
+            });
         },
         Err(error) => {
             println!("{:?}",error);

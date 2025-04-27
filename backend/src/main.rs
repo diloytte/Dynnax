@@ -1,7 +1,6 @@
 mod constants;
 mod db;
 mod types;
-mod pf;
 mod routes;
 mod state;
 mod tg;
@@ -12,6 +11,7 @@ use grammers_client::types::Chat;
 use dashmap::DashMap;
 use dotenv::dotenv;
 
+use reqwest::Client;
 use shared::{db::connect::{self, connect}, tg::{client::connect_client, dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data}}};
 use tower_http::cors::{Any, CorsLayer};
 use std::{env, sync::Arc};
@@ -78,16 +78,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pf_api_url = format!("{}{}",pump_portal_url,pf_api_key);
 
     let state = AppState {
+        request_client:Client::new(),
         db,
         all_dialogs: dialogs_dashmap,
         snipe_targets: DashMap::default(),
         twitter_snipe_targets: DashMap::default(),
         tg_client: Some(client.clone()),
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
-        sniper_trenches_chat,
+        sniper_trenches_chat:Arc::new(sniper_trenches_chat),
         pf_api_url,
         priority_fee_multiplier:1,
-        trojan_bot_chat
+        trojan_bot_chat:Arc::new(trojan_bot_chat)
     };
 
     let shared_state = Arc::new(state);

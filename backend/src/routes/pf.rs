@@ -1,8 +1,8 @@
 use axum::{http::StatusCode, response::IntoResponse, routing::post, Extension, Json, Router};
 use serde::Deserialize;
-use shared::{json_error, pf::sell_ca};
+use shared::{json_error, pf::{manual_buy_token, sell_ca}};
 
-use crate::{types::other::AppStateExtension, pf::manual_buy_token};
+use crate::types::other::AppStateExtension;
 
 #[derive(Deserialize)]
 pub struct ManualBuyDTO{
@@ -23,7 +23,7 @@ async fn manual_buy(
     Extension(state):AppStateExtension,
     Json(manual_buy_dto):Json<ManualBuyDTO>
 )-> impl IntoResponse{
-    match manual_buy_token(&state.pf_api_url, manual_buy_dto.sol_amount,manual_buy_dto.ca).await{
+    match manual_buy_token(&state.pf_api_url, manual_buy_dto.sol_amount,manual_buy_dto.ca,&state.request_client).await{
         Ok(_) => {
             (StatusCode::OK).into_response()
         },
