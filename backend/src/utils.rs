@@ -1,7 +1,10 @@
 use std::sync::Arc;
 
 use crate::{
-    db::queries::{snipe_targets::q_get_all_snipe_targets, x_snipe_targets::q_get_all_x_snipe_targets}, state::AppState,
+    db::queries::{
+        snipe_targets::q_get_all_snipe_targets, x_snipe_targets::q_get_all_x_snipe_targets,
+    },
+    state::AppState,
 };
 
 pub async fn load_snipe_configurations(state: &Arc<AppState>) -> Result<(), ()> {
@@ -21,7 +24,9 @@ pub async fn load_snipe_configurations(state: &Arc<AppState>) -> Result<(), ()> 
     if let Ok(twitter_snipe_targets) = twitter_snipe_targets_result {
         for twitter_snipe_target in twitter_snipe_targets {
             let x_snipe_name = twitter_snipe_target.target_name.clone();
-            state.twitter_snipe_targets.insert(x_snipe_name,twitter_snipe_target.into());
+            state
+                .twitter_snipe_targets
+                .insert(x_snipe_name, twitter_snipe_target.into());
         }
     }
 

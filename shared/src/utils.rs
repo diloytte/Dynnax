@@ -1,8 +1,12 @@
-use std::{fs::File, io::{self, BufReader}, path::PathBuf, process::Command};
 use rodio::{Decoder, OutputStream, Source};
+use std::{
+    fs::File,
+    io::{self, BufReader},
+    path::PathBuf,
+    process::Command,
+};
 
 use crate::types::{Browser, SoundError};
-
 
 #[macro_export]
 macro_rules! json_error {
@@ -11,7 +15,7 @@ macro_rules! json_error {
     };
 }
 
-pub fn open_browser(browser: Browser, url: &String) -> io::Result<()> {
+pub fn open_browser(browser: Browser, url: &str) -> io::Result<()> {
     #[cfg(not(feature = "remote"))]
     match browser {
         Browser::Brave => {
@@ -25,21 +29,21 @@ pub fn open_browser(browser: Browser, url: &String) -> io::Result<()> {
     Ok(())
 }
 
-pub fn play_buy_notif(){
+pub fn play_buy_notif() {
     #[cfg(not(feature = "remote"))]
-    tokio::spawn(async{
-        match play_sound(){
-            Ok(_) => {},
+    tokio::spawn(async {
+        match play_sound() {
+            Ok(_) => {}
             Err(error) => {
-                println!("{}",error)
-            },
+                println!("{}", error)
+            }
         }
     });
-} 
+}
 
-fn play_sound()->Result<(),SoundError> {
+fn play_sound() -> Result<(), SoundError> {
     //TODO: Good for now, but can be done better. Either saving something to in memory state, or using Sink (check rodio docs).
-    let (_stream,stream_handle) = OutputStream::try_default()?;
+    let (_stream, stream_handle) = OutputStream::try_default()?;
     let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     path.push("src/assets/buy.wav");
     let file = BufReader::new(File::open(path)?);

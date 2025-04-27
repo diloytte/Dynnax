@@ -5,7 +5,6 @@ use std::path::Path;
 
 use grammers_session::Session;
 
-
 #[derive(Debug)]
 pub struct ConfigData {
     pub api_id: i32,

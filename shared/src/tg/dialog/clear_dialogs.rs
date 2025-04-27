@@ -1,6 +1,6 @@
 use grammers_client::{Client, InvocationError};
 
-pub async fn clear_dialogs(client:&Client) ->Result<(),InvocationError> {
+pub async fn clear_dialogs(client: &Client) -> Result<(), InvocationError> {
     let mut iter_dialogs = client.iter_dialogs();
 
     let dialogs_len = iter_dialogs.total().await.unwrap_or(0);

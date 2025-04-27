@@ -51,15 +51,15 @@ pub async fn q_patch_x_snipe_target(
     dto: &PatchXSnipeTargetDTO,
 ) -> Result<(), sqlx::Error> {
     let name = &dto.target_name;
-        sqlx::query!(
-            r#"
+    sqlx::query!(
+        r#"
             UPDATE x_snipe_targets SET target_name = $1 WHERE target_name = $2
             "#,
-            name,
-            name
-        )
-        .execute(db)
-        .await?;
+        name,
+        name
+    )
+    .execute(db)
+    .await?;
 
     if let Some(sol) = dto.sol_amount {
         sqlx::query!(
@@ -124,9 +124,15 @@ pub async fn q_patch_x_snipe_target(
     Ok(())
 }
 
-pub async fn q_delete_x_snipe_target(db: &Database, target_name: &String) -> Result<(), sqlx::Error> {
-    sqlx::query!("DELETE FROM x_snipe_targets WHERE target_name = $1", target_name)
-        .execute(db)
-        .await?;
+pub async fn q_delete_x_snipe_target(
+    db: &Database,
+    target_name: &String,
+) -> Result<(), sqlx::Error> {
+    sqlx::query!(
+        "DELETE FROM x_snipe_targets WHERE target_name = $1",
+        target_name
+    )
+    .execute(db)
+    .await?;
     Ok(())
 }

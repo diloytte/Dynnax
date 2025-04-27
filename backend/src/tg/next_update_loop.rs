@@ -3,8 +3,10 @@ use std::sync::Arc;
 use grammers_client::{Client, InvocationError, Update};
 use token_address_extractor::extract_solana_address;
 
-use crate::{sniper::{snipe::snipe, snipe_x::snipe_x}, state::AppState};
-
+use crate::{
+    sniper::{snipe::snipe, snipe_x::snipe_x},
+    state::AppState,
+};
 
 pub async fn main_tg_loop(
     client: Client,
@@ -15,17 +17,17 @@ pub async fn main_tg_loop(
             Ok(Update::NewMessage(message)) => {
                 let message_text = message.text();
                 let ca = extract_solana_address(message_text);
-                
+
                 if ca.is_none() {
                     continue;
                 }
-                
+
                 let chat_id = message.chat().id();
                 let client = client.clone();
                 let ca = ca.unwrap();
                 let shared_state = shared_state.clone();
                 let message = message.clone();
-                
+
                 if shared_state.redacted_custom_bot_id != chat_id {
                     tokio::spawn(async move {
                         let _ = snipe(chat_id, &client, &shared_state, &ca).await;

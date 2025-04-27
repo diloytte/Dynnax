@@ -70,8 +70,8 @@ pub async fn buy_ca(
     match send_trade(&TradeRequest::Buy(&body), url, http_client).await {
         Ok(_) => {}
         Err(error) => {
-            println!("{}", format!("Error: {:?}, CA: {}", error, ca));
-            let dex_address = fetch_base_token_address_from_dex(ca,http_client).await;
+            println!("Error: {:?}, CA: {}", error, ca);
+            let dex_address = fetch_base_token_address_from_dex(ca, http_client).await;
             if dex_address.is_err() {
                 println!("Error from DEX. {:?}", error);
             }
@@ -109,7 +109,7 @@ pub async fn sell_ca(
     snipe_target: &SnipeTarget,
     ca: String,
     sell_precent: f32,
-    http_client:&ReqwestClient
+    http_client: &ReqwestClient,
 ) -> Result<(), TradeError> {
     let body = TradeRequestSell {
         action: "sell".to_string(),
@@ -189,7 +189,6 @@ pub async fn fetch_base_token_address_from_dex(
         Err(format!("No pair found for ca: {}", ca))
     }
 }
-
 
 // pub fn test(){
 //     let fetch_dex_address_result = fetch_base_token_address_from_dex(&ca);

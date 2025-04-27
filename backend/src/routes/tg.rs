@@ -1,6 +1,9 @@
 use axum::{Extension, Router, http::StatusCode, response::IntoResponse, routing::get};
 use serde_json::json;
-use shared::{json_error, tg::dialog::{clear_dialogs::clear_dialogs, get_dialogs::get_dialogs_data}};
+use shared::{
+    json_error,
+    tg::dialog::{clear_dialogs::clear_dialogs, get_dialogs::get_dialogs_data},
+};
 
 use crate::types::other::AppStateExtension;
 
@@ -14,15 +17,11 @@ pub fn routes() -> Router {
     )
 }
 
-async fn clear_dialogs_route(Extension(state): AppStateExtension)-> impl IntoResponse{
-   match clear_dialogs(state.tg_client.as_ref().unwrap()).await  {
-    Ok(_) => {
-        (StatusCode::OK).into_response()
-    },
-    Err(error) => {
-        (StatusCode::OK,json_error!(error.to_string())).into_response()
-    }
-   };
+async fn clear_dialogs_route(Extension(state): AppStateExtension) -> impl IntoResponse {
+    match clear_dialogs(state.tg_client.as_ref().unwrap()).await {
+        Ok(_) => (StatusCode::OK).into_response(),
+        Err(error) => (StatusCode::OK, json_error!(error.to_string())).into_response(),
+    };
 }
 
 async fn get_me(Extension(state): AppStateExtension) -> impl IntoResponse {

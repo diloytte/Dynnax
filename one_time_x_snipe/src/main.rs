@@ -1,5 +1,5 @@
-mod state;
 mod routes;
+mod state;
 
 use std::sync::Arc;
 
@@ -8,8 +8,8 @@ use dotenv::dotenv;
 use routes::routes;
 use shared::db::connect::connect;
 use state::State;
-use tokio::net::TcpListener;
 use std::env;
+use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -23,14 +23,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let db_url = env::var("DATABASE_URL")?;
     let db = connect(db_url).await.unwrap();
 
-    let state = State {
-        db
-    };
+    let state = State { db };
 
     let shared_state = Arc::new(state);
 
-    let router = Router::new()
-        .nest("/api/v1", routes());
+    let router = Router::new().nest("/api/v1", routes());
 
     axum::serve(listener, router).await.unwrap();
 

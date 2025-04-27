@@ -30,7 +30,6 @@ impl From<DBSnipeTarget> for SnipeTarget {
     }
 }
 
-
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
 pub struct DBXSnipeTarget {
     pub id: i32,
@@ -45,7 +44,7 @@ pub struct DBXSnipeTarget {
 impl From<DBXSnipeTarget> for TwitterTarget {
     fn from(db: DBXSnipeTarget) -> Self {
         TwitterTarget {
-            target_name:db.target_name,
+            target_name: db.target_name,
             snipe_config: SnipeConfig {
                 sol_amount: db.sol_amount as f32,
                 slippage: db.slippage,

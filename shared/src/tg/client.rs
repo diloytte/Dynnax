@@ -1,4 +1,7 @@
-use std::{error::Error, io::{self}};
+use std::{
+    error::Error,
+    io::{self},
+};
 
 use grammers_client::{Client, Config, SignInError};
 
@@ -28,7 +31,9 @@ pub async fn connect_client(session_path: &str) -> Result<Client, Box<dyn Error>
         match client.sign_in(&token, code).await {
             Ok(_) => println!("Logged in successfully!"),
             Err(SignInError::PasswordRequired(password_token)) => {
-                client.check_password(password_token, &config.password).await?;
+                client
+                    .check_password(password_token, &config.password)
+                    .await?;
             }
             Err(e) => return Err(e.into()),
         }

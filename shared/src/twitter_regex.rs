@@ -29,8 +29,6 @@ mod tests {
         }
     }
 
-
-
     #[test]
     fn test_valid_inputs() {
         let cases = [
@@ -46,21 +44,26 @@ mod tests {
 
         for (input, expected) in cases {
             let actual = extract_twitter_sender(input);
-            assert_eq!(actual, Some(expected.to_string()), "Input failed: {}", input);
+            assert_eq!(
+                actual,
+                Some(expected.to_string()),
+                "Input failed: {}",
+                input
+            );
         }
     }
 
     #[test]
     fn test_invalid_inputs() {
         let invalids = [
-            "🖼️🔄 repost from fz7",             // not a keyword
-            "📝 Message from Ga__ke",           // not a keyword
-            "from patty_fi",                    // missing action
-            "Retweet by user123",               // wrong preposition
-            "This is just a random tweet",      // no structure
-            "Quote: @john",                     // wrong format
-            "tweetform Ga__ke",                 // typo
-            "tweet from",                       // no username
+            "🖼️🔄 repost from fz7",        // not a keyword
+            "📝 Message from Ga__ke",      // not a keyword
+            "from patty_fi",               // missing action
+            "Retweet by user123",          // wrong preposition
+            "This is just a random tweet", // no structure
+            "Quote: @john",                // wrong format
+            "tweetform Ga__ke",            // typo
+            "tweet from",                  // no username
         ];
 
         for input in invalids {
@@ -76,4 +79,3 @@ mod tests {
         assert_eq!(result, Some("spaced_user".to_string()));
     }
 }
-

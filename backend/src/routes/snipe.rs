@@ -17,7 +17,10 @@ use axum::{
     routing::{delete, get, patch, post},
 };
 use serde_json::json;
-use shared::{json_error, types::{SnipeConfig, SnipeTarget}};
+use shared::{
+    json_error,
+    types::{SnipeConfig, SnipeTarget},
+};
 
 pub fn routes() -> Router {
     Router::new().nest(
@@ -44,7 +47,11 @@ async fn create_snipe_target(
         );
     }
 
-    if state.snipe_targets.get(&create_snipe_dto.target_id).is_some() {
+    if state
+        .snipe_targets
+        .get(&create_snipe_dto.target_id)
+        .is_some()
+    {
         return (
             StatusCode::BAD_REQUEST,
             json_error!(format!(

@@ -1,5 +1,5 @@
-use std::io;
 use core::fmt;
+use std::io;
 
 use serde::{Deserialize, Serialize};
 
@@ -11,7 +11,7 @@ pub enum Browser {
 pub enum SoundError {
     IoError(io::Error),
     StreamError(rodio::StreamError),
-    DecoderError(rodio::decoder::DecoderError)
+    DecoderError(rodio::decoder::DecoderError),
 }
 
 impl From<io::Error> for SoundError {
@@ -20,13 +20,13 @@ impl From<io::Error> for SoundError {
     }
 }
 
-impl From<rodio::StreamError> for SoundError{
+impl From<rodio::StreamError> for SoundError {
     fn from(err: rodio::StreamError) -> Self {
         SoundError::StreamError(err)
     }
 }
 
-impl From<rodio::decoder::DecoderError> for SoundError{
+impl From<rodio::decoder::DecoderError> for SoundError {
     fn from(err: rodio::decoder::DecoderError) -> Self {
         SoundError::DecoderError(err)
     }
@@ -37,26 +37,10 @@ impl fmt::Display for SoundError {
         match self {
             SoundError::IoError(err) => write!(f, "I/O error: {}", err),
             SoundError::StreamError(err) => write!(f, "Stream error: {}", err),
-            SoundError::DecoderError(err) => write!(f, "Decoder error. {}",err),
+            SoundError::DecoderError(err) => write!(f, "Decoder error. {}", err),
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #[derive(Debug)]
 pub enum TradeError {
@@ -70,7 +54,7 @@ impl From<reqwest::Error> for TradeError {
     }
 }
 
-#[derive(Debug, Serialize,Clone)]
+#[derive(Debug, Serialize, Clone)]
 pub struct TradeRequestBuy {
     pub action: String,
     pub mint: String,
@@ -99,7 +83,7 @@ pub struct TradeRequestSell {
 #[derive(Debug, Serialize)]
 pub enum TradeRequest<'a> {
     Buy(&'a TradeRequestBuy),
-    Sell(&'a TradeRequestSell)
+    Sell(&'a TradeRequestSell),
 }
 
 #[derive(Debug, Deserialize)]
@@ -113,24 +97,15 @@ pub struct PfResponse {
     pub signature: Option<String>,
 }
 
-
-
-
-
-
 #[derive(Deserialize)]
 pub struct DexScreenerResponse {
     pub pairs: Vec<Pair>,
 }
 
-
-
 #[derive(Deserialize)]
 pub struct Pair {
     pub base_token: BaseToken,
 }
-
-
 
 #[derive(Deserialize)]
 pub struct BaseToken {
@@ -138,34 +113,6 @@ pub struct BaseToken {
     pub name: String,
     pub symbol: String,
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct SnipeConfig {
@@ -205,9 +152,9 @@ impl Default for SnipeTarget {
     }
 }
 
-#[derive(Debug, Serialize,Clone)]
+#[derive(Debug, Serialize, Clone)]
 pub struct TwitterTarget {
-    pub target_name:String,
+    pub target_name: String,
     pub snipe_config: SnipeConfig,
     pub is_active: bool,
     pub deactivate_on_snipe: bool,

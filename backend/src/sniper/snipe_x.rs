@@ -2,7 +2,7 @@ use crate::db::queries::x_snipe_targets::q_patch_x_snipe_target;
 use crate::state::AppState;
 use crate::types::dtos::snipe_x::PatchXSnipeTargetDTO;
 use grammers_client::types::Message;
-use grammers_client::{Client, InvocationError, InputMessage};
+use grammers_client::{Client, InputMessage, InvocationError};
 use shared::pf::buy_ca;
 use shared::twitter_regex::extract_twitter_sender;
 use shared::types::Browser;
@@ -18,37 +18,45 @@ pub async fn snipe_x(
     ca: &String,
 ) -> Result<(), InvocationError> {
     let sender_option = extract_twitter_sender(message.text());
-    
+
     if sender_option.is_none() {
         println!("Unable to find Twitter sender.");
         println!("Message:");
-        println!("{}",message.text());
+        println!("{}", message.text());
         println!("---------------");
         return Ok(());
     }
-    
+
     let twitter_snipe_targets = &shared_state.twitter_snipe_targets;
 
     let twitter_sender = sender_option.unwrap();
     let twitter_snipe_target_option = twitter_snipe_targets.get_mut(&twitter_sender);
 
     if twitter_snipe_target_option.is_none() {
-        println!("{} is not a Twitter Snipe Target.",twitter_sender);
+        println!("{} is not a Twitter Snipe Target.", twitter_sender);
         return Ok(());
     }
 
     let mut twitter_snipe_target = twitter_snipe_target_option.unwrap();
 
-    if !twitter_snipe_target.is_active{
-        println!("{} is not a Active.",twitter_sender);
+    if !twitter_snipe_target.is_active {
+        println!("{} is not a Active.", twitter_sender);
         return Ok(());
     }
 
-    match buy_ca(&shared_state.pf_api_url,& twitter_snipe_target.snipe_config, ca,1,&shared_state.request_client).await {
+    match buy_ca(
+        &shared_state.pf_api_url,
+        &twitter_snipe_target.snipe_config,
+        ca,
+        1,
+        &shared_state.request_client,
+    )
+    .await
+    {
         Ok(_) => {
             if twitter_snipe_target.deactivate_on_snipe {
                 twitter_snipe_target.is_active = false;
-                
+
                 let db = shared_state.db.clone();
                 let patch = PatchXSnipeTargetDTO {
                     target_name: twitter_snipe_target.target_name.clone(),
@@ -69,12 +77,19 @@ pub async fn snipe_x(
             let ca = ca.clone();
 
             tokio::spawn(async move {
-                buy_notify(&chat_name, &super::Shiller::X(twitter_sender), &ca, &client, &trenches_chat, &trojan_bot);
+                buy_notify(
+                    &chat_name,
+                    &super::Shiller::X(twitter_sender),
+                    &ca,
+                    &client,
+                    &trenches_chat,
+                    &trojan_bot,
+                );
             });
-        },
+        }
         Err(error) => {
-            println!("{:?}",error);
-        },
+            println!("{:?}", error);
+        }
     }
 
     Ok(())
