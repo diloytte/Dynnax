@@ -3,6 +3,8 @@ mod pf;
 mod snipe;
 mod snipe_x;
 mod tg;
+mod snipe_internal;
+mod snipe_x_internal;
 
 use axum::{
     Router,

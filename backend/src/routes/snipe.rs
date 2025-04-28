@@ -22,73 +22,75 @@ use shared::{
     types::{SnipeConfig, SnipeTarget},
 };
 
+use super::snipe_internal::create_snipe_target_internal;
+
 pub fn routes() -> Router {
     Router::new().nest(
         "/snipe",
         Router::new()
             .route("/", get(get_snipe_targets))
             .route("/", post(create_snipe_target))
+            .route("/bulk", post(create_bulk_snipe_targets))
             .route("/", patch(patch_snipe_target))
             .route("/{id}", delete(delete_snipe_target)),
     )
 }
 
+async fn create_bulk_snipe_targets(
+    Extension(state): AppStateExtension,
+    Json(create_snipe_dtos): Json<Vec<CreateSnipeDTO>>,
+) -> impl IntoResponse {
+    let mut created = Vec::new();
+    let mut failed = Vec::new();
+
+    for dto in create_snipe_dtos {
+        match create_snipe_target_internal(&state, dto).await {
+            Ok(snipe_target) => {
+                created.push(snipe_target);
+            }
+            Err(error_message) => {
+                failed.push(error_message);
+            }
+        }
+    }
+
+    let response_data = json!({
+        "created": created,
+        "failed": failed
+    })
+    .to_string();
+
+    (StatusCode::OK, response_data)
+}
+
+
+
 async fn create_snipe_target(
     Extension(state): AppStateExtension,
     Json(create_snipe_dto): Json<CreateSnipeDTO>,
 ) -> impl IntoResponse {
-    if state.all_dialogs.get(&create_snipe_dto.target_id).is_none() {
-        return (
-            StatusCode::NOT_FOUND,
-            json_error!(format!(
-                "Dialog with ID: {} does not exist.",
-                &create_snipe_dto.target_id
-            )),
-        );
+    match create_snipe_target_internal(&state, create_snipe_dto).await {
+        Ok(snipe_target) => {
+            let response_data = json!({
+                "snipe_target": snipe_target
+            })
+            .to_string();
+            (StatusCode::OK, response_data)
+        }
+        Err(message) => {
+            let status = if message.contains("does not exist") {
+                StatusCode::NOT_FOUND
+            } else if message.contains("already exists") {
+                StatusCode::BAD_REQUEST
+            } else {
+                StatusCode::INTERNAL_SERVER_ERROR
+            };
+
+            (status, json_error!(message))
+        }
     }
-
-    if state
-        .snipe_targets
-        .get(&create_snipe_dto.target_id)
-        .is_some()
-    {
-        return (
-            StatusCode::BAD_REQUEST,
-            json_error!(format!(
-                "Snipe Target with ID: {} already exists.",
-                &create_snipe_dto.target_id
-            )),
-        );
-    }
-
-    if let Err(error) = q_create_snipe_target(&state.db, &create_snipe_dto).await {
-        println!("Error <create_snipe_target>: {}", error);
-        return (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            json_error!("Something went wrong."),
-        );
-    }
-
-    let snipe_targets = &state.snipe_targets;
-    let snipe_target = SnipeTarget {
-        target_name: create_snipe_dto.target_name,
-        snipe_config: create_snipe_dto
-            .snipe_config
-            .unwrap_or(SnipeConfig::default()),
-        is_active: true,
-        deactivate_on_snipe: create_snipe_dto.deactivate_on_snipe.unwrap_or(true),
-        past_shills: vec![],
-    };
-
-    let response_data = json!({
-        "snipe_target":snipe_target
-    })
-    .to_string();
-
-    snipe_targets.insert(create_snipe_dto.target_id, snipe_target);
-
-    (StatusCode::OK, response_data)
 }
+
 
 async fn get_snipe_targets(Extension(state): AppStateExtension) -> impl IntoResponse {
     let snipe_targets = &state.snipe_targets;

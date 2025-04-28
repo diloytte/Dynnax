@@ -19,72 +19,72 @@ use reqwest::StatusCode;
 use serde_json::json;
 use shared::{json_error, types::TwitterTarget};
 
+use super::snipe_x_internal::create_snipe_x_target_internal;
+
 pub fn routes() -> Router {
     Router::new().nest(
         "/snipeX",
         Router::new()
             .route("/", get(get_x_snipe_targets))
             .route("/", post(create_snipe_x_target))
+            .route("/bulk", post(create_bulk_snipe_x_targets))
             .route("/", patch(patch_x_snipe_target))
             .route("/{id}", delete(delete_x_snipe_target)),
     )
 }
 
-async fn create_snipe_x_target(
+
+async fn create_bulk_snipe_x_targets(
     Extension(state): AppStateExtension,
-    Json(twitter_create_snipe_dto): Json<CreateXSnipeTargetDTO>,
+    Json(dtos): Json<Vec<CreateXSnipeTargetDTO>>,
 ) -> impl IntoResponse {
-    if state
-        .twitter_snipe_targets
-        .get(&twitter_create_snipe_dto.target_name)
-        .is_some()
-    {
-        return (
-            StatusCode::BAD_REQUEST,
-            json_error!(format!(
-                "Twitter Snipe Target with Name: {} already exists.",
-                &twitter_create_snipe_dto.target_name
-            )),
-        );
+    let mut created = Vec::new();
+    let mut failed = Vec::new();
+
+    for dto in dtos {
+        match create_snipe_x_target_internal(&state, dto).await {
+            Ok(twitter_snipe_target) => {
+                created.push(twitter_snipe_target);
+            }
+            Err(error_message) => {
+                failed.push(error_message);
+            }
+        }
     }
-
-    let twitter_target_name = &twitter_create_snipe_dto.target_name;
-    let twitter_snipe_config_option = twitter_create_snipe_dto.snipe_config;
-    let twitter_snipe_config = twitter_snipe_config_option.unwrap_or_default();
-
-    if let Err(error) = q_create_x_snipe_target(
-        &state.db,
-        twitter_target_name,
-        &twitter_snipe_config,
-        &twitter_create_snipe_dto.deactivate_on_snipe,
-    )
-    .await
-    {
-        println!("Error <create_snipe_target>: {}", error);
-        return (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            json_error!("Something went wrong."),
-        );
-    }
-
-    let twitter_snipe_targets = &state.twitter_snipe_targets;
-
-    let twitter_snipe_target = TwitterTarget {
-        target_name: twitter_target_name.clone(),
-        snipe_config: twitter_snipe_config,
-        is_active: true,
-        deactivate_on_snipe: twitter_create_snipe_dto.deactivate_on_snipe.unwrap_or(true),
-    };
 
     let response_data = json!({
-        "snipe_target": twitter_snipe_target
+        "created": created,
+        "failed": failed
     })
     .to_string();
 
-    twitter_snipe_targets.insert(twitter_target_name.to_string(), twitter_snipe_target);
-
     (StatusCode::OK, response_data)
 }
+
+
+async fn create_snipe_x_target(
+    Extension(state): AppStateExtension,
+    Json(dto): Json<CreateXSnipeTargetDTO>,
+) -> impl IntoResponse {
+    match create_snipe_x_target_internal(&state, dto).await {
+        Ok(twitter_snipe_target) => {
+            let response_data = json!({
+                "snipe_target": twitter_snipe_target
+            })
+            .to_string();
+            (StatusCode::OK, response_data)
+        }
+        Err(message) => {
+            let status = if message.contains("already exists") {
+                StatusCode::BAD_REQUEST
+            } else {
+                StatusCode::INTERNAL_SERVER_ERROR
+            };
+            (status, json_error!(message))
+        }
+    }
+}
+
 
 async fn get_x_snipe_targets(Extension(state): AppStateExtension) -> impl IntoResponse {
     let twitter_snipe_targets = &state.twitter_snipe_targets;
