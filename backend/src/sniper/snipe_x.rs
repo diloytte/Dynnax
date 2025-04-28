@@ -13,7 +13,7 @@ pub async fn snipe_x(
     message: &Message,
     client: &Client,
     shared_state: &Arc<AppState>,
-    ca: &String,
+    ca: &str,
 ) -> Result<(), InvocationError> {
     let sender_option = extract_twitter_sender(message.text());
 
@@ -68,22 +68,26 @@ pub async fn snipe_x(
                     let _ = q_patch_x_snipe_target(&db, &patch).await;
                 });
             }
-            let client = client.clone();
-            let chat_name = twitter_snipe_target.target_name.clone();
-            let trenches_chat = shared_state.sniper_trenches_chat.clone();
-            let trojan_bot = shared_state.trojan_bot_chat.clone();
-            let ca = ca.clone();
+            #[cfg(not(feature = "remote"))]
+            {
+                let client = client.clone();
+                let chat_name = twitter_snipe_target.target_name.clone();
+                let trenches_chat = shared_state.sniper_trenches_chat.clone();
+                let trojan_bot = shared_state.trojan_bot_chat.clone();
+                let ca = ca.to_owned();
 
-            tokio::spawn(async move {
-                let _ = buy_notify(
-                    &chat_name,
-                    &super::Shiller::X(twitter_sender),
-                    &ca,
-                    &client,
-                    &trenches_chat,
-                    &trojan_bot,
-                ).await;
-            });
+                tokio::spawn(async move {
+                    let _ = buy_notify(
+                        &chat_name,
+                        &super::Shiller::X(twitter_sender),
+                        &ca,
+                        &client,
+                        &trenches_chat,
+                        &trojan_bot,
+                    )
+                    .await;
+                });
+            }
         }
         Err(error) => {
             println!("{:?}", error);

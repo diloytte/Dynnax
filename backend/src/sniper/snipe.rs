@@ -10,10 +10,10 @@ pub async fn snipe(
     chat_id: i64,
     client: &Client,
     shared_state: &Arc<AppState>,
-    ca: &String,
+    ca: &str,
 ) -> Result<(), InvocationError> {
     //TODO: Worst solution but for now it works.FIX ASAP
-    if GLOBALY_BLOCKED_CAS.contains(ca) {
+    if GLOBALY_BLOCKED_CAS.contains(&ca.to_string()) {
         return Ok(());
     }
 
@@ -56,22 +56,26 @@ pub async fn snipe(
                 // TODO: write to db, needs patch above.
                 snipe_target.past_shills.push(ca.to_string());
 
-                let client = client.clone();
-                let chat_name = snipe_target.target_name.clone();
-                let trenches_chat = shared_state.sniper_trenches_chat.clone();
-                let trojan_bot = shared_state.trojan_bot_chat.clone();
-                let ca = ca.clone();
+                #[cfg(not(feature = "remote"))]
+                {
+                    let client = client.clone();
+                    let chat_name = snipe_target.target_name.clone();
+                    let trenches_chat = shared_state.sniper_trenches_chat.clone();
+                    let trojan_bot = shared_state.trojan_bot_chat.clone();
+                    let ca = ca.to_owned();
 
-                tokio::spawn(async move {
-                    let _ = buy_notify(
-                        &chat_name,
-                        &super::Shiller::Tg(chat_id),
-                        &ca,
-                        &client,
-                        &trenches_chat,
-                        &trojan_bot,
-                    ).await;
-                });
+                    tokio::spawn(async move {
+                        let _ = buy_notify(
+                            &chat_name,
+                            &super::Shiller::Tg(chat_id),
+                            &ca,
+                            &client,
+                            &trenches_chat,
+                            &trojan_bot,
+                        )
+                        .await;
+                    });
+                }
             }
             Err(error) => {
                 println!("ERROR: {:?}", error)

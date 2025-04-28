@@ -54,7 +54,7 @@ pub async fn buy_ca_tg(client: &Client, message: &str, chat: &Chat) -> Result<()
 pub async fn buy_ca(
     url: &str,
     snipe_config: &SnipeConfig,
-    ca: &String,
+    ca: &str,
     fee_multiplier: u8,
     http_client: &ReqwestClient,
 ) -> Result<(), TradeError> {
