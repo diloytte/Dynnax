@@ -9,13 +9,19 @@ interface SnipeStore {
 }
 
 
-
 export const useTwitterSnipeStore = create<SnipeStore>((set) => ({
     twitterTargets: [],
     
     fetchTwitterSnipeTargets: async () => {
         try {
-            const res = await fetch('http://localhost:8001/api/v1/snipeX')
+            const API_KEY = import.meta.env.VITE_API_TOKEN;
+            const res = await fetch('http://localhost:8001/api/v1/snipeX', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${API_KEY}`, 
+                    'Content-Type': 'application/json'
+                }
+            });
             const data = await res.json()
             const targets = data.twitter_snipe_targets
 
@@ -55,7 +61,11 @@ export const useTwitterSnipeStore = create<SnipeStore>((set) => ({
     deleteTwitterTarget: async (name:String) => {
         const res = await fetch(`http://localhost:8001/api/v1/snipeX/${name}`, {
             method: 'DELETE',
-        })
+            headers: {
+                'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`,
+                'Content-Type': 'application/json'
+            }
+        });
         if (!res.ok) throw new Error('Failed to delete target')
 
         set((state) => ({

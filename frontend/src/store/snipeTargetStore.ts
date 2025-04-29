@@ -15,7 +15,14 @@ export const useSnipeStore = create<SnipeStore>((set) => ({
     
     fetchSnipeTargets: async () => {
         try {
-            const res = await fetch('http://localhost:8001/api/v1/snipe')
+            const API_KEY = import.meta.env.VITE_API_TOKEN;
+            const res = await fetch('http://localhost:8001/api/v1/snipe', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${API_KEY}`, 
+                    'Content-Type': 'application/json'
+                }
+            });
             const data = await res.json()
             const targets = data.snipe_targets
 

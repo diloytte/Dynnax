@@ -89,28 +89,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     load_snipe_configurations(&shared_state).await.unwrap();
 
-    let cors = CorsLayer::new()
-        .allow_origin(Any)
-        .allow_methods([
-            Method::GET,
-            Method::POST,
-            Method::PUT,
-            Method::DELETE,
-            Method::PATCH,
-        ])
-        .allow_headers([
-            "Content-Type".parse().unwrap(),
-            "Authorization".parse().unwrap(),
-            "Access-Control-Allow-Origin".parse().unwrap(),
-        ]);
-
     tokio::spawn(main_tg_loop(client.clone(), shared_state.clone()));
 
+    let cors = CorsLayer::new()
+    .allow_origin(Any)
+    .allow_methods([
+        Method::GET,
+        Method::POST,
+        Method::PUT,
+        Method::DELETE,
+        Method::PATCH,
+    ])
+    .allow_headers([
+        "Content-Type".parse().unwrap(),
+        "Authorization".parse().unwrap(),
+    ]);
 
     let router = Router::new()
     .nest("/api/v1", routes())
     .layer(cors)
-    .layer(middleware::from_fn(middlewares::auth_middleware))
     .layer(Extension(shared_state))
     .fallback(fallback);
 

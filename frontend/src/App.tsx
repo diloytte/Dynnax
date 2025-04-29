@@ -20,7 +20,13 @@ function App() {
     fetchTwitterTargets();
     const fetchDialogs = async () => {
       try {
-        const res = await fetch('http://localhost:8001/api/v1/tg/dialogs')
+        const res = await fetch('http://localhost:8001/api/v1/tg/dialogs', {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`, // or your token
+              'Content-Type': 'application/json'
+          }
+      });
         const data = await res.json()
         if (data.dialogs) {
           setDialogs(data.dialogs)
