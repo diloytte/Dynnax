@@ -1,8 +1,8 @@
 use reqwest::Client;
 use std::{sync::Arc, time::Duration};
-use tokio::{time, task, time::Instant};
+use tokio::{task, time, time::Instant};
 
-pub async fn start_keep_alive(api_key:String) {
+pub async fn start_keep_alive(api_key: String) {
     let pf_api_url = format!("https://pumpportal.fun/api/trade?api-key={}", api_key);
     let client = Arc::new(Client::new());
 
@@ -12,7 +12,7 @@ pub async fn start_keep_alive(api_key:String) {
     let url = pf_api_url.clone();
 
     task::spawn(async move {
-        let mut interval = time::interval(Duration::from_secs(50));
+        let mut interval = time::interval(Duration::from_secs(70));
 
         loop {
             interval.tick().await;

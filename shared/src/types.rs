@@ -86,6 +86,15 @@ pub enum TradeRequest<'a> {
     Sell(&'a TradeRequestSell),
 }
 
+impl<'a> TradeRequest<'a> {
+    pub fn to_payload(&self) -> serde_json::Value {
+        match self {
+            TradeRequest::Buy(buy) => serde_json::to_value(buy).unwrap(),
+            TradeRequest::Sell(sell) => serde_json::to_value(sell).unwrap(),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct ErrorResponse {
     pub errors: Vec<String>,

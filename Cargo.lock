@@ -2406,6 +2406,7 @@ dependencies = [
  "reqwest",
  "rodio",
  "serde",
+ "serde_json",
  "sqlx",
  "tokio",
 ]

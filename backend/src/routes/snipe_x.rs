@@ -1,9 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    db::queries::x_snipe_targets::{
-        q_delete_x_snipe_target, q_patch_x_snipe_target,
-    },
+    db::queries::x_snipe_targets::{q_delete_x_snipe_target, q_patch_x_snipe_target},
     types::{
         dtos::snipe_x::{CreateXSnipeTargetDTO, PatchXSnipeTargetDTO},
         other::AppStateExtension,
@@ -33,7 +31,6 @@ pub fn routes() -> Router {
     )
 }
 
-
 async fn create_bulk_snipe_x_targets(
     Extension(state): AppStateExtension,
     Json(dtos): Json<Vec<CreateXSnipeTargetDTO>>,
@@ -61,7 +58,6 @@ async fn create_bulk_snipe_x_targets(
     (StatusCode::OK, response_data)
 }
 
-
 async fn create_snipe_x_target(
     Extension(state): AppStateExtension,
     Json(dto): Json<CreateXSnipeTargetDTO>,
@@ -84,7 +80,6 @@ async fn create_snipe_x_target(
         }
     }
 }
-
 
 async fn get_x_snipe_targets(Extension(state): AppStateExtension) -> impl IntoResponse {
     let twitter_snipe_targets = &state.twitter_snipe_targets;
@@ -149,7 +144,6 @@ async fn patch_x_snipe_target(
             json_error!(format!("Failed to patch DB: {}", err)),
         );
     }
-
     let twitter_snipe_targets: &dashmap::DashMap<String, TwitterTarget> =
         &state.twitter_snipe_targets;
     let snipe_target_option = twitter_snipe_targets.get_mut(&patch_x_snipe_target_dto.target_name);

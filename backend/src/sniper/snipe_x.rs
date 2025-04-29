@@ -5,13 +5,15 @@ use grammers_client::types::Message;
 use grammers_client::{Client, InvocationError};
 use shared::pf::buy_ca;
 use shared::twitter_regex::extract_twitter_sender;
+#[cfg(not(feature = "remote"))]
+use shared::utils::play_buy_notif;
 use std::sync::Arc;
 
 use super::buy_notify;
 
 pub async fn snipe_x(
     message: &Message,
-    client: &Client,
+    #[cfg_attr(not(feature = "remote"), allow(unused_variables))] _client: &Client,
     shared_state: &Arc<AppState>,
     ca: &str,
 ) -> Result<(), InvocationError> {
@@ -68,9 +70,12 @@ pub async fn snipe_x(
                     let _ = q_patch_x_snipe_target(&db, &patch).await;
                 });
             }
+
             #[cfg(not(feature = "remote"))]
+            play_buy_notif();
+
             {
-                let client = client.clone();
+                let client = _client.clone();
                 let chat_name = twitter_snipe_target.target_name.clone();
                 let trenches_chat = shared_state.sniper_trenches_chat.clone();
                 let trojan_bot = shared_state.trojan_bot_chat.clone();

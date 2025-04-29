@@ -23,9 +23,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let db_url = env::var("DATABASE_URL")?;
     let db = connect(db_url).await.unwrap();
 
-    let state = State { db };
+    let state = State { _db: db };
 
-    let shared_state = Arc::new(state);
+    let _shared_state = Arc::new(state);
 
     let router = Router::new().nest("/api/v1", routes());
 

@@ -4,6 +4,7 @@ import { DialogData } from './components/dialog/Dialog'
 import SnipeTarget from './components/snipeTarget/SnipeTarget'
 import { useSnipeStore } from './store/snipeTargetStore'
 import { useTwitterSnipeStore } from './store/twitterSnipeTargetsStore'
+import { fetchWithFallback } from './utils'
 
 function App() {
   const [dialogs, setDialogs] = useState<DialogData[]>([])
@@ -20,21 +21,18 @@ function App() {
     fetchTwitterTargets();
     const fetchDialogs = async () => {
       try {
-        const res = await fetch('http://localhost:8001/api/v1/tg/dialogs', {
+        const res = await fetchWithFallback('/api/v1/tg/dialogs', {
           method: 'GET',
-          headers: {
-              'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`, // or your token
-              'Content-Type': 'application/json'
-          }
-      });
-        const data = await res.json()
+        });
+        const data = await res.json();
         if (data.dialogs) {
-          setDialogs(data.dialogs)
+          setDialogs(data.dialogs);
         }
       } catch (err) {
-        console.error('Failed to fetch dialogs:', err)
+        console.error('Failed to fetch dialogs:', err);
       }
-    }
+    };
+    
 
     fetchDialogs()
   }, [])

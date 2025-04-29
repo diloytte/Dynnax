@@ -1,13 +1,13 @@
 mod constants;
 mod db;
-mod routes;
+mod middlewares;
 mod pf;
+mod routes;
 mod sniper;
 mod state;
 mod tg;
 mod types;
 mod utils;
-mod middlewares;
 
 use dashmap::DashMap;
 use dotenv::dotenv;
@@ -27,7 +27,7 @@ use tg::next_update_loop::main_tg_loop;
 use tower_http::cors::{Any, CorsLayer};
 use utils::load_snipe_configurations;
 
-use axum::{http::Method, Extension, Router};
+use axum::{Extension, Router, http::Method};
 use routes::{fallback, routes};
 use state::AppState;
 use tokio::net::TcpListener;
@@ -64,14 +64,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
         .unwrap();
 
-
     let trojan_bot_chat_id: i64 = env::var("TROJAN_DIALOG_ID")?.parse()?;
     let trojan_bot_chat = find_dialog_chat_by_id(&client, trojan_bot_chat_id)
         .await
         .unwrap();
 
     let dynnax_api_key = env::var("API_KEY")?;
-    
+
     let state = AppState {
         request_client: Client::new(),
         db,
@@ -81,10 +80,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         tg_client: Some(client.clone()),
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
         sniper_trenches_chat: Arc::new(sniper_trenches_chat),
-        pf_api_url:pf_api_url.clone(),
+        pf_api_url: pf_api_url.clone(),
         priority_fee_multiplier: 1,
         trojan_bot_chat: Arc::new(trojan_bot_chat),
-        dynnax_api_key
+        dynnax_api_key,
     };
 
     let shared_state = Arc::new(state);
@@ -96,24 +95,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     tokio::spawn(start_keep_alive(pf_api_key.clone()));
 
     let cors = CorsLayer::new()
-    .allow_origin(Any)
-    .allow_methods([
-        Method::GET,
-        Method::POST,
-        Method::PUT,
-        Method::DELETE,
-        Method::PATCH,
-    ])
-    .allow_headers([
-        "Content-Type".parse().unwrap(),
-        "Authorization".parse().unwrap(),
-    ]);
+        .allow_origin(Any)
+        .allow_methods([
+            Method::GET,
+            Method::POST,
+            Method::PUT,
+            Method::DELETE,
+            Method::PATCH,
+        ])
+        .allow_headers([
+            "Content-Type".parse().unwrap(),
+            "Authorization".parse().unwrap(),
+        ]);
 
     let router = Router::new()
-    .nest("/api/v1", routes())
-    .layer(cors)
-    .layer(Extension(shared_state))
-    .fallback(fallback);
+        .nest("/api/v1", routes())
+        .layer(cors)
+        .layer(Extension(shared_state))
+        .fallback(fallback);
 
     let (bind_address, port) = if cfg!(feature = "production") {
         println!("Running PRODUCTION backend build");
@@ -122,11 +121,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         println!("Running DEVELOPMENT backend build");
         ("localhost", "8000")
     };
-    
+
     let listener = TcpListener::bind(format!("{}:{}", bind_address, port))
         .await
         .unwrap();
-    
+
     axum::serve(listener, router).await.unwrap();
 
     Ok(())

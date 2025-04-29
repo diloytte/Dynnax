@@ -1,18 +1,24 @@
 use crate::{
     constants::GLOBALY_BLOCKED_CAS, db::queries::snipe_targets::q_patch_snipe_target,
-    sniper::buy_notify, state::AppState, types::dtos::PatchSnipeTargetDTO,
+    state::AppState, types::dtos::PatchSnipeTargetDTO,
 };
 use grammers_client::{Client, InvocationError};
 use shared::pf::buy_ca;
 use std::sync::Arc;
 
+use crate::sniper::buy_notify;
+
+#[cfg(not(feature = "remote"))]
+use shared::utils::play_buy_notif;
+
 pub async fn snipe(
     chat_id: i64,
-    client: &Client,
+    _client: &Client,
     shared_state: &Arc<AppState>,
     ca: &str,
 ) -> Result<(), InvocationError> {
     //TODO: Worst solution but for now it works.FIX ASAP
+
     if GLOBALY_BLOCKED_CAS.contains(&ca.to_string()) {
         return Ok(());
     }
@@ -57,8 +63,10 @@ pub async fn snipe(
                 snipe_target.past_shills.push(ca.to_string());
 
                 #[cfg(not(feature = "remote"))]
+                play_buy_notif();
+
                 {
-                    let client = client.clone();
+                    let client = _client.clone();
                     let chat_name = snipe_target.target_name.clone();
                     let trenches_chat = shared_state.sniper_trenches_chat.clone();
                     let trojan_bot = shared_state.trojan_bot_chat.clone();

@@ -1,6 +1,8 @@
-use shared::types::{SnipeConfig, SnipeTarget};
+use shared::types::SnipeTarget;
 
-use crate::{db::queries::snipe_targets::q_create_snipe_target, state::AppState, types::dtos::CreateSnipeDTO};
+use crate::{
+    db::queries::snipe_targets::q_create_snipe_target, state::AppState, types::dtos::CreateSnipeDTO,
+};
 
 pub async fn create_snipe_target_internal(
     state: &AppState,
@@ -13,7 +15,11 @@ pub async fn create_snipe_target_internal(
         ));
     }
 
-    if state.snipe_targets.get(&create_snipe_dto.target_id).is_some() {
+    if state
+        .snipe_targets
+        .get(&create_snipe_dto.target_id)
+        .is_some()
+    {
         return Err(format!(
             "Snipe Target with ID: {} already exists.",
             create_snipe_dto.target_id
@@ -27,9 +33,7 @@ pub async fn create_snipe_target_internal(
 
     let snipe_target = SnipeTarget {
         target_name: create_snipe_dto.target_name,
-        snipe_config: create_snipe_dto
-            .snipe_config
-            .unwrap_or(SnipeConfig::default()),
+        snipe_config: create_snipe_dto.snipe_config.unwrap_or_default(),
         is_active: true,
         deactivate_on_snipe: create_snipe_dto.deactivate_on_snipe.unwrap_or(true),
         past_shills: vec![],

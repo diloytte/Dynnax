@@ -1,6 +1,7 @@
 // src/store/snipeStore.ts
 import { create } from 'zustand'
 import { TwitterSnipeTargetData } from '../components/snipeTarget/SnipeTarget'
+import { fetchWithFallback } from '../utils'
 
 interface SnipeStore {
     twitterTargets: TwitterSnipeTargetData[]
@@ -14,14 +15,9 @@ export const useTwitterSnipeStore = create<SnipeStore>((set) => ({
     
     fetchTwitterSnipeTargets: async () => {
         try {
-            const API_KEY = import.meta.env.VITE_API_TOKEN;
-            const res = await fetch('http://localhost:8001/api/v1/snipeX', {
+            const res = await fetchWithFallback('/api/v1/snipeX', {
                 method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${API_KEY}`, 
-                    'Content-Type': 'application/json'
-                }
-            });
+              });
             const data = await res.json()
             const targets = data.twitter_snipe_targets
 
@@ -59,13 +55,9 @@ export const useTwitterSnipeStore = create<SnipeStore>((set) => ({
 
 
     deleteTwitterTarget: async (name:String) => {
-        const res = await fetch(`http://localhost:8001/api/v1/snipeX/${name}`, {
+        const res = await fetchWithFallback(`/api/v1/snipeX/${name}`, {
             method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`,
-                'Content-Type': 'application/json'
-            }
-        });
+          });
         if (!res.ok) throw new Error('Failed to delete target')
 
         set((state) => ({

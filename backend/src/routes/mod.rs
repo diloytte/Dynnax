@@ -1,13 +1,17 @@
 mod dbg;
 mod pf;
 mod snipe;
-mod snipe_x;
-mod tg;
 mod snipe_internal;
+mod snipe_x;
 mod snipe_x_internal;
+mod tg;
 
 use axum::{
-    body::Body, http::{Request, StatusCode}, middleware, response::IntoResponse, Router
+    Router,
+    body::Body,
+    http::{Request, StatusCode},
+    middleware,
+    response::IntoResponse,
 };
 
 use crate::middlewares;

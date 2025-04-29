@@ -1,6 +1,6 @@
 import { updateSnipeTarget } from '../../api/updateSnipeTarget'
 import { globalSnipeTargetConfigurations } from '../../constants'
-import Dialog, { DialogData } from '../dialog/Dialog'
+import Dialog from '../dialog/Dialog'
 import Slider from '../slider/Slider'
 import Toggle from '../toggle/Toggle'
 import styles from './SnipeTarget.module.scss'
@@ -16,7 +16,7 @@ export interface SnipeTargetData {
     slippage: number,
     solAmount: number
   }
-  isTwitterTarget?:boolean
+  isTwitterTarget: boolean
 }
 
 export interface TwitterSnipeTargetData {
@@ -38,7 +38,7 @@ const SnipeTarget = (snipeTargetData: SnipeTargetData) => {
         name={snipeTargetData.targetName}
         dialogType={0}
         isSnipeTarget={true}
-        isTwitterData={snipeTargetData.isTwitterTarget}
+        isTwitter={snipeTargetData.isTwitterTarget}
       />
       <div className={styles.configurations}>
         <div className={styles.sliderWrapper}>
@@ -66,22 +66,33 @@ const SnipeTarget = (snipeTargetData: SnipeTargetData) => {
             sniperTargetId={snipeTargetData.targetId} />
         </div>
         <div className={styles.togglesWrapper}>
-          <Toggle
-            onToggle={(value) =>
-              updateSnipeTarget({
-                target_id: snipeTargetData.targetId,
-                is_active: value,
-              }).catch(console.error)}
+        <Toggle
+  onToggle={(value) =>
+    updateSnipeTarget({
+      isTwitterTarget: snipeTargetData.isTwitterTarget,
+      ...(snipeTargetData.isTwitterTarget
+        ? { target_name: snipeTargetData.targetName }
+        : { target_id: snipeTargetData.targetId }),
+      is_active: value,
+    }).catch(console.error)
+  }
+  name={"Is Active?"}
+  initialValue={snipeTargetData.isActive}
+/>
 
-            name={"is Active?"} initialValue={snipeTargetData.isActive} />
-          <Toggle
-            onToggle={(value) =>
-              updateSnipeTarget({
-                target_id: snipeTargetData.targetId,
-                deactive_on_snipe: value,
-              }).catch(console.error)
-            }
-            name={"DOS"} initialValue={snipeTargetData.deactiveOnSnipe} />
+<Toggle
+  onToggle={(value) =>
+    updateSnipeTarget({
+      isTwitterTarget: snipeTargetData.isTwitterTarget,
+      ...(snipeTargetData.isTwitterTarget
+        ? { target_name: snipeTargetData.targetName }
+        : { target_id: snipeTargetData.targetId }),
+      deactivate_on_snipe: value,
+    }).catch(console.error)
+  }
+  name={"Deactivate on Snipe?"}
+  initialValue={snipeTargetData.deactiveOnSnipe}
+/>
         </div>
       </div>
     </div>

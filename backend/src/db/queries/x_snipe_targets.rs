@@ -7,9 +7,9 @@ pub async fn q_create_x_snipe_target(
     target_name: &str,
     snipe_config: &SnipeConfig,
     deactivate_on_snipe: &Option<bool>,
+    is_active: bool,
 ) -> Result<(), sqlx::error::Error> {
     let deactivate_on_snipe = deactivate_on_snipe.unwrap_or(true);
-    let is_active = true;
 
     sqlx::query!(
         r#"

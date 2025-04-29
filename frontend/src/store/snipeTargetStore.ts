@@ -1,6 +1,7 @@
 // src/store/snipeStore.ts
 import { create } from 'zustand'
 import { SnipeTargetData } from '../components/snipeTarget/SnipeTarget'
+import { fetchWithFallback } from '../utils'
 
 interface SnipeStore {
     targets: SnipeTargetData[]
@@ -15,14 +16,9 @@ export const useSnipeStore = create<SnipeStore>((set) => ({
     
     fetchSnipeTargets: async () => {
         try {
-            const API_KEY = import.meta.env.VITE_API_TOKEN;
-            const res = await fetch('http://localhost:8001/api/v1/snipe', {
+            const res = await fetchWithFallback('/api/v1/snipe', {
                 method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${API_KEY}`, 
-                    'Content-Type': 'application/json'
-                }
-            });
+              });
             const data = await res.json()
             const targets = data.snipe_targets
 
@@ -63,9 +59,9 @@ export const useSnipeStore = create<SnipeStore>((set) => ({
 
 
     deleteTarget: async (targetId: number) => {
-        const res = await fetch(`http://localhost:8001/api/v1/snipe/${targetId}`, {
+        const res = await fetchWithFallback(`/api/v1/snipe/${targetId}`, {
             method: 'DELETE',
-        })
+          });
         if (!res.ok) throw new Error('Failed to delete target')
 
         set((state) => ({

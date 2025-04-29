@@ -75,7 +75,7 @@ pub async fn buy_ca(
             let dex_address = fetch_base_token_address_from_dex(ca, http_client).await;
             if dex_address.is_err() {
                 println!("Error from DEX. {:?}", error);
-                return Ok(());
+                return Err(TradeError::CustomError(dex_address.err().unwrap()));
             }
             match send_trade(
                 &TradeRequest::Buy(&TradeRequestBuy {
@@ -146,7 +146,7 @@ pub async fn send_trade(
     url: &str,
     http_client: &ReqwestClient,
 ) -> Result<(), TradeError> {
-    let response = http_client.post(url).json(&body).send().await?;
+    let response = http_client.post(url).json(&body.to_payload()).send().await?;
 
     let pf_response: PfResponse = response.json().await?;
     match pf_response.signature {

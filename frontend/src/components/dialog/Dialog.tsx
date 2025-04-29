@@ -19,7 +19,7 @@ export type DialogData = {
   dialogType: DialogType,
   isSnipeTarget: boolean,
   imageUrl?: string
-  isTwitterData?:boolean
+  isTwitter?:boolean
 }
 
 const getTypeIcon = (type: DialogType): string => {
@@ -35,7 +35,7 @@ const getTypeIcon = (type: DialogType): string => {
   }
 };
 
-const Dialog: React.FC<DialogData> = ({ id, name, dialogType, isSnipeTarget,isTwitterData }: DialogData) => {
+const Dialog: React.FC<DialogData> = ({ id, name, dialogType, isSnipeTarget,isTwitter: isTwitterData }: DialogData) => {
     const deleteTarget = useSnipeStore((state) => state.deleteTarget)
     const deleteTwitterTarget = useTwitterSnipeStore((state)=>state.deleteTwitterTarget)
   return (

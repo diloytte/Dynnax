@@ -1,4 +1,6 @@
 #[cfg(not(feature = "remote"))]
+use crate::types::{Browser, SoundError};
+#[cfg(not(feature = "remote"))]
 use rodio::{Decoder, OutputStream, Source};
 #[cfg(not(feature = "remote"))]
 use std::{
@@ -7,8 +9,6 @@ use std::{
     path::PathBuf,
     process::Command,
 };
-#[cfg(not(feature = "remote"))]
-use crate::types::{Browser, SoundError};
 
 #[macro_export]
 macro_rules! json_error {

@@ -1,9 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    db::queries::snipe_targets::{
-        q_delete_snipe_target, q_patch_snipe_target,
-    },
+    db::queries::snipe_targets::{q_delete_snipe_target, q_patch_snipe_target},
     types::{
         dtos::{CreateSnipeDTO, PatchSnipeTargetDTO},
         other::AppStateExtension,
@@ -17,10 +15,7 @@ use axum::{
     routing::{delete, get, patch, post},
 };
 use serde_json::json;
-use shared::{
-    json_error,
-    types::SnipeTarget,
-};
+use shared::{json_error, types::SnipeTarget};
 
 use super::snipe_internal::create_snipe_target_internal;
 
@@ -63,8 +58,6 @@ async fn create_bulk_snipe_targets(
     (StatusCode::OK, response_data)
 }
 
-
-
 async fn create_snipe_target(
     Extension(state): AppStateExtension,
     Json(create_snipe_dto): Json<CreateSnipeDTO>,
@@ -90,7 +83,6 @@ async fn create_snipe_target(
         }
     }
 }
-
 
 async fn get_snipe_targets(Extension(state): AppStateExtension) -> impl IntoResponse {
     let snipe_targets = &state.snipe_targets;

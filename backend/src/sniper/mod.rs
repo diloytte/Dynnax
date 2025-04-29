@@ -6,7 +6,7 @@ use grammers_client::{Client, InputMessage, InvocationError, types::Chat};
 use shared::types::Browser;
 
 #[cfg(not(feature = "remote"))]
-use shared::utils::{open_browser, play_buy_notif};
+use shared::utils::open_browser;
 
 pub mod snipe;
 pub mod snipe_x;
@@ -33,8 +33,6 @@ pub async fn buy_notify(
     trenches_chat: &Chat,
     trojan_bot: &Chat,
 ) -> Result<(), InvocationError> {
-    #[cfg(not(feature = "remote"))]
-    play_buy_notif();
     let final_msg = format!(
         "---------------\nChat: {}\n ID: {}\n CA: {}\n---------------",
         chat_name, shiller, ca
@@ -43,8 +41,10 @@ pub async fn buy_notify(
         "https://neo.bullx.io/terminal?chainId=1399811149&address={}",
         ca
     );
+
     #[cfg(not(feature = "remote"))]
     let _ = open_browser(Browser::Brave, &bullx_link);
+
     {
         let client = client.clone();
         let trenches_chat = trenches_chat.clone();
