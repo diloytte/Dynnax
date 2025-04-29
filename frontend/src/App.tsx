@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import { DialogData } from './components/dialog/Dialog'
+import Dialog, { DialogData } from './components/dialog/Dialog'
 import SnipeTarget from './components/snipeTarget/SnipeTarget'
 import { useSnipeStore } from './store/snipeTargetStore'
 import { useTwitterSnipeStore } from './store/twitterSnipeTargetsStore'
@@ -39,6 +39,12 @@ function App() {
   return (
     <>
       <div className='App'>
+        <div className=".dialogs">
+        {dialogs.map((dialog,index)=>(
+          <Dialog id={dialog.id} name={dialog.name} dialogType={dialog.dialogType} isSnipeTarget={false}/>
+        ))
+        }
+        </div>
         {/* <TokenBuyPanel onBuy={()=>{}} mint='4W1qX9t4kRSVv8pH4PjkGRpsZ9MNfnxmrUTP8NJZpump' symbol='test' name='Test' logo='https://d23exngyjlavgo.cloudfront.net/solana_6rj9mHEuB52bUTyRUzwV9ZN1buPDHgBYb5zQJi1tpump'/> */}
         {/* <Token mint='4W1qX9t4kRSVv8pH4PjkGRpsZ9MNfnxmrUTP8NJZpump' symbol='test' name='Test' logo='https://d23exngyjlavgo.cloudfront.net/solana_6rj9mHEuB52bUTyRUzwV9ZN1buPDHgBYb5zQJi1tpump'/> */}
         <div>
@@ -47,7 +53,7 @@ function App() {
               key={target.targetName}
               targetId={index}
               isTwitterTarget={true}
-              pastShills={[]} // or any real past shills if you have them
+              pastShills={[]}
               {...target}
             />
           ))}

@@ -28,6 +28,7 @@ pub async fn snipe(
 
     if let Some(mut snipe_target) = snipe_target_option {
         if !snipe_target.is_active {
+            println!("Target {} is not active",snipe_target.target_name);
             return Ok(());
         }
         match buy_ca(
