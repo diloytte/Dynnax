@@ -151,7 +151,7 @@ pub async fn send_trade(
     let pf_response: PfResponse = response.json().await?;
     match pf_response.signature {
         Some(sig) => {
-            println!("SELL Transaction sent. Signature: {}", sig);
+            println!("Transaction sent. Signature: {}", sig);
         }
         None => {
             return Err(TradeError::CustomError(format!(
