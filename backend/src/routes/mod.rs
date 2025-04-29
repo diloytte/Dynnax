@@ -7,10 +7,7 @@ mod snipe_internal;
 mod snipe_x_internal;
 
 use axum::{
-    Router,
-    body::Body,
-    http::{Request, StatusCode},
-    response::IntoResponse,
+    body::Body, http::{Request, StatusCode}, response::IntoResponse, Router
 };
 
 pub fn routes() -> Router {
@@ -25,6 +22,7 @@ fn _routes() -> Router {
         .merge(snipe::routes())
         .merge(pf::routes())
         .merge(snipe_x::routes())
+
 }
 
 pub async fn fallback(req: Request<Body>) -> impl IntoResponse {

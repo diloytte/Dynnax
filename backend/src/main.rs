@@ -6,6 +6,7 @@ mod state;
 mod tg;
 mod types;
 mod utils;
+mod middlewares;
 
 use dashmap::DashMap;
 use dotenv::dotenv;
@@ -24,7 +25,7 @@ use tg::next_update_loop::main_tg_loop;
 use tower_http::cors::{Any, CorsLayer};
 use utils::load_snipe_configurations;
 
-use axum::{Extension, Router, http::Method};
+use axum::{http::Method, middleware, Extension, Router};
 use routes::{fallback, routes};
 use state::AppState;
 use tokio::net::TcpListener;
@@ -32,45 +33,14 @@ use tokio::net::TcpListener;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
-
-    let port: &str = if cfg!(feature = "production") {
-        println!("Running PRODUCTION backend build");
-        "8001"
-    } else {
-        println!("Running DEVELOPMENT backend build");
-        "8000"
-    };
-
-    let listener = TcpListener::bind(format!("{}:{}", "localhost", port))
-        .await
-        .unwrap();
-
     let db_url = env::var("DATABASE_URL")?;
     let db = connect(db_url).await.unwrap();
-
-    let redacted_self_bot_father_dialog_id: i64 =
-        env::var("REDACTED_SELF_BOT_FATHER_DIALOG_ID")?.parse()?;
-
     sqlx::migrate!("./migrations").run(&db).await.unwrap();
 
     let client = connect_client("./backend/session.session").await?;
 
-    let dialogs_data = get_dialogs_data(&client).await?;
-
     let dialogs_dashmap = DashMap::new();
-
-    let sniper_trenches_chat_id: i64 = env::var("SNIPER_TRENCHES_CHAT_ID")?.parse()?;
-
-    let sniper_trenches_chat: Chat = find_dialog_chat_by_id(&client, sniper_trenches_chat_id)
-        .await
-        .unwrap();
-
-    let trojan_bot_chat_id: i64 = env::var("TROJAN_DIALOG_ID")?.parse()?;
-
-    let trojan_bot_chat = find_dialog_chat_by_id(&client, trojan_bot_chat_id)
-        .await
-        .unwrap();
-
+    let dialogs_data = get_dialogs_data(&client).await?;
     for dialog in dialogs_data {
         dialogs_dashmap.insert(dialog.id, (dialog.name, dialog.dialog_type));
     }
@@ -82,9 +52,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let pump_portal_url: &str = "https://pumpportal.fun/api/trade?api-key=";
-
     let pf_api_url = format!("{}{}", pump_portal_url, pf_api_key);
 
+    let redacted_self_bot_father_dialog_id: i64 =
+        env::var("REDACTED_SELF_BOT_FATHER_DIALOG_ID")?.parse()?;
+
+    let sniper_trenches_chat_id: i64 = env::var("SNIPER_TRENCHES_CHAT_ID")?.parse()?;
+    let sniper_trenches_chat: Chat = find_dialog_chat_by_id(&client, sniper_trenches_chat_id)
+        .await
+        .unwrap();
+
+
+    let trojan_bot_chat_id: i64 = env::var("TROJAN_DIALOG_ID")?.parse()?;
+    let trojan_bot_chat = find_dialog_chat_by_id(&client, trojan_bot_chat_id)
+        .await
+        .unwrap();
+
+    let dynnax_api_key = env::var("API_KEY")?;
+    
     let state = AppState {
         request_client: Client::new(),
         db,
@@ -97,6 +82,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         pf_api_url,
         priority_fee_multiplier: 1,
         trojan_bot_chat: Arc::new(trojan_bot_chat),
+        dynnax_api_key
     };
 
     let shared_state = Arc::new(state);
@@ -120,12 +106,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     tokio::spawn(main_tg_loop(client.clone(), shared_state.clone()));
 
-    let router = Router::new()
-        .nest("/api/v1", routes())
-        .layer(cors)
-        .layer(Extension(shared_state))
-        .fallback(fallback);
 
+    let router = Router::new()
+    .nest("/api/v1", routes())
+    .layer(cors)
+    .layer(middleware::from_fn(middlewares::auth_middleware))
+    .layer(Extension(shared_state))
+    .fallback(fallback);
+
+    let (bind_address, port) = if cfg!(feature = "production") {
+        println!("Running PRODUCTION backend build");
+        ("0.0.0.0", "8001")
+    } else {
+        println!("Running DEVELOPMENT backend build");
+        ("localhost", "8000")
+    };
+    
+    let listener = TcpListener::bind(format!("{}:{}", bind_address, port))
+        .await
+        .unwrap();
+    
     axum::serve(listener, router).await.unwrap();
 
     Ok(())

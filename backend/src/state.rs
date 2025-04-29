@@ -12,6 +12,7 @@ use shared::{
 };
 
 pub struct AppState {
+    pub dynnax_api_key: String,
     pub request_client: ReqwestClient,
     pub db: Database,
     pub all_dialogs: DashMap<i64, (String, u8)>,
