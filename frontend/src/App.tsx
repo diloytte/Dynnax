@@ -14,11 +14,12 @@ function App() {
   const twitterTargets = useTwitterSnipeStore((state) => state.twitterTargets);
   const fetchTwitterTargets = useTwitterSnipeStore((state) => state.fetchTwitterSnipeTargets);
 
-  console.info(twitterTargets)
-
   useEffect(() => {
     fetchSnipeTargets();
     fetchTwitterTargets();
+  }, []);
+
+  useEffect(() => {
     const fetchDialogs = async () => {
       try {
         const res = await fetchWithFallback('/api/v1/tg/dialogs', {
@@ -32,10 +33,8 @@ function App() {
         console.error('Failed to fetch dialogs:', err);
       }
     };
-    
-
-    fetchDialogs()
-  }, [])
+    fetchDialogs();
+  }, []);
 
   return (
     <>

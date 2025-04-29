@@ -17,5 +17,5 @@ pub struct PatchSnipeTargetDTO {
     pub slippage: Option<i32>,
     pub priority_fee: Option<f32>,
     pub is_active: Option<bool>,
-    pub deactive_on_snipe: Option<bool>,
+    pub deactivate_on_snipe: Option<bool>,
 }

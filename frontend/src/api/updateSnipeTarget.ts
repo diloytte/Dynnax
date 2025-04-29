@@ -30,7 +30,7 @@ export async function updateSnipeTarget(params: SnipeParams) {
     throw new Error(`Snipe request failed: ${response.status} ${response.statusText} - ${errorBody}`);
   }
 
-  return response.json();
+  let changedTarget = response.json();
 }
 
   

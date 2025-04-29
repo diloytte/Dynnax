@@ -138,7 +138,7 @@ async fn patch_snipe_target(
             snipe_target.is_active = is_active;
         }
 
-        if let Some(deactivate_on_snipe) = patch_snipe_target_dto.deactive_on_snipe {
+        if let Some(deactivate_on_snipe) = patch_snipe_target_dto.deactivate_on_snipe {
             snipe_target.deactivate_on_snipe = deactivate_on_snipe;
         }
 

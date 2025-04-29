@@ -124,7 +124,7 @@ pub async fn q_patch_snipe_target(
         .await?;
     }
 
-    if let Some(deactivate_on_snipe) = dto.deactive_on_snipe {
+    if let Some(deactivate_on_snipe) = dto.deactivate_on_snipe {
         sqlx::query!(
             r#"
             UPDATE snipe_targets SET deactivate_on_snipe = $1 WHERE target_id = $2

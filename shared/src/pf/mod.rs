@@ -77,29 +77,7 @@ pub async fn buy_ca(
                 println!("Error from DEX. {:?}", error);
                 return Err(TradeError::CustomError(dex_address.err().unwrap()));
             }
-            match send_trade(
-                &TradeRequest::Buy(&TradeRequestBuy {
-                    action: body.action,
-                    mint: dex_address.unwrap(),
-                    amount: body.amount,
-                    denominated_in_sol: body.denominated_in_sol,
-                    slippage: body.slippage,
-                    priority_fee: body.priority_fee,
-                    pool: body.pool,
-                }),
-                url,
-                http_client,
-            )
-            .await
-            {
-                Ok(_) => {}
-                Err(error) => {
-                    return Err(TradeError::CustomError(format!(
-                        "Error: {:?}, CA: {}",
-                        error, ca
-                    )));
-                }
-            }
+            send_dex_ca_trade(ca, url, &body, http_client).await?;
         }
     }
 
@@ -192,31 +170,36 @@ pub async fn fetch_base_token_address_from_dex(
     }
 }
 
-// pub fn test(){
-//     let fetch_dex_address_result = fetch_base_token_address_from_dex(&ca);
-//     if fetch_dex_address_result.is_err(){
-//         println!("Dexscreener error: {:?}",fetch_dex_address_result.as_ref().err());
-//     }
-//     let dex_address = fetch_dex_address_result.unwrap();
-//     let body = TradeRequestBuy {
-//         action: "buy".to_string(),
-//         mint: dex_address,
-//         amount: snipe_target.snipe_config.sol_amount,
-//         denominated_in_sol: "true".to_string(),
-//         slippage: snipe_target.snipe_config.slippage,
-//         priority_fee: snipe_target.snipe_config.priority_fee * fee_multiplier as f32,
-//         pool: "auto".to_string(),
-//     };
+async fn send_dex_ca_trade(
+    ca: &str,
+    url: &str,
+    body: &TradeRequestBuy,
+    http_client: &ReqwestClient,
+) -> Result<(), TradeError> {
+    let dex_address = fetch_base_token_address_from_dex(ca, http_client).await;
+    if let Err(err) = dex_address {
+        println!("Error from DEX. {:?}", err);
+        return Err(TradeError::CustomError(err));
+    }
+    
+    let dex_mint = dex_address.unwrap();
+    let dex_body = TradeRequestBuy {
+        action: body.action.clone(),
+        mint: dex_mint,
+        amount: body.amount,
+        denominated_in_sol: body.denominated_in_sol.clone(),
+        slippage: body.slippage,
+        priority_fee: body.priority_fee,
+        pool: body.pool.clone(),
+    };
 
-//     let pf_response: PfResponse = ureq::post(url).send_json(&body)?.body_mut().read_json()?;
-//     match pf_response.signature {
-//         Some(sig) => {
-//             println!("BUY Transaction sent. Signature: {}", sig);
-//         }
-//         None => {
-//             return Err(TradeError::CustomError(
-//                 format!("{} \n CA: {}",pf_response.errors.first().unwrap(),ca)
-//             ));
-//         }
-//     }
-// }
+    match send_trade(&TradeRequest::Buy(&dex_body), url, http_client).await {
+        Ok(_) => Ok(()),
+        Err(error) => {
+            Err(TradeError::CustomError(format!(
+                "Error: {:?}, CA: {}",
+                error, ca
+            )))
+        }
+    }
+}

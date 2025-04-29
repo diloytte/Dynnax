@@ -4,7 +4,7 @@ const BASE_URLS = [
     import.meta.env.VITE_SECRET_SERVER,
   ];
   
-export async function fetchWithFallback(path: string, options: RequestInit = {}) {
+  export async function fetchWithFallback(path: string, options: RequestInit = {}) {
     const API_KEY = import.meta.env.VITE_API_TOKEN;
   
     const headers = {
@@ -14,24 +14,36 @@ export async function fetchWithFallback(path: string, options: RequestInit = {})
     };
   
     for (const baseUrl of BASE_URLS) {
+      console.info(`[fetchWithFallback] Trying: ${baseUrl}${path}`);
       try {
         const res = await fetch(`${baseUrl}${path}`, {
           ...options,
           headers,
         });
   
+        console.info(`[fetchWithFallback] Got response: ${res.status} from ${baseUrl}${path}`);
+  
         if (!res.ok) {
-          console.warn(`Fetch failed on ${baseUrl}${path} with status: ${res.status}`);
+          let responseText = '';
+          try {
+            responseText = await res.text();
+            console.warn(`[fetchWithFallback] Failed status ${res.status}. Response: ${responseText}`);
+          } catch (err) {
+            console.warn(`[fetchWithFallback] Failed to read error body`);
+          }
           continue;
         }
   
-        return res; // Success
+        return res; // 🚨 Return the actual Response object, NOT parsed JSON
       } catch (err) {
-        console.warn(`Fetch error on ${baseUrl}${path}:`, err);
+        console.error(`[fetchWithFallback] Network error on ${baseUrl}${path}:`, err);
+        // Try next server
       }
     }
   
-    console.error('All fetch attempts failed. All servers are down.');
+    console.error('[fetchWithFallback] All fetch attempts failed.');
     throw new Error('All fetch attempts failed.');
   }
+  
+  
   

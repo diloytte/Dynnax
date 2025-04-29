@@ -51,7 +51,7 @@ pub async fn snipe(
                         sol_amount: None,
                         slippage: None,
                         priority_fee: None,
-                        deactive_on_snipe: None,
+                        deactivate_on_snipe: None,
                     };
 
                     tokio::spawn(async move {
