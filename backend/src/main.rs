@@ -1,6 +1,7 @@
 mod constants;
 mod db;
 mod routes;
+mod pf;
 mod sniper;
 mod state;
 mod tg;
@@ -12,6 +13,7 @@ use dashmap::DashMap;
 use dotenv::dotenv;
 use grammers_client::types::Chat;
 
+use pf::start_keep_alive;
 use reqwest::Client;
 use shared::{
     db::connect::connect,
@@ -25,7 +27,7 @@ use tg::next_update_loop::main_tg_loop;
 use tower_http::cors::{Any, CorsLayer};
 use utils::load_snipe_configurations;
 
-use axum::{http::Method, middleware, Extension, Router};
+use axum::{http::Method, Extension, Router};
 use routes::{fallback, routes};
 use state::AppState;
 use tokio::net::TcpListener;
@@ -79,7 +81,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         tg_client: Some(client.clone()),
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
         sniper_trenches_chat: Arc::new(sniper_trenches_chat),
-        pf_api_url,
+        pf_api_url:pf_api_url.clone(),
         priority_fee_multiplier: 1,
         trojan_bot_chat: Arc::new(trojan_bot_chat),
         dynnax_api_key
@@ -90,6 +92,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     load_snipe_configurations(&shared_state).await.unwrap();
 
     tokio::spawn(main_tg_loop(client.clone(), shared_state.clone()));
+
+    tokio::spawn(start_keep_alive(pf_api_key.clone()));
 
     let cors = CorsLayer::new()
     .allow_origin(Any)
