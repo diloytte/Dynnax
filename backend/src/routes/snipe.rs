@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     db::queries::snipe_targets::{
-        q_create_snipe_target, q_delete_snipe_target, q_patch_snipe_target,
+        q_delete_snipe_target, q_patch_snipe_target,
     },
     types::{
         dtos::{CreateSnipeDTO, PatchSnipeTargetDTO},
@@ -19,7 +19,7 @@ use axum::{
 use serde_json::json;
 use shared::{
     json_error,
-    types::{SnipeConfig, SnipeTarget},
+    types::SnipeTarget,
 };
 
 use super::snipe_internal::create_snipe_target_internal;

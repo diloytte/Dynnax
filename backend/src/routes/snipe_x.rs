@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::{
     db::queries::x_snipe_targets::{
-        q_create_x_snipe_target, q_delete_x_snipe_target, q_patch_x_snipe_target,
+        q_delete_x_snipe_target, q_patch_x_snipe_target,
     },
     types::{
         dtos::snipe_x::{CreateXSnipeTargetDTO, PatchXSnipeTargetDTO},

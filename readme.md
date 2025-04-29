@@ -90,4 +90,11 @@ cargo run -p <folder name>
 
 Remote is added because `open_browser` and `play_sound` functionalities shouldnt be called on remote backend.
 
+
+3. Building in custom folder.
+
+```
+CARGO_TARGET_DIR=target-prod cargo build -p backend --release --features "production remote"
+```
+
 # Migrations
