@@ -92,7 +92,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     tokio::spawn(main_tg_loop(client.clone(), shared_state.clone()));
 
-    tokio::spawn(start_keep_alive(pf_api_key.clone()));
+    start_keep_alive(pf_api_key.clone()).await;
 
     let cors = CorsLayer::new()
         .allow_origin(Any)

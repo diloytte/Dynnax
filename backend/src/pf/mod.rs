@@ -33,7 +33,6 @@ async fn send_dummy_request(client: &Client, url: &str) {
     let start = Instant::now();
     let response = client
         .post(url)
-        .body("{}") // Tiny dummy body
         .send()
         .await;
 

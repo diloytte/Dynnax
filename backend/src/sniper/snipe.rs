@@ -18,7 +18,6 @@ pub async fn snipe(
     ca: &str,
 ) -> Result<(), InvocationError> {
     //TODO: Worst solution but for now it works.FIX ASAP
-
     if GLOBALY_BLOCKED_CAS.contains(&ca.to_string()) {
         return Ok(());
     }
@@ -90,6 +89,8 @@ pub async fn snipe(
                 println!("ERROR: {:?}", error)
             }
         }
+    } else {
+        println!("Target with chat ID: {} does not exit.",chat_id);
     }
     Ok(())
 }
