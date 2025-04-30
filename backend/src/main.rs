@@ -114,13 +114,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .layer(Extension(shared_state))
         .fallback(fallback);
 
-    let (bind_address, port) = if cfg!(feature = "production") {
-        println!("Running PRODUCTION backend build");
-        ("0.0.0.0", "8001")
-    } else {
-        println!("Running DEVELOPMENT backend build");
-        ("localhost", "8000")
-    };
+        let port = if cfg!(feature = "production") {
+            println!("Running PRODUCTION backend build");
+            "8001"
+        } else {
+            println!("Running DEVELOPMENT backend build");
+            "8000"
+        };
+        
+        let bind_address = if cfg!(any(feature = "remote", feature = "production")) {
+            "0.0.0.0"
+        } else {
+            "localhost"
+        };
 
     let listener = TcpListener::bind(format!("{}:{}", bind_address, port))
         .await
