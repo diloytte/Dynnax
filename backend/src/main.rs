@@ -47,6 +47,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         dialogs_dashmap.insert(dialog.id, (dialog.name, dialog.dialog_type));
     }
 
+    // PUMPFUN_PORTAL_API_KEY
     let pf_api_key = if cfg!(feature = "production") {
         env::var("PUMPFUN_PORTAL_API_KEY")?
     } else {
@@ -114,19 +115,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .layer(Extension(shared_state))
         .fallback(fallback);
 
-        let port = if cfg!(feature = "production") {
-            println!("Running PRODUCTION backend build");
-            "8001"
-        } else {
-            println!("Running DEVELOPMENT backend build");
-            "8000"
-        };
-        
-        let bind_address = if cfg!(any(feature = "remote", feature = "production")) {
-            "0.0.0.0"
-        } else {
-            "localhost"
-        };
+    let port = if cfg!(feature = "production") {
+        println!("Running PRODUCTION backend build");
+        "8001"
+    } else {
+        println!("Running DEVELOPMENT backend build");
+        "8000"
+    };
+
+    let bind_address = if cfg!(any(feature = "remote", feature = "production")) {
+        "0.0.0.0"
+    } else {
+        "localhost"
+    };
+
+    println!("Listening on: {}:{}",bind_address,port);
 
     let listener = TcpListener::bind(format!("{}:{}", bind_address, port))
         .await

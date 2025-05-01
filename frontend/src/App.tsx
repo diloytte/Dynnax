@@ -15,8 +15,8 @@ function App() {
   const fetchTwitterTargets = useTwitterSnipeStore((state) => state.fetchTwitterSnipeTargets);
 
   useEffect(() => {
-    fetchSnipeTargets();
-    fetchTwitterTargets();
+    // fetchSnipeTargets();
+    // fetchTwitterTargets();
   }, []);
 
   useEffect(() => {

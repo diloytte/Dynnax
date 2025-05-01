@@ -73,7 +73,6 @@ pub async fn snipe_x(
 
             #[cfg(not(feature = "remote"))]
             play_buy_notif();
-
             {
                 let client = _client.clone();
                 let chat_name = twitter_snipe_target.target_name.clone();

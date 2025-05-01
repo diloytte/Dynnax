@@ -1,7 +1,8 @@
 const BASE_URLS = [
     'http://localhost:8001',
     'http://localhost:8000',
-    import.meta.env.VITE_SECRET_SERVER,
+    import.meta.env.VITE_SECRET_SERVER + ":8001",
+    import.meta.env.VITE_SECRET_SERVER + ":8000",
   ];
   
   export async function fetchWithFallback(path: string, options: RequestInit = {}) {

@@ -1,5 +1,4 @@
 use std::sync::Arc;
-
 use grammers_client::{Client, InvocationError, Update};
 use token_address_extractor::extract_solana_address;
 

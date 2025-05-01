@@ -8,6 +8,9 @@ use crate::types::{PfResponse, SnipeTarget, TradeError, TradeRequestBuy, TradeRe
 #[cfg(not(feature = "remote"))]
 use crate::utils::play_buy_notif;
 
+#[cfg(feature = "performance_log")]
+use std::time::Instant;
+
 pub async fn manual_buy_token(
     url: &str,
     sol_amount: f32,
@@ -58,6 +61,9 @@ pub async fn buy_ca(
     fee_multiplier: u8,
     http_client: &ReqwestClient,
 ) -> Result<(), TradeError> {
+        #[cfg(feature = "performance_log")]
+        let start = Instant::now();
+
     let body = TradeRequestBuy {
         action: "buy".to_string(),
         mint: ca.to_string(),
@@ -69,7 +75,13 @@ pub async fn buy_ca(
     };
 
     match send_trade(&TradeRequest::Buy(&body), url, http_client).await {
-        Ok(_) => {}
+        Ok(_) => {
+            #[cfg(feature = "performance_log")]
+            {
+                let duration = start.elapsed();
+                println!("Buy delay: {} ms", duration.as_millis());
+            }
+        }
         Err(error) => {
             println!("Error: {:?}, CA: {}", error, ca);
             let dex_address = fetch_base_token_address_from_dex(ca, http_client).await;

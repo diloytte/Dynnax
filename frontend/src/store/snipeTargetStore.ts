@@ -26,6 +26,7 @@ export const useSnipeStore = create<SnipeStore>((set) => ({
                 ([targetId, targetRaw]) => {
                     const target = targetRaw as {
                         target_name: string
+                        isTwitterTarget?:boolean,
                         deactivate_on_snipe: boolean
                         is_active: boolean
                         past_shills: any[]
@@ -37,6 +38,7 @@ export const useSnipeStore = create<SnipeStore>((set) => ({
                     }
 
                     return {
+                        isTwitterTarget:true,
                         targetId: Number(targetId),
                         targetName: target.target_name,
                         deactiveOnSnipe: target.deactivate_on_snipe,

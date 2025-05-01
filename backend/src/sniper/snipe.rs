@@ -1,10 +1,11 @@
 use crate::{
-    constants::GLOBALY_BLOCKED_CAS, db::queries::snipe_targets::q_patch_snipe_target,
+    db::queries::snipe_targets::q_patch_snipe_target,
     state::AppState, types::dtos::PatchSnipeTargetDTO,
 };
 use grammers_client::{Client, InvocationError};
 use shared::pf::buy_ca;
 use std::sync::Arc;
+
 
 use crate::sniper::buy_notify;
 
@@ -17,11 +18,6 @@ pub async fn snipe(
     shared_state: &Arc<AppState>,
     ca: &str,
 ) -> Result<(), InvocationError> {
-    //TODO: Worst solution but for now it works.FIX ASAP
-    if GLOBALY_BLOCKED_CAS.contains(&ca.to_string()) {
-        return Ok(());
-    }
-
     let snipe_targets = &shared_state.snipe_targets;
     let snipe_target_option = snipe_targets.get_mut(&chat_id);
 
@@ -59,6 +55,7 @@ pub async fn snipe(
                     });
                 }
 
+                // TODO: Do this only if it does not exist.
                 // TODO: write to db, needs patch above.
                 snipe_target.past_shills.push(ca.to_string());
 
@@ -89,8 +86,6 @@ pub async fn snipe(
                 println!("ERROR: {:?}", error)
             }
         }
-    } else {
-        println!("Target with chat ID: {} does not exit.",chat_id);
     }
     Ok(())
 }
