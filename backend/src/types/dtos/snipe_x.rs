@@ -7,6 +7,7 @@ pub struct CreateXSnipeTargetDTO {
     pub snipe_config: Option<SnipeConfig>,
     pub is_active: bool,
     pub deactivate_on_snipe: Option<bool>,
+    pub is_one_time_snipe: Option<bool>
 }
 
 #[derive(Debug, Deserialize)]

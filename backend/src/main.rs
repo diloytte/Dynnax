@@ -20,14 +20,13 @@ use shared::{
     tg::{
         client::connect_client,
         dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data},
-    },
+    }, utils::build_cors_layer,
 };
 use std::{env, sync::Arc};
 use tg::next_update_loop::main_tg_loop;
-use tower_http::cors::{Any, CorsLayer};
 use utils::load_snipe_configurations;
 
-use axum::{Extension, Router, http::Method};
+use axum::{Extension, Router};
 use routes::{fallback, routes};
 use state::AppState;
 use tokio::net::TcpListener;
@@ -83,6 +82,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         twitter_snipe_targets: DashMap::default(),
         tg_client: client.clone(),
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
+        redacted_bot_chat: find_dialog_chat_by_id(&client,redacted_self_bot_father_dialog_id).await.unwrap(),
         sniper_trenches_chat: Arc::new(sniper_trenches_chat),
         pf_api_url: pf_api_url.clone(),
         priority_fee_multiplier: 1,
@@ -98,23 +98,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     start_keep_alive(pf_api_key.clone()).await;
 
-    let cors = CorsLayer::new()
-        .allow_origin(Any)
-        .allow_methods([
-            Method::GET,
-            Method::POST,
-            Method::PUT,
-            Method::DELETE,
-            Method::PATCH,
-        ])
-        .allow_headers([
-            "Content-Type".parse().unwrap(),
-            "Authorization".parse().unwrap(),
-        ]);
-
     let router = Router::new()
         .nest("/api/v1", routes())
-        .layer(cors)
+        .layer(build_cors_layer())
         .layer(Extension(shared_state))
         .fallback(fallback);
 

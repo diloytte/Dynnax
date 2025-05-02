@@ -1,6 +1,7 @@
 use crate::db::queries::x_snipe_targets::q_patch_x_snipe_target;
 use crate::state::AppState;
 use crate::types::dtos::snipe_x::PatchXSnipeTargetDTO;
+use crate::utils::remove_one_time_snipe_x_target;
 use grammers_client::types::Message;
 use grammers_client::{Client, InvocationError};
 use shared::pf::buy_ca;
@@ -71,6 +72,7 @@ pub async fn snipe_x(
                 });
             }
 
+
             #[cfg(not(feature = "remote"))]
             play_buy_notif();
             {
@@ -93,6 +95,11 @@ pub async fn snipe_x(
                     )
                     .await;
                 });
+            }
+
+            if twitter_snipe_target.is_one_time {
+                //TODO: Remove from db too
+                remove_one_time_snipe_x_target(&shared_state.tg_client,&shared_state.redacted_bot_chat,&twitter_snipe_target.target_name).await?;
             }
         }
         Err(error) => {

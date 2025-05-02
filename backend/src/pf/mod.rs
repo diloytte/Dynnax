@@ -54,6 +54,7 @@ pub async fn send_dummy_request(client: &Client, url: &str) {
         .await;
 
         match response {
+            #[cfg_attr(not(feature = "performance_log"), allow(unused_variables))]
             Ok(res) => {
                 #[cfg(feature = "performance_log")]
                 {

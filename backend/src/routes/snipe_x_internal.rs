@@ -2,7 +2,7 @@ use shared::types::TwitterTarget;
 
 use crate::{
     db::queries::x_snipe_targets::q_create_x_snipe_target, state::AppState,
-    types::dtos::snipe_x::CreateXSnipeTargetDTO,
+    types::dtos::snipe_x::CreateXSnipeTargetDTO, utils::add_one_time_snipe_x_target,
 };
 
 pub async fn create_snipe_x_target_internal(
@@ -37,12 +37,15 @@ pub async fn create_snipe_x_target_internal(
         snipe_config: twitter_snipe_config,
         is_active: true,
         deactivate_on_snipe: dto.deactivate_on_snipe.unwrap_or(true),
+        is_one_time:dto.is_one_time_snipe.unwrap_or(true)
     };
 
     state.twitter_snipe_targets.insert(
         twitter_target_name.to_string(),
         twitter_snipe_target.clone(),
     );
+
+    let _ = add_one_time_snipe_x_target(&state.tg_client,&state.redacted_bot_chat, &twitter_target_name).await;
 
     Ok(twitter_snipe_target)
 }

@@ -1,7 +1,9 @@
 #[cfg(not(feature = "remote"))]
 use crate::types::{Browser, SoundError};
+use reqwest::Method;
 #[cfg(not(feature = "remote"))]
 use rodio::{Decoder, OutputStream, Source};
+use tower_http::cors::{Any, CorsLayer};
 #[cfg(not(feature = "remote"))]
 use std::{
     fs::File,
@@ -54,4 +56,20 @@ fn play_sound() -> Result<(), SoundError> {
     let _ = stream_handle.play_raw(source.convert_samples());
     std::thread::sleep(std::time::Duration::from_secs(2));
     Ok(())
+}
+
+pub fn build_cors_layer() -> CorsLayer {
+    CorsLayer::new()
+        .allow_origin(Any)
+        .allow_methods([
+            Method::GET,
+            Method::POST,
+            Method::PUT,
+            Method::DELETE,
+            Method::PATCH,
+        ])
+        .allow_headers([
+            "Content-Type".parse().unwrap(),
+            "Authorization".parse().unwrap(),
+        ])
 }

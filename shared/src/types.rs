@@ -167,6 +167,7 @@ pub struct TwitterTarget {
     pub snipe_config: SnipeConfig,
     pub is_active: bool,
     pub deactivate_on_snipe: bool,
+    pub is_one_time:bool
 }
 
 impl Default for TwitterTarget {
@@ -176,6 +177,7 @@ impl Default for TwitterTarget {
             snipe_config: Default::default(),
             is_active: true,
             deactivate_on_snipe: true,
+            is_one_time:true,
         }
     }
 }

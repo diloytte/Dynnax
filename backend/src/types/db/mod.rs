@@ -52,6 +52,7 @@ impl From<DBXSnipeTarget> for TwitterTarget {
             },
             is_active: db.is_active,
             deactivate_on_snipe: db.deactivate_on_snipe,
+            is_one_time:true //TODO THIS, !!!
         }
     }
 }
