@@ -3,15 +3,18 @@ use std::{
     io::{self},
 };
 
-use grammers_client::{Client, Config, SignInError};
 use crate::tg::config::{load_or_create_session, load_tg_client_config, save_session};
+use grammers_client::{Client, Config, SignInError};
 
 pub enum ClientType {
     Trader,
-    Informer
+    Informer,
 }
 
-pub async fn connect_client(session_path: &str,client_type:ClientType) -> Result<Client, Box<dyn Error>> {
+pub async fn connect_client(
+    session_path: &str,
+    client_type: ClientType,
+) -> Result<Client, Box<dyn Error>> {
     let config = load_tg_client_config(client_type)?;
 
     let session = load_or_create_session(session_path).await?;

@@ -3,9 +3,6 @@ use serde_json::json;
 use std::{sync::Arc, time::Duration};
 use tokio::{task, time};
 
-#[cfg(feature = "performance_log")]
-use tokio::time::Instant;
-
 pub async fn start_keep_alive(api_key: String) {
     let pf_api_url = format!("https://pumpportal.fun/api/trade?api-key={}", api_key);
     let client = Arc::new(Client::new());
@@ -47,25 +44,20 @@ pub async fn send_dummy_request(client: &Client, url: &str) {
         "slippage": 0.000001
     });
 
-    let response = client
-        .post(url)
-        .json(&body)
-        .send()
-        .await;
+    let response = client.post(url).json(&body).send().await;
 
-        match response {
-            #[cfg_attr(not(feature = "performance_log"), allow(unused_variables))]
-            Ok(res) => {
-                #[cfg(feature = "performance_log")]
-                {
+    match response {
+        #[cfg_attr(not(feature = "performance_log"), allow(unused_variables))]
+        Ok(res) => {
+            #[cfg(feature = "performance_log")]
+            {
                 let status = res.status();
-                    let ms = start.elapsed().as_millis();
-                    println!("Keep-alive ping: {} ms (status: {})", ms, status);
-                }
-            }
-            Err(err) => {
-                eprintln!("Ping failed: {:?}", err);
+                let ms = start.elapsed().as_millis();
+                println!("Keep-alive ping: {} ms (status: {})", ms, status);
             }
         }
-        
+        Err(err) => {
+            eprintln!("Ping failed: {:?}", err);
+        }
+    }
 }

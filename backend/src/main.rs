@@ -20,7 +20,8 @@ use shared::{
     tg::{
         client::connect_client,
         dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data},
-    }, utils::build_cors_layer,
+    },
+    utils::build_cors_layer,
 };
 use std::{env, sync::Arc};
 use tg::next_update_loop::main_tg_loop;
@@ -38,9 +39,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let db = connect(db_url).await.unwrap();
     sqlx::migrate!("./migrations").run(&db).await.unwrap();
 
-    let client = connect_client("./backend/session.session",shared::tg::client::ClientType::Trader).await?;
+    let client = connect_client(
+        "./backend/session.session",
+        shared::tg::client::ClientType::Trader,
+    )
+    .await?;
 
-    let client_informer = connect_client("./backend/session_informer.session", shared::tg::client::ClientType::Informer).await?;
+    let client_informer = connect_client(
+        "./backend/session_informer.session",
+        shared::tg::client::ClientType::Informer,
+    )
+    .await?;
 
     let dialogs_dashmap = DashMap::new();
     let dialogs_data = get_dialogs_data(&client).await?;
@@ -76,12 +85,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         request_client: Client::new(),
         db,
         all_dialogs: dialogs_dashmap,
-        tg_client_informer:client_informer,
+        tg_client_informer: client_informer,
         snipe_targets: DashMap::default(),
         twitter_snipe_targets: DashMap::default(),
         tg_client: client.clone(),
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
-        redacted_bot_chat: find_dialog_chat_by_id(&client,redacted_self_bot_father_dialog_id).await.unwrap(),
+        redacted_bot_chat: find_dialog_chat_by_id(&client, redacted_self_bot_father_dialog_id)
+            .await
+            .unwrap(),
         sniper_trenches_chat: Arc::new(sniper_trenches_chat),
         pf_api_url: pf_api_url.clone(),
         priority_fee_multiplier: 1,
@@ -117,7 +128,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "localhost"
     };
 
-    println!("Listening on: {}:{}",bind_address,port);
+    println!("Listening on: {}:{}", bind_address, port);
 
     let listener = TcpListener::bind(format!("{}:{}", bind_address, port))
         .await

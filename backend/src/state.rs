@@ -21,7 +21,7 @@ pub struct AppState {
     pub tg_client: Client,
     pub tg_client_informer: Client,
     pub redacted_custom_bot_id: i64,
-    pub redacted_bot_chat:Chat,
+    pub redacted_bot_chat: Chat,
     pub sniper_trenches_chat: Arc<Chat>,
     pub trojan_bot_chat: Arc<Chat>,
     pub pf_api_url: String,

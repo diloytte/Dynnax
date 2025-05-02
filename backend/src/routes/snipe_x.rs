@@ -5,7 +5,8 @@ use crate::{
     types::{
         dtos::snipe_x::{CreateXSnipeTargetDTO, PatchXSnipeTargetDTO},
         other::AppStateExtension,
-    }, utils::remove_one_time_snipe_x_target,
+    },
+    utils::remove_one_time_snipe_x_target,
 };
 use axum::{
     Extension, Json, Router,
@@ -116,7 +117,9 @@ async fn delete_x_snipe_target(
         &state.twitter_snipe_targets;
     let removed_target = twitter_snipe_targets.remove(&target_name);
 
-    let _ = remove_one_time_snipe_x_target(&state.tg_client,&state.redacted_bot_chat, &target_name).await;
+    let _ =
+        remove_one_time_snipe_x_target(&state.tg_client, &state.redacted_bot_chat, &target_name)
+            .await;
 
     match removed_target {
         Some(snipe_target) => (

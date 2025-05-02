@@ -11,7 +11,11 @@ use std::{collections::HashMap, env};
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
 
-    let client: Client = connect_client("./dead_x_sniper/session.session",shared::tg::client::ClientType::Trader).await?;
+    let client: Client = connect_client(
+        "./dead_x_sniper/session.session",
+        shared::tg::client::ClientType::Trader,
+    )
+    .await?;
 
     let redacted_self_bot_father_dialog_id: i64 =
         env::var("REDACTED_SELF_BOT_FATHER_DIALOG_ID")?.parse()?;

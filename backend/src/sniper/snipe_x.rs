@@ -72,7 +72,6 @@ pub async fn snipe_x(
                 });
             }
 
-
             #[cfg(not(feature = "remote"))]
             play_buy_notif();
             {
@@ -82,7 +81,7 @@ pub async fn snipe_x(
                 let trojan_bot = shared_state.trojan_bot_chat.clone();
                 let ca = ca.to_owned();
                 let informer = shared_state.tg_client_informer.clone(); // clone here
-                
+
                 tokio::spawn(async move {
                     let _ = buy_notify(
                         &chat_name,
@@ -99,7 +98,12 @@ pub async fn snipe_x(
 
             if twitter_snipe_target.is_one_time {
                 //TODO: Remove from db too
-                remove_one_time_snipe_x_target(&shared_state.tg_client,&shared_state.redacted_bot_chat,&twitter_snipe_target.target_name).await?;
+                remove_one_time_snipe_x_target(
+                    &shared_state.tg_client,
+                    &shared_state.redacted_bot_chat,
+                    &twitter_snipe_target.target_name,
+                )
+                .await?;
             }
         }
         Err(error) => {

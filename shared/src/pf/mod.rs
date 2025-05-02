@@ -61,8 +61,8 @@ pub async fn buy_ca(
     fee_multiplier: u8,
     http_client: &ReqwestClient,
 ) -> Result<(), TradeError> {
-        #[cfg(feature = "performance_log")]
-        let start = Instant::now();
+    #[cfg(feature = "performance_log")]
+    let start = Instant::now();
 
     let body = TradeRequestBuy {
         action: "buy".to_string(),
@@ -136,7 +136,11 @@ pub async fn send_trade(
     url: &str,
     http_client: &ReqwestClient,
 ) -> Result<(), TradeError> {
-    let response = http_client.post(url).json(&body.to_payload()).send().await?;
+    let response = http_client
+        .post(url)
+        .json(&body.to_payload())
+        .send()
+        .await?;
 
     let pf_response: PfResponse = response.json().await?;
     match pf_response.signature {
@@ -193,7 +197,7 @@ async fn send_dex_ca_trade(
         println!("Error from DEX. {:?}", err);
         return Err(TradeError::CustomError(err));
     }
-    
+
     let dex_mint = dex_address.unwrap();
     let dex_body = TradeRequestBuy {
         action: body.action.clone(),
@@ -207,11 +211,9 @@ async fn send_dex_ca_trade(
 
     match send_trade(&TradeRequest::Buy(&dex_body), url, http_client).await {
         Ok(_) => Ok(()),
-        Err(error) => {
-            Err(TradeError::CustomError(format!(
-                "Error: {:?}, CA: {}",
-                error, ca
-            )))
-        }
+        Err(error) => Err(TradeError::CustomError(format!(
+            "Error: {:?}, CA: {}",
+            error, ca
+        ))),
     }
 }

@@ -37,7 +37,7 @@ pub async fn create_snipe_x_target_internal(
         snipe_config: twitter_snipe_config,
         is_active: true,
         deactivate_on_snipe: dto.deactivate_on_snipe.unwrap_or(true),
-        is_one_time:dto.is_one_time_snipe.unwrap_or(true)
+        is_one_time: dto.is_one_time_snipe.unwrap_or(true),
     };
 
     state.twitter_snipe_targets.insert(
@@ -45,7 +45,12 @@ pub async fn create_snipe_x_target_internal(
         twitter_snipe_target.clone(),
     );
 
-    let _ = add_one_time_snipe_x_target(&state.tg_client,&state.redacted_bot_chat, &twitter_target_name).await;
+    let _ = add_one_time_snipe_x_target(
+        &state.tg_client,
+        &state.redacted_bot_chat,
+        twitter_target_name,
+    )
+    .await;
 
     Ok(twitter_snipe_target)
 }

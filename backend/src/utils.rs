@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use grammers_client::{Client, InvocationError,types::Chat};
+use grammers_client::{Client, InvocationError, types::Chat};
 
 use crate::{
     db::queries::{
@@ -35,13 +35,24 @@ pub async fn load_snipe_configurations(state: &Arc<AppState>) -> Result<(), ()> 
     Ok(())
 }
 
-pub async fn add_one_time_snipe_x_target(client:&Client,redacted_chat:&Chat,target_id:&str)->Result<(),InvocationError>{
-    client.send_message(redacted_chat, format!("/add {}",target_id)).await?;
+pub async fn add_one_time_snipe_x_target(
+    client: &Client,
+    redacted_chat: &Chat,
+    target_id: &str,
+) -> Result<(), InvocationError> {
+    client
+        .send_message(redacted_chat, format!("/add {}", target_id))
+        .await?;
     Ok(())
 }
 
-
-pub async fn remove_one_time_snipe_x_target(client:&Client,redacted_chat:&Chat,target_id:&str)->Result<(),InvocationError>{
-    client.send_message(redacted_chat, format!("/remove {}",target_id)).await?;
+pub async fn remove_one_time_snipe_x_target(
+    client: &Client,
+    redacted_chat: &Chat,
+    target_id: &str,
+) -> Result<(), InvocationError> {
+    client
+        .send_message(redacted_chat, format!("/remove {}", target_id))
+        .await?;
     Ok(())
 }
