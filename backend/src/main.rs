@@ -48,7 +48,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         dialogs_dashmap.insert(dialog.id, (dialog.name, dialog.dialog_type));
     }
 
-    // PUMPFUN_PORTAL_API_KEY
     let pf_api_key = if cfg!(feature = "production") {
         env::var("PUMPFUN_PORTAL_API_KEY")?
     } else {
