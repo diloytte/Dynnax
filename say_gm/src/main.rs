@@ -6,7 +6,7 @@ use std::collections::HashMap;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
-    let client: Client = connect_client("./say_gm/session.session").await?;
+    let client: Client = connect_client("./say_gm/session.session",shared::tg::client::ClientType::Trader).await?;
 
     let mut gm_hashmap: HashMap<i64, &str> = HashMap::new();
 

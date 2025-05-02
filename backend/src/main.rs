@@ -39,7 +39,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let db = connect(db_url).await.unwrap();
     sqlx::migrate!("./migrations").run(&db).await.unwrap();
 
-    let client = connect_client("./backend/session.session").await?;
+    let client = connect_client("./backend/session.session",shared::tg::client::ClientType::Trader).await?;
+
+    let client_informer = connect_client("./backend/session_informer.session", shared::tg::client::ClientType::Informer).await?;
 
     let dialogs_dashmap = DashMap::new();
     let dialogs_data = get_dialogs_data(&client).await?;
@@ -76,9 +78,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         request_client: Client::new(),
         db,
         all_dialogs: dialogs_dashmap,
+        tg_client_informer:client_informer,
         snipe_targets: DashMap::default(),
         twitter_snipe_targets: DashMap::default(),
-        tg_client: Some(client.clone()),
+        tg_client: client.clone(),
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
         sniper_trenches_chat: Arc::new(sniper_trenches_chat),
         pf_api_url: pf_api_url.clone(),

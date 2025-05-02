@@ -18,14 +18,14 @@ pub fn routes() -> Router {
 }
 
 async fn clear_dialogs_route(Extension(state): AppStateExtension) -> impl IntoResponse {
-    match clear_dialogs(state.tg_client.as_ref().unwrap()).await {
+    match clear_dialogs(&state.tg_client).await {
         Ok(_) => (StatusCode::OK).into_response(),
         Err(error) => (StatusCode::OK, json_error!(error.to_string())).into_response(),
     };
 }
 
 async fn get_me(Extension(state): AppStateExtension) -> impl IntoResponse {
-    let tg_client = state.tg_client.as_ref().unwrap();
+    let tg_client = &state.tg_client;
     let me_result = tg_client.get_me().await;
 
     if me_result.is_err() {
@@ -51,7 +51,7 @@ async fn get_me(Extension(state): AppStateExtension) -> impl IntoResponse {
 }
 
 async fn get_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
-    let client = state.tg_client.as_ref().unwrap();
+    let client = &state.tg_client;
     let dialogs_result = get_dialogs_data(client).await;
     let dialogs = dialogs_result.unwrap_or(vec![]);
     (

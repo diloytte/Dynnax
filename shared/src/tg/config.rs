@@ -5,6 +5,8 @@ use std::path::Path;
 
 use grammers_session::Session;
 
+use super::client::ClientType;
+
 #[derive(Debug)]
 pub struct ConfigData {
     pub api_id: i32,
@@ -13,11 +15,21 @@ pub struct ConfigData {
     pub password: String,
 }
 
-pub fn load_tg_client_config() -> Result<ConfigData, Box<dyn Error>> {
-    let api_id: i32 = env::var("API_ID")?.parse()?;
-    let api_hash: String = env::var("API_HASH")?;
-    let phone_number: String = env::var("PHONE_NUMBER")?;
-    let password: String = env::var("PASSWORD")?;
+pub fn load_tg_client_config(client_type: ClientType) -> Result<ConfigData, Box<dyn Error>> {
+    let (api_id, api_hash, phone_number, password) = match client_type {
+        ClientType::Trader => (
+            env::var("API_ID")?.parse()?,
+            env::var("API_HASH")?,
+            env::var("PHONE_NUMBER")?,
+            env::var("PASSWORD")?,
+        ),
+        ClientType::Informer => (
+            env::var("INFORM_CLIENT_API_ID")?.parse()?,
+            env::var("INFORM_CLIENT_API_HASH")?,
+            env::var("INFORM_CLIENT_NUMBER")?,
+            env::var("INFORM_CLIENT_PASSWORD")?,
+        ),
+    };
 
     Ok(ConfigData {
         api_id,

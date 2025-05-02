@@ -79,12 +79,14 @@ pub async fn snipe_x(
                 let trenches_chat = shared_state.sniper_trenches_chat.clone();
                 let trojan_bot = shared_state.trojan_bot_chat.clone();
                 let ca = ca.to_owned();
-
+                let informer = shared_state.tg_client_informer.clone(); // clone here
+                
                 tokio::spawn(async move {
                     let _ = buy_notify(
                         &chat_name,
                         &super::Shiller::X(twitter_sender),
                         &ca,
+                        &informer,
                         &client,
                         &trenches_chat,
                         &trojan_bot,

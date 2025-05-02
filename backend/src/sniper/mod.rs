@@ -29,6 +29,7 @@ pub async fn buy_notify(
     chat_name: &str,
     shiller: &Shiller,
     ca: &str,
+    client_informer: &Client,
     client: &Client,
     trenches_chat: &Chat,
     trojan_bot: &Chat,
@@ -51,8 +52,10 @@ pub async fn buy_notify(
         let trojan_bot = trojan_bot.clone();
         let final_msg = final_msg.clone();
         let bullx_link = bullx_link.clone();
+        let client_informer_clone = client_informer.clone();
+
         tokio::spawn(async move {
-            let _ = client
+            let _ = client_informer_clone
                 .send_message(
                     trenches_chat,
                     InputMessage::text(format!("{}\n{}", final_msg, bullx_link)),

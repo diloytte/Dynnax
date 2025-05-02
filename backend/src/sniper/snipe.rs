@@ -63,6 +63,7 @@ pub async fn snipe(
                 play_buy_notif();
 
                 {
+                    let informet_client = shared_state.tg_client_informer.clone();
                     let client = _client.clone();
                     let chat_name = snipe_target.target_name.clone();
                     let trenches_chat = shared_state.sniper_trenches_chat.clone();
@@ -74,6 +75,7 @@ pub async fn snipe(
                             &chat_name,
                             &super::Shiller::Tg(chat_id),
                             &ca,
+                            &informet_client,
                             &client,
                             &trenches_chat,
                             &trojan_bot,
