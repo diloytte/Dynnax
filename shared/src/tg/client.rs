@@ -49,6 +49,6 @@ pub async fn connect_client(
     let session_data = client.session().save();
     save_session(session_path, session_data)?;
 
-    println!("Connected to Telegram!");
+    println!("Connected to Telegram via {}!",client.get_me().await.unwrap().full_name());
     Ok(client)
 }

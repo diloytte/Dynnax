@@ -10,3 +10,4 @@ target_backend_prod
 aws.md
 target_backend_dev
 routine.md
+**/session_informer.session

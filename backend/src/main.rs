@@ -69,6 +69,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let redacted_self_bot_father_dialog_id: i64 =
         env::var("REDACTED_SELF_BOT_FATHER_DIALOG_ID")?.parse()?;
 
+    let redacted_system_bot: i64 =
+    env::var("REDACTED_SYSTEMS_BOT_DIALOG_ID")?.parse()?;
+
     let sniper_trenches_chat_id: i64 = env::var("SNIPER_TRENCHES_CHAT_ID")?.parse()?;
     let sniper_trenches_chat: Chat = find_dialog_chat_by_id(&client, sniper_trenches_chat_id)
         .await
@@ -90,7 +93,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         twitter_snipe_targets: DashMap::default(),
         tg_client: client.clone(),
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
-        redacted_bot_chat: find_dialog_chat_by_id(&client, redacted_self_bot_father_dialog_id)
+        redacted_bot_chat: find_dialog_chat_by_id(&client, redacted_system_bot)
             .await
             .unwrap(),
         sniper_trenches_chat: Arc::new(sniper_trenches_chat),
