@@ -60,7 +60,7 @@ function App() {
         </div>
         <div>
           {snipeTargets.map((target) => (
-            <SnipeTarget key={target.targetId} {...target} />
+            <SnipeTarget key={target.targetId} {...target} isTwitterTarget={false} />
           ))}
         </div>
       </div>
