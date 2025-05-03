@@ -11,6 +11,7 @@ use std::{
     process::Command,
 };
 use tower_http::cors::{Any, CorsLayer};
+use std::{env, str::FromStr};
 
 #[macro_export]
 macro_rules! json_error {
@@ -72,4 +73,22 @@ pub fn build_cors_layer() -> CorsLayer {
             "Content-Type".parse().unwrap(),
             "Authorization".parse().unwrap(),
         ])
+}
+
+pub fn load_env_var<T: FromStr>(key: &str) -> T
+where
+    T::Err: std::fmt::Debug,
+{
+    let value = env::var(key).unwrap_or_else(|_| {
+        eprintln!("Environment variable `{}` is missing", key);
+        std::process::exit(1);
+    });
+
+    value.parse::<T>().unwrap_or_else(|e| {
+        eprintln!(
+            "Failed to parse environment variable `{}` as target type: {:?}",
+            key, e
+        );
+        std::process::exit(1);
+    })
 }

@@ -106,17 +106,18 @@ pub struct PfResponse {
     pub signature: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug,Deserialize)]
 pub struct DexScreenerResponse {
     pub pairs: Vec<Pair>,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug,Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Pair {
     pub base_token: BaseToken,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug,Deserialize)]
 pub struct BaseToken {
     pub address: String,
     pub name: String,

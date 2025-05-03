@@ -21,7 +21,7 @@ use shared::{
         client::connect_client,
         dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data},
     },
-    utils::build_cors_layer,
+    utils::{build_cors_layer, load_env_var},
 };
 use std::{env, sync::Arc};
 use tg::next_update_loop::main_tg_loop;
@@ -58,31 +58,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let pf_api_key = if cfg!(feature = "production") {
-        env::var("PUMPFUN_PORTAL_API_KEY")?
+        load_env_var::<String>("PUMPFUN_PORTAL_API_KEY")
     } else {
-        env::var("PUMPFUN_PORTAL_API_KEY_DEV")?
+        load_env_var::<String>("PUMPFUN_PORTAL_API_KEY_DEV")
     };
 
     let pump_portal_url: &str = "https://pumpportal.fun/api/trade?api-key=";
     let pf_api_url = format!("{}{}", pump_portal_url, pf_api_key);
 
     let redacted_self_bot_father_dialog_id: i64 =
-        env::var("REDACTED_SELF_BOT_FATHER_DIALOG_ID")?.parse()?;
-
+    load_env_var("REDACTED_SELF_BOT_FATHER_DIALOG_ID");
+    
     let redacted_system_bot: i64 =
-    env::var("REDACTED_SYSTEMS_BOT_DIALOG_ID")?.parse()?;
+    load_env_var("REDACTED_SYSTEMS_BOT_DIALOG_ID");
 
-    let sniper_trenches_chat_id: i64 = env::var("SNIPER_TRENCHES_CHAT_ID")?.parse()?;
+    let sniper_trenches_chat_id: i64 = load_env_var("SNIPER_TRENCHES_CHAT_ID");
     let sniper_trenches_chat: Chat = find_dialog_chat_by_id(&client, sniper_trenches_chat_id)
         .await
         .unwrap();
 
-    let trojan_bot_chat_id: i64 = env::var("TROJAN_DIALOG_ID")?.parse()?;
+    let trojan_bot_chat_id: i64 = load_env_var("TROJAN_DIALOG_ID");
     let trojan_bot_chat = find_dialog_chat_by_id(&client, trojan_bot_chat_id)
         .await
         .unwrap();
 
-    let dynnax_api_key = env::var("API_KEY")?;
+    let dynnax_api_key = load_env_var("API_KEY");
 
     let state = AppState {
         request_client: Client::new(),
