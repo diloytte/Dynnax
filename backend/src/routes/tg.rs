@@ -1,11 +1,11 @@
-use axum::{Extension, Router, http::StatusCode, response::IntoResponse, routing::get};
+use axum::{http::StatusCode, response::IntoResponse, routing::{get, post}, Extension, Router};
 use serde_json::json;
 use shared::{
     json_error,
-    tg::dialog::{clear_dialogs::clear_dialogs, get_dialogs::get_dialogs_data},
+    tg::dialog::{clear_dialogs::clear_dialogs, get_dialogs::{get_dialogs as tg_all_dialogs, simplify_dialog, SimplifiedDialog}},
 };
 
-use crate::types::other::AppStateExtension;
+use crate::{tg::shill::shill_in_groupchats, types::other::AppStateExtension};
 
 pub fn routes() -> Router {
     Router::new().nest(
@@ -13,8 +13,19 @@ pub fn routes() -> Router {
         Router::new()
             .route("/", get(get_me))
             .route("/clear", get(clear_dialogs_route))
-            .route("/dialogs", get(get_dialogs)),
+            .route("/dialogs", get(get_dialogs))
+            .route("/shill",post(shill))
     )
+}
+
+async fn shill(Extension(state): AppStateExtension) -> impl IntoResponse {
+    let shill_result = shill_in_groupchats(&state.shill_groups, &state.tg_client, &"NIGAS".to_string()).await;
+    if shill_result.is_err(){
+        println!("Error: {:?}",shill_result.err());
+        return (StatusCode::CONFLICT,json_error!("Error in shilling."));
+    }
+
+    (StatusCode::OK,"".to_string())
 }
 
 async fn clear_dialogs_route(Extension(state): AppStateExtension) -> impl IntoResponse {
@@ -52,13 +63,17 @@ async fn get_me(Extension(state): AppStateExtension) -> impl IntoResponse {
 
 async fn get_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
     let client = &state.tg_client;
-    let dialogs_result = get_dialogs_data(client).await;
+    let dialogs_result = tg_all_dialogs(client).await;
     let dialogs = dialogs_result.unwrap_or(vec![]);
+    let dialogs_simplified:Vec<SimplifiedDialog> = dialogs.iter().map(|dialog|{
+        simplify_dialog(dialog)
+    }).collect();
     (
         StatusCode::OK,
         json!({
-            "dialogs":dialogs
+            "dialogs":dialogs_simplified
         })
         .to_string(),
     )
 }
+

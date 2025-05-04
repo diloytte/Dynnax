@@ -92,3 +92,10 @@ where
         std::process::exit(1);
     })
 }
+
+pub fn load_env_string(key: &str) -> String {
+    env::var(key).unwrap_or_else(|_| {
+        eprintln!("Environment variable `{}` is missing", key);
+        std::process::exit(1);
+    })
+}

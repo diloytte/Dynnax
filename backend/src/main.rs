@@ -19,13 +19,13 @@ use shared::{
     db::connect::connect,
     tg::{
         client::connect_client,
-        dialog::{find_dialog::find_dialog_chat_by_id, get_dialogs::get_dialogs_data},
+        dialog::{find_dialog::find_dialog_chat_by_id_from_list, get_dialogs::{get_dialog_type_as_number, get_dialogs}},
     },
     utils::{build_cors_layer, load_env_var},
 };
 use std::{env, sync::Arc};
 use tg::next_update_loop::main_tg_loop;
-use utils::load_snipe_configurations;
+use utils::{load_shill_groups, load_snipe_configurations};
 
 use axum::{Extension, Router};
 use routes::{fallback, routes};
@@ -35,6 +35,7 @@ use tokio::net::TcpListener;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     dotenv().ok();
+
     let db_url = env::var("DATABASE_URL")?;
     let db = connect(db_url).await.unwrap();
     sqlx::migrate!("./migrations").run(&db).await.unwrap();
@@ -52,9 +53,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .await?;
 
     let dialogs_dashmap = DashMap::new();
-    let dialogs_data = get_dialogs_data(&client).await?;
-    for dialog in dialogs_data {
-        dialogs_dashmap.insert(dialog.id, (dialog.name, dialog.dialog_type));
+    let dialogs = get_dialogs(&client).await?;
+    for dialog in &dialogs {
+        dialogs_dashmap.insert(dialog.chat.id(), (dialog.chat.name().to_string(),get_dialog_type_as_number(&dialog)));
     }
 
     let pf_api_key = if cfg!(feature = "production") {
@@ -73,18 +74,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     load_env_var("REDACTED_SYSTEMS_BOT_DIALOG_ID");
 
     let sniper_trenches_chat_id: i64 = load_env_var("SNIPER_TRENCHES_CHAT_ID");
-    let sniper_trenches_chat: Chat = find_dialog_chat_by_id(&client, sniper_trenches_chat_id)
+    let sniper_trenches_chat: Chat = find_dialog_chat_by_id_from_list(&dialogs, sniper_trenches_chat_id)
         .await
         .unwrap();
 
     let trojan_bot_chat_id: i64 = load_env_var("TROJAN_DIALOG_ID");
-    let trojan_bot_chat = find_dialog_chat_by_id(&client, trojan_bot_chat_id)
+    let trojan_bot_chat = find_dialog_chat_by_id_from_list(&dialogs, trojan_bot_chat_id)
         .await
         .unwrap();
 
     let dynnax_api_key = load_env_var("API_KEY");
 
+    let shill_group_ids: String = load_env_var::<String>("SHILL_GROUP_IDS");
+
+    let load_shill_groups_tuple = load_shill_groups(&shill_group_ids,&dialogs).await;
+
+    let shill_groups = load_shill_groups_tuple.0;
+
+    let shill_groups_errors = load_shill_groups_tuple.1;
+
+    for error in shill_groups_errors{
+        println!("{:?}",error);
+    }
+
     let state = AppState {
+        shill_groups,
         request_client: Client::new(),
         db,
         all_dialogs: dialogs_dashmap,
@@ -93,7 +107,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         twitter_snipe_targets: DashMap::default(),
         tg_client: client.clone(),
         redacted_custom_bot_id: redacted_self_bot_father_dialog_id,
-        redacted_bot_chat: find_dialog_chat_by_id(&client, redacted_system_bot)
+        redacted_bot_chat: find_dialog_chat_by_id_from_list(&dialogs, redacted_system_bot)
             .await
             .unwrap(),
         sniper_trenches_chat: Arc::new(sniper_trenches_chat),
