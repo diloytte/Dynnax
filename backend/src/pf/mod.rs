@@ -36,12 +36,12 @@ pub async fn send_dummy_request(client: &Client, url: &str) {
 
     let body = json!({
         "action": "buy",
-        "amount": 0.0000001,
+        "amount": 0.0000000000000001,
         "denominatedInSol": "true",
         "mint": "8ncucXv6U6epZKHPbgaEBcEK399TpHGKCquSt4RnmX4f",
         "pool": "auto",
-        "priorityFee": 0.00000000005,
-        "slippage": 0.000001
+        "priorityFee": 0.000000000000000000005,
+        "slippage": 0.00000000000000001
     });
 
     let response = client.post(url).json(&body).send().await;

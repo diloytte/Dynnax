@@ -21,11 +21,13 @@ pub async fn main_tg_loop(
                     continue;
                 }
 
+                let message_sender_id = message.sender().unwrap().id();
                 let chat_id = message.chat().id();
                 let ca = ca.unwrap();
 
+
                 if shared_state.redacted_custom_bot_id != chat_id {
-                    let _ = snipe(chat_id, &client, &shared_state, &ca).await;
+                    let _ = snipe(chat_id,message_sender_id, &client, &shared_state, &ca).await;
                 } else {
                     let _ = snipe_x(&message, &client, &shared_state, &ca).await;
                 }

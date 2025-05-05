@@ -8,13 +8,15 @@ pub async fn create_snipe_target_internal(
     state: &AppState,
     create_snipe_dto: CreateSnipeDTO,
 ) -> Result<SnipeTarget, String> {
-    if state.all_dialogs.get(&create_snipe_dto.target_id).is_none() {
-        return Err(format!(
-            "Dialog with ID: {} does not exist.",
-            create_snipe_dto.target_id
-        ));
+    if !create_snipe_dto.is_user{
+        if state.all_dialogs.get(&create_snipe_dto.target_id).is_none() {
+            return Err(format!(
+                "Dialog with ID: {} does not exist.",
+                create_snipe_dto.target_id
+            ));
+        }
     }
-
+        
     if state
         .snipe_targets
         .get(&create_snipe_dto.target_id)
@@ -37,6 +39,7 @@ pub async fn create_snipe_target_internal(
         is_active: true,
         deactivate_on_snipe: create_snipe_dto.deactivate_on_snipe.unwrap_or(true),
         past_shills: vec![],
+        is_user:create_snipe_dto.is_user
     };
 
     state

@@ -7,6 +7,7 @@ pub struct CreateSnipeDTO {
     pub target_id: i64,
     pub snipe_config: Option<SnipeConfig>,
     pub deactivate_on_snipe: Option<bool>,
+    pub is_user:bool
 }
 
 #[derive(Debug, Deserialize)]

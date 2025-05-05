@@ -25,8 +25,8 @@ pub async fn q_create_snipe_target(
     sqlx::query!(
         r#"
         INSERT INTO snipe_targets (
-            target_id, target_name, sol_amount, slippage, priority_fee, deactivate_on_snipe, is_active
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+            target_id, target_name, sol_amount, slippage, priority_fee, deactivate_on_snipe, is_active, is_user
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         "#,
         target_id,
         target_name,
@@ -34,7 +34,8 @@ pub async fn q_create_snipe_target(
         snipe_config.slippage,
         snipe_config.priority_fee as f64,
         deactivate_on_snipe,
-        is_active
+        is_active,
+        create_snipe_dto.is_user
     )
     .execute(db)
     .await?;
@@ -48,7 +49,7 @@ pub async fn q_get_all_snipe_targets(
     let rows = sqlx::query_as!(
         DBSnipeTarget,
         r#"
-        SELECT id, target_name, target_id, sol_amount, slippage, priority_fee, is_active, deactivate_on_snipe, past_shills
+        SELECT id, target_name, target_id, sol_amount, slippage, priority_fee, is_active, deactivate_on_snipe, past_shills, is_user
         FROM snipe_targets
         "#,
     )

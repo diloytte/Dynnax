@@ -148,7 +148,9 @@ pub struct SnipeTarget {
     pub is_active: bool,
     pub deactivate_on_snipe: bool,
     pub past_shills: Vec<String>,
+    pub is_user: bool,
 }
+
 
 impl Default for SnipeTarget {
     fn default() -> Self {
@@ -158,9 +160,11 @@ impl Default for SnipeTarget {
             is_active: true,
             deactivate_on_snipe: true,
             past_shills: Vec::new(),
+            is_user: false, // ✅ default value
         }
     }
 }
+
 
 #[derive(Debug, Serialize, Clone)]
 pub struct TwitterTarget {
