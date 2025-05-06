@@ -38,27 +38,27 @@ pub async fn buy_notify(
         "---------------\nChat: {}\n ID: {}\n CA: {}\n---------------",
         chat_name, shiller, ca
     );
-    let bullx_link = format!(
-        "https://neo.bullx.io/terminal?chainId=1399811149&address={}",
+    let link = format!(
+        "https://axiom.trade/t/{}",
         ca
     );
 
     #[cfg(not(feature = "remote"))]
-    let _ = open_browser(Browser::Brave, &bullx_link);
+    let _ = open_browser(Browser::Brave, &link);
 
     {
         let client = client.clone();
         let trenches_chat = trenches_chat.clone();
         let trojan_bot = trojan_bot.clone();
         let final_msg = final_msg.clone();
-        let bullx_link = bullx_link.clone();
+        let link = link.clone();
         let client_informer_clone = client_informer.clone();
 
         tokio::spawn(async move {
             let _ = client_informer_clone
                 .send_message(
                     trenches_chat,
-                    InputMessage::text(format!("{}\n{}", final_msg, bullx_link)),
+                    InputMessage::text(format!("{}\n{}", final_msg, link)),
                 )
                 .await;
             tokio::time::sleep(std::time::Duration::from_secs(1)).await;
