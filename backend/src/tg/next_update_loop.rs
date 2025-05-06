@@ -6,6 +6,8 @@ use crate::{
     sniper::{snipe::snipe, snipe_x::snipe_x},
     state::AppState,
 };
+#[cfg(all(not(feature = "remote"), not(feature = "production")))]
+use super::shutdown::maybe_shutdown_command;
 
 pub async fn main_tg_loop(
     client: Client,
@@ -15,14 +17,22 @@ pub async fn main_tg_loop(
         match client.next_update().await {
             Ok(Update::NewMessage(message)) => {
                 let message_text = message.text();
+              
+                #[cfg(all(not(feature = "remote"), not(feature = "production")))]
+                maybe_shutdown_command(message_text);
+
                 let ca = extract_solana_address(message_text);
 
                 if ca.is_none() {
                     continue;
                 }
 
-                let message_sender_id = message.sender().unwrap().id();
                 let chat_id = message.chat().id();
+                let mut message_sender_id = chat_id;
+                let message_sender = message.sender();
+                if message_sender.is_some() {
+                    message_sender_id = message_sender.unwrap().id();
+                }
                 let ca = ca.unwrap();
 
 
