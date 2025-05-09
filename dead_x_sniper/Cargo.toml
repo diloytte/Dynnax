@@ -9,3 +9,4 @@ shared = {path = "../shared"}
 grammers-client = "0.7.0"
 grammers-session = "0.7.0"
 dotenv = "0.15.0"
+reqwest = "0.12.15"

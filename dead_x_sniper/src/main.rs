@@ -1,9 +1,9 @@
 use dotenv::dotenv;
 use grammers_client::{Client, Update};
 use shared::{
-    pf::buy_ca_tg,
+    pf::{buy_ca, buy_ca_tg},
     tg::{client::connect_client, dialog::find_dialog::find_dialog_chat_by_id},
-    twitter_regex::extract_twitter_sender,
+    twitter_regex::extract_twitter_sender, types::SnipeConfig, utils::load_env_var,
 };
 use std::{collections::HashMap, env};
 
@@ -46,8 +46,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let _trojan_chat = trojan_chat.unwrap();
 
-    let pepeboost_chat = pepeboost_chat.unwrap();
-
     let redacted_bot_chat = redacted_bot_dialog.unwrap();
 
     let mut tracked_twitter_account: HashMap<&str, &str> = HashMap::new();
@@ -67,6 +65,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             .send_message(&redacted_bot_chat, format!("/add {}", tracked.0))
             .await?;
     }
+
+    let http_client = reqwest::Client::new();
+
+    let pf_api_key = load_env_var::<String>("PUMPFUN_PORTAL_API_KEY");
+    let pump_portal_url: &str = "https://pumpportal.fun/api/trade?api-key=";
+    let pf_api_url = format!("{}{}", pump_portal_url, pf_api_key);
 
     loop {
         match client.next_update().await {
@@ -100,7 +104,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                 let ca = ca.unwrap();
 
-                buy_ca_tg(&client, ca, &pepeboost_chat).await?;
+                match buy_ca(pf_api_url.as_str(),&SnipeConfig { sol_amount: 9.0, slippage: 10, priority_fee: 0.0002 }, ca, 1, &http_client).await{
+                    Ok(_) => {
+
+                    },
+                    Err(error) => {
+                        println!("Error: {:?}",error);
+                    },
+                }
 
                 tracked_twitter_account.remove(twitter_sender.as_str());
             }

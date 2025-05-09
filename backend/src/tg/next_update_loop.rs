@@ -18,9 +18,6 @@ pub async fn main_tg_loop(
             Ok(Update::NewMessage(message)) => {
                 let message_text = message.text();
               
-                #[cfg(all(not(feature = "remote"), not(feature = "production")))]
-                maybe_shutdown_command(message_text);
-
                 let ca = extract_solana_address(message_text);
 
                 if ca.is_none() {
@@ -41,6 +38,9 @@ pub async fn main_tg_loop(
                 } else {
                     let _ = snipe_x(&message, &client, &shared_state, &ca).await;
                 }
+
+                #[cfg(all(not(feature = "remote"), not(feature = "production")))]
+                maybe_shutdown_command(message_text);
             }
             Err(e) => eprintln!("Error in listen_for_updates: {}", e),
             _ => continue,

@@ -84,12 +84,15 @@ pub async fn buy_ca(
         }
         Err(error) => {
             println!("Error: {:?}, CA: {}", error, ca);
-            let dex_address = fetch_base_token_address_from_dex(ca, http_client).await;
-            if dex_address.is_err() {
-                println!("Error from DEX. {:?}", error);
-                return Err(TradeError::CustomError(dex_address.err().unwrap()));
-            }
-            send_dex_ca_trade(ca, url, &body, http_client).await?;
+            
+            // IMPORTANTE: Removed this cause its way too slow.
+
+            // let dex_address = fetch_base_token_address_from_dex(ca, http_client).await;
+            // if dex_address.is_err() {
+            //     println!("Error from DEX. {:?}", error);
+            //     return Err(TradeError::CustomError(dex_address.err().unwrap()));
+            // }
+            // send_dex_ca_trade(ca, url, &body, http_client).await?;
         }
     }
 

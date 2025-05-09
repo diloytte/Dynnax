@@ -568,6 +568,7 @@ dependencies = [
  "dotenv",
  "grammers-client",
  "grammers-session",
+ "reqwest",
  "shared",
  "tokio",
 ]
