@@ -1,5 +1,5 @@
 use grammers_client::Client;
-use grammers_client::types::{Chat,Dialog};
+use grammers_client::types::{Chat, Dialog};
 
 pub async fn find_dialog_chat_by_id(client: &Client, id: i64) -> Option<Chat> {
     let mut iter_dialogs = client.iter_dialogs();
@@ -17,11 +17,11 @@ pub async fn find_dialog_chat_by_id(client: &Client, id: i64) -> Option<Chat> {
     None
 }
 
-pub async fn find_dialog_chat_by_id_from_list(all_dialogs:&Vec<Dialog>, id: i64) -> Option<Chat> {
+pub async fn find_dialog_chat_by_id_from_list(all_dialogs: &Vec<Dialog>, id: i64) -> Option<Chat> {
     for dialog in all_dialogs {
-            if dialog.chat.id() == id {
-                return Some(dialog.clone().chat);
-            }
+        if dialog.chat.id() == id {
+            return Some(dialog.clone().chat);
         }
+    }
     None
 }

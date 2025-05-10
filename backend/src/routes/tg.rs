@@ -1,8 +1,16 @@
-use axum::{http::StatusCode, response::IntoResponse, routing::{get, post}, Extension, Router};
+use axum::{
+    Extension, Router,
+    http::StatusCode,
+    response::IntoResponse,
+    routing::{get, post},
+};
 use serde_json::json;
 use shared::{
     json_error,
-    tg::dialog::{clear_dialogs::clear_dialogs, get_dialogs::{get_dialogs as tg_all_dialogs, simplify_dialog, SimplifiedDialog}},
+    tg::dialog::{
+        clear_dialogs::clear_dialogs,
+        get_dialogs::{SimplifiedDialog, get_dialogs as tg_all_dialogs, simplify_dialog},
+    },
 };
 
 use crate::{tg::shill::shill_in_groupchats, types::other::AppStateExtension};
@@ -14,18 +22,19 @@ pub fn routes() -> Router {
             .route("/", get(get_me))
             .route("/clear", get(clear_dialogs_route))
             .route("/dialogs", get(get_dialogs))
-            .route("/shill",post(shill))
+            .route("/shill", post(shill)),
     )
 }
 
 async fn shill(Extension(state): AppStateExtension) -> impl IntoResponse {
-    let shill_result = shill_in_groupchats(&state.shill_groups, &state.tg_client, &"NIGAS".to_string()).await;
-    if shill_result.is_err(){
-        println!("Error: {:?}",shill_result.err());
-        return (StatusCode::CONFLICT,json_error!("Error in shilling."));
+    let shill_result =
+        shill_in_groupchats(&state.shill_groups, &state.tg_client, &"NIGAS".to_string()).await;
+    if shill_result.is_err() {
+        println!("Error: {:?}", shill_result.err());
+        return (StatusCode::CONFLICT, json_error!("Error in shilling."));
     }
 
-    (StatusCode::OK,"".to_string())
+    (StatusCode::OK, "".to_string())
 }
 
 async fn clear_dialogs_route(Extension(state): AppStateExtension) -> impl IntoResponse {
@@ -65,9 +74,10 @@ async fn get_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
     let client = &state.tg_client;
     let dialogs_result = tg_all_dialogs(client).await;
     let dialogs = dialogs_result.unwrap_or(vec![]);
-    let dialogs_simplified:Vec<SimplifiedDialog> = dialogs.iter().map(|dialog|{
-        simplify_dialog(dialog)
-    }).collect();
+    let dialogs_simplified: Vec<SimplifiedDialog> = dialogs
+        .iter()
+        .map(|dialog| simplify_dialog(dialog))
+        .collect();
     (
         StatusCode::OK,
         json!({
@@ -76,4 +86,3 @@ async fn get_dialogs(Extension(state): AppStateExtension) -> impl IntoResponse {
         .to_string(),
     )
 }
-

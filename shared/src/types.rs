@@ -106,18 +106,18 @@ pub struct PfResponse {
     pub signature: Option<String>,
 }
 
-#[derive(Debug,Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct DexScreenerResponse {
     pub pairs: Vec<Pair>,
 }
 
-#[derive(Debug,Deserialize)]
+#[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Pair {
     pub base_token: BaseToken,
 }
 
-#[derive(Debug,Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct BaseToken {
     pub address: String,
     pub name: String,
@@ -151,7 +151,6 @@ pub struct SnipeTarget {
     pub is_user: bool,
 }
 
-
 impl Default for SnipeTarget {
     fn default() -> Self {
         SnipeTarget {
@@ -164,7 +163,6 @@ impl Default for SnipeTarget {
         }
     }
 }
-
 
 #[derive(Debug, Serialize, Clone)]
 pub struct TwitterTarget {

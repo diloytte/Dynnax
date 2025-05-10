@@ -2,12 +2,12 @@ use grammers_client::{Client, InvocationError, Update};
 use std::sync::Arc;
 use token_address_extractor::extract_solana_address;
 
+#[cfg(all(not(feature = "remote"), not(feature = "production")))]
+use super::shutdown::maybe_shutdown_command;
 use crate::{
     sniper::{snipe::snipe, snipe_x::snipe_x},
     state::AppState,
 };
-#[cfg(all(not(feature = "remote"), not(feature = "production")))]
-use super::shutdown::maybe_shutdown_command;
 
 pub async fn main_tg_loop(
     client: Client,
@@ -17,7 +17,7 @@ pub async fn main_tg_loop(
         match client.next_update().await {
             Ok(Update::NewMessage(message)) => {
                 let message_text = message.text();
-              
+
                 let ca = extract_solana_address(message_text);
 
                 if ca.is_none() {
@@ -32,9 +32,8 @@ pub async fn main_tg_loop(
                 }
                 let ca = ca.unwrap();
 
-
                 if shared_state.redacted_custom_bot_id != chat_id {
-                    let _ = snipe(chat_id,message_sender_id, &client, &shared_state, &ca).await;
+                    let _ = snipe(chat_id, message_sender_id, &client, &shared_state, &ca).await;
                 } else {
                     let _ = snipe_x(&message, &client, &shared_state, &ca).await;
                 }

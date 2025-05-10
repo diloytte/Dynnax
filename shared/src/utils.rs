@@ -3,6 +3,7 @@ use crate::types::{Browser, SoundError};
 use reqwest::Method;
 #[cfg(not(feature = "remote"))]
 use rodio::{Decoder, OutputStream, Source};
+use std::{env, str::FromStr};
 #[cfg(not(feature = "remote"))]
 use std::{
     fs::File,
@@ -11,7 +12,6 @@ use std::{
     process::Command,
 };
 use tower_http::cors::{Any, CorsLayer};
-use std::{env, str::FromStr};
 
 #[macro_export]
 macro_rules! json_error {

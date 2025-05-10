@@ -13,14 +13,15 @@ use shared::utils::play_buy_notif;
 
 pub async fn snipe(
     chat_id: i64,
-    message_sender_id:i64,
+    message_sender_id: i64,
     _client: &Client,
     shared_state: &Arc<AppState>,
     ca: &str,
 ) -> Result<(), InvocationError> {
     let snipe_targets = &shared_state.snipe_targets;
 
-    let snipe_target_option = snipe_targets.get_mut(&chat_id)
+    let snipe_target_option = snipe_targets
+        .get_mut(&chat_id)
         .or_else(|| snipe_targets.get_mut(&message_sender_id));
 
     if let Some(mut snipe_target) = snipe_target_option {

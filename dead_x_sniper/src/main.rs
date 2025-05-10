@@ -1,9 +1,11 @@
 use dotenv::dotenv;
 use grammers_client::{Client, Update};
 use shared::{
-    pf::{buy_ca, buy_ca_tg},
+    pf::buy_ca,
     tg::{client::connect_client, dialog::find_dialog::find_dialog_chat_by_id},
-    twitter_regex::extract_twitter_sender, types::SnipeConfig, utils::load_env_var,
+    twitter_regex::extract_twitter_sender,
+    types::SnipeConfig,
+    utils::load_env_var,
 };
 use std::{collections::HashMap, env};
 
@@ -104,13 +106,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                 let ca = ca.unwrap();
 
-                match buy_ca(pf_api_url.as_str(),&SnipeConfig { sol_amount: 9.0, slippage: 10, priority_fee: 0.0002 }, ca, 1, &http_client).await{
-                    Ok(_) => {
-
+                match buy_ca(
+                    pf_api_url.as_str(),
+                    &SnipeConfig {
+                        sol_amount: 9.0,
+                        slippage: 10,
+                        priority_fee: 0.0002,
                     },
+                    ca,
+                    1,
+                    &http_client,
+                )
+                .await
+                {
+                    Ok(_) => {}
                     Err(error) => {
-                        println!("Error: {:?}",error);
-                    },
+                        println!("Error: {:?}", error);
+                    }
                 }
 
                 tracked_twitter_account.remove(twitter_sender.as_str());

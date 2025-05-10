@@ -19,7 +19,10 @@ use shared::{
     db::connect::connect,
     tg::{
         client::connect_client,
-        dialog::{find_dialog::find_dialog_chat_by_id_from_list, get_dialogs::{get_dialog_type_as_number, get_dialogs}},
+        dialog::{
+            find_dialog::find_dialog_chat_by_id_from_list,
+            get_dialogs::{get_dialog_type_as_number, get_dialogs},
+        },
     },
     utils::{build_cors_layer, load_env_var},
 };
@@ -55,7 +58,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let dialogs_dashmap = DashMap::new();
     let dialogs = get_dialogs(&client).await?;
     for dialog in &dialogs {
-        dialogs_dashmap.insert(dialog.chat.id(), (dialog.chat.name().to_string(),get_dialog_type_as_number(&dialog)));
+        dialogs_dashmap.insert(
+            dialog.chat.id(),
+            (
+                dialog.chat.name().to_string(),
+                get_dialog_type_as_number(dialog),
+            ),
+        );
     }
 
     let pf_api_key = if cfg!(feature = "production") {
@@ -68,15 +77,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pf_api_url = format!("{}{}", pump_portal_url, pf_api_key);
 
     let redacted_self_bot_father_dialog_id: i64 =
-    load_env_var("REDACTED_SELF_BOT_FATHER_DIALOG_ID");
-    
-    let redacted_system_bot: i64 =
-    load_env_var("REDACTED_SYSTEMS_BOT_DIALOG_ID");
+        load_env_var("REDACTED_SELF_BOT_FATHER_DIALOG_ID");
+
+    let redacted_system_bot: i64 = load_env_var("REDACTED_SYSTEMS_BOT_DIALOG_ID");
 
     let sniper_trenches_chat_id: i64 = load_env_var("SNIPER_TRENCHES_CHAT_ID");
-    let sniper_trenches_chat: Chat = find_dialog_chat_by_id_from_list(&dialogs, sniper_trenches_chat_id)
-        .await
-        .unwrap();
+    let sniper_trenches_chat: Chat =
+        find_dialog_chat_by_id_from_list(&dialogs, sniper_trenches_chat_id)
+            .await
+            .unwrap();
 
     let trojan_bot_chat_id: i64 = load_env_var("TROJAN_DIALOG_ID");
     let trojan_bot_chat = find_dialog_chat_by_id_from_list(&dialogs, trojan_bot_chat_id)
@@ -87,14 +96,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let shill_group_ids: String = load_env_var::<String>("SHILL_GROUP_IDS");
 
-    let load_shill_groups_tuple = load_shill_groups(&shill_group_ids,&dialogs).await;
+    let load_shill_groups_tuple = load_shill_groups(shill_group_ids, &dialogs).await;
 
     let shill_groups = load_shill_groups_tuple.0;
 
     let shill_groups_errors = load_shill_groups_tuple.1;
 
-    for error in shill_groups_errors{
-        println!("{:?}",error);
+    for error in shill_groups_errors {
+        println!("{:?}", error);
     }
 
     let state = AppState {

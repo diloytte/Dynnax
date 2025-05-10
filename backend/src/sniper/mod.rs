@@ -38,10 +38,7 @@ pub async fn buy_notify(
         "---------------\nChat: {}\n ID: {}\n CA: {}\n---------------",
         chat_name, shiller, ca
     );
-    let link = format!(
-        "https://axiom.trade/t/{}",
-        ca
-    );
+    let link = format!("https://axiom.trade/t/{}", ca);
 
     #[cfg(not(feature = "remote"))]
     let _ = open_browser(Browser::Brave, &link);

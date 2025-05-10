@@ -84,7 +84,7 @@ pub async fn buy_ca(
         }
         Err(error) => {
             println!("Error: {:?}, CA: {}", error, ca);
-            
+
             // IMPORTANTE: Removed this cause its way too slow.
 
             // let dex_address = fetch_base_token_address_from_dex(ca, http_client).await;
@@ -189,6 +189,7 @@ pub async fn fetch_base_token_address_from_dex(
     }
 }
 
+#[allow(dead_code)]
 async fn send_dex_ca_trade(
     ca: &str,
     url: &str,

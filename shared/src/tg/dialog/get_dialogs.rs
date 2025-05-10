@@ -1,5 +1,5 @@
-use grammers_client::types::Dialog;
 use grammers_client::types::Chat;
+use grammers_client::types::Dialog;
 use grammers_client::{Client, InvocationError};
 use serde::Serialize;
 
@@ -20,7 +20,7 @@ pub async fn get_dialogs(client: &Client) -> Result<Vec<Dialog>, InvocationError
     Ok(dialogs)
 }
 
-pub fn get_dialog_type_as_number(dialog:&Dialog)->u8{
+pub fn get_dialog_type_as_number(dialog: &Dialog) -> u8 {
     match dialog.chat {
         Chat::User(_) => 0,
         Chat::Group(_) => 1,
@@ -42,6 +42,10 @@ impl From<SimplifiedDialog> for (String, u8) {
     }
 }
 
-pub fn simplify_dialog(dialog:&Dialog)->SimplifiedDialog{
-    return SimplifiedDialog { id: dialog.chat.id(), name: dialog.chat.name().to_string(), dialog_type: get_dialog_type_as_number(dialog) }
+pub fn simplify_dialog(dialog: &Dialog) -> SimplifiedDialog {
+    SimplifiedDialog {
+        id: dialog.chat.id(),
+        name: dialog.chat.name().to_string(),
+        dialog_type: get_dialog_type_as_number(dialog),
+    }
 }

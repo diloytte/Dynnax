@@ -12,7 +12,7 @@ pub struct DBSnipeTarget {
     pub is_active: bool,
     pub deactivate_on_snipe: bool,
     pub past_shills: Vec<String>,
-    pub is_user:bool
+    pub is_user: bool,
 }
 
 impl From<DBSnipeTarget> for SnipeTarget {
@@ -27,7 +27,7 @@ impl From<DBSnipeTarget> for SnipeTarget {
             is_active: db.is_active,
             deactivate_on_snipe: db.deactivate_on_snipe,
             past_shills: db.past_shills,
-            is_user:db.is_user
+            is_user: db.is_user,
         }
     }
 }
