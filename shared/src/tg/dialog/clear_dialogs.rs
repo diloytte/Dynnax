@@ -1,6 +1,9 @@
 use grammers_client::{Client, InvocationError};
 
-pub async fn clear_dialogs(client: &Client) -> Result<(), InvocationError> {
+pub async fn clear_dialogs(
+    client: &Client,
+    ignore_user: Option<bool>,
+) -> Result<(), InvocationError> {
     let mut iter_dialogs = client.iter_dialogs();
 
     let dialogs_len = iter_dialogs.total().await.unwrap_or(0);
@@ -11,7 +14,16 @@ pub async fn clear_dialogs(client: &Client) -> Result<(), InvocationError> {
         match next_dialog_result_option {
             Ok(next_dialog_option) => {
                 if let Some(dialog) = next_dialog_option {
-                    let _ = client.mark_as_read(dialog.chat).await;
+                    let chat = dialog.chat;
+
+                    if ignore_user.is_some() {
+                        match chat {
+                            grammers_client::types::Chat::User(_) => continue,
+                            _ => {} 
+                        }
+                    }
+
+                    let _ = client.mark_as_read(chat).await;
                 }
             }
             Err(err) => {

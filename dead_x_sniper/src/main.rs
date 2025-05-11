@@ -5,7 +5,7 @@ use shared::{
     tg::{client::connect_client, dialog::find_dialog::find_dialog_chat_by_id},
     twitter_regex::extract_twitter_sender,
     types::SnipeConfig,
-    utils::load_env_var,
+    utils::{load_env_var, play_buy_notif},
 };
 use std::{collections::HashMap, env};
 
@@ -119,7 +119,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 )
                 .await
                 {
-                    Ok(_) => {}
+                    Ok(_) => {
+                        play_buy_notif();
+                    }
                     Err(error) => {
                         println!("Error: {:?}", error);
                     }

@@ -1,8 +1,5 @@
 use axum::{
-    Extension, Router,
-    http::StatusCode,
-    response::IntoResponse,
-    routing::{get, post},
+    http::StatusCode, response::IntoResponse, routing::{get, post}, Extension, Json, Router
 };
 use serde_json::json;
 use shared::{
@@ -13,7 +10,7 @@ use shared::{
     },
 };
 
-use crate::{tg::shill::shill_in_groupchats, types::other::AppStateExtension};
+use crate::{tg::shill::shill_in_groupchats, types::{dtos::tg::{IgnoreUserDTO, ShillDTO}, other::AppStateExtension}};
 
 pub fn routes() -> Router {
     Router::new().nest(
@@ -26,9 +23,9 @@ pub fn routes() -> Router {
     )
 }
 
-async fn shill(Extension(state): AppStateExtension) -> impl IntoResponse {
+async fn shill(Extension(state): AppStateExtension,Json(shill_dto):Json<ShillDTO>) -> impl IntoResponse {
     let shill_result =
-        shill_in_groupchats(&state.shill_groups, &state.tg_client, &"NIGAS".to_string()).await;
+        shill_in_groupchats(&state.shill_groups, &state.tg_client,&shill_dto.shill_message,shill_dto.is_test,&state.sniper_trenches_chat).await;
     if shill_result.is_err() {
         println!("Error: {:?}", shill_result.err());
         return (StatusCode::CONFLICT, json_error!("Error in shilling."));
@@ -36,9 +33,8 @@ async fn shill(Extension(state): AppStateExtension) -> impl IntoResponse {
 
     (StatusCode::OK, "".to_string())
 }
-
-async fn clear_dialogs_route(Extension(state): AppStateExtension) -> impl IntoResponse {
-    match clear_dialogs(&state.tg_client).await {
+async fn clear_dialogs_route(Extension(state): AppStateExtension, Json(ignore_user_dto):Json<IgnoreUserDTO>) -> impl IntoResponse {
+    match clear_dialogs(&state.tg_client, if ignore_user_dto.ignore_user.is_none() {Some(true)} else {Some(false)}).await {
         Ok(_) => (StatusCode::OK).into_response(),
         Err(error) => (StatusCode::OK, json_error!(error.to_string())).into_response(),
     };
