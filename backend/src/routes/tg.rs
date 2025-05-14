@@ -17,7 +17,7 @@ pub fn routes() -> Router {
         "/tg",
         Router::new()
             .route("/", get(get_me))
-            .route("/clear", get(clear_dialogs_route))
+            .route("/clear", post(clear_dialogs_route))
             .route("/dialogs", get(get_dialogs))
             .route("/shill", post(shill)),
     )

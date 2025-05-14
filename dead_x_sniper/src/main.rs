@@ -57,10 +57,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "TheRoaringKitty",
         "EKEWAk7hfnwfR8DBb1cTayPPambqyC7pwNiYkaYQKQHp",
     );
-    tracked_twitter_account.insert(
-        "unity_on_solana",
-        "EdhTCqUxXRWQcUd5Fonyz9rapHAB6mABAuVkmPrtpump",
-    );
 
     for tracked in &tracked_twitter_account {
         client
@@ -73,6 +69,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pf_api_key = load_env_var::<String>("PUMPFUN_PORTAL_API_KEY");
     let pump_portal_url: &str = "https://pumpportal.fun/api/trade?api-key=";
     let pf_api_url = format!("{}{}", pump_portal_url, pf_api_key);
+
+    println!("Running dead x sniper.");
 
     loop {
         match client.next_update().await {
