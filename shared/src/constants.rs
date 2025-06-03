@@ -3,5 +3,5 @@ use regex::Regex;
 
 lazy_static! {
     pub static ref TWITTER_BOT_REGEX: Regex =
-        Regex::new(r"(?i)\b(?:tweet|quote|reply|retweet)\sfrom\s(.+)").unwrap();
+        Regex::new(r"(?i)^\s*(?:\P{L}*\s*)?(\w+)\s+(Tweeted|Retweeted|Replied)").unwrap();
 }
